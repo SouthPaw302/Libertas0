@@ -36,7 +36,7 @@
     },
     {
       "id": "deck-a",
-      "state": "RESEARCH",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "audio-kernel"
       ],

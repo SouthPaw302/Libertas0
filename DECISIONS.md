@@ -34,3 +34,13 @@ Current Web Audio provides sample-frame authority on the render thread. The refe
 Status: ACCEPTED
 
 Audio kernel passed T1-T4 in GitHub/Chrome and T5 on the real local Windows/Edge/Realtek audio path. The exact physical test targeted `c18f3e80d46aa58d0fbead3a6c7f3bb995b97917` and returned zero new discontinuities during the stress interval and zero observed discontinuities during the five-minute run.
+
+## D-0008 — Deck A uses a replaceable decoder provider
+Status: ACCEPTED FOR PHASE 3
+
+The reference provider is Web Audio `decodeAudioData`: broadly available, complete-file asynchronous decode, with PCM resampled into the engine AudioContext rate. WebCodecs AudioDecoder remains a later provider because availability is not universal and encoded-chunk decoding does not remove demux requirements.
+
+## D-0009 — Deck A owns PCM transport inside AudioWorklet
+Status: ACCEPTED FOR PHASE 3
+
+After decode, the worklet owns source-frame position, interpolation, play/pause, seek, varispeed and output. HTML media and main-thread timers are not transport authorities. Phase 3 volume is audio-timeline automation through an AudioParam.

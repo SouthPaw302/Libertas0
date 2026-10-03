@@ -3,14 +3,56 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Libertas0 Audio Kernel Harness</title>
+  <title>Libertas0 — Deck A</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 960px; }
+    fieldset { margin: 1rem 0; padding: 1rem; }
+    .row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin: .5rem 0; }
+    label { display: flex; gap: .5rem; align-items: center; }
+    input[type="range"] { width: 240px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #111; color: #eee; padding: 1rem; }
+  </style>
 </head>
 <body>
   <main>
-    <h1>Libertas0 Audio Kernel Harness</h1>
-    <button id="activate" type="button">Start audio kernel</button>
-    <button id="stop" type="button">Stop signal</button>
-    <pre id="status">not started</pre>
+    <h1>Libertas0 — Deck A</h1>
+
+    <fieldset>
+      <legend>Deck A transport</legend>
+      <div class="row">
+        <input id="deck-file" type="file" accept="audio/*" />
+        <button id="deck-load" type="button">Load</button>
+        <button id="deck-play" type="button">Play</button>
+        <button id="deck-pause" type="button">Pause</button>
+      </div>
+      <div class="row">
+        <label>Seek
+          <input id="deck-seek" type="range" min="0" max="1000" value="0" />
+        </label>
+        <label>Rate
+          <input id="deck-rate" type="number" min="0.25" max="4" step="0.01" value="1" />
+        </label>
+      </div>
+      <div class="row">
+        <label>Volume
+          <input id="deck-volume" type="range" min="0" max="1" step="0.01" value="1" />
+        </label>
+        <label>
+          <input id="deck-mute" type="checkbox" />
+          Mute
+        </label>
+      </div>
+      <pre id="deck-status">Deck A not initialized</pre>
+    </fieldset>
+
+    <details>
+      <summary>Audio-kernel regression harness</summary>
+      <div class="row">
+        <button id="activate" type="button">Start diagnostic tone</button>
+        <button id="stop" type="button">Stop diagnostic tone</button>
+      </div>
+      <pre id="status">not started</pre>
+    </details>
   </main>
   <script type="module" src="/src/main.ts"></script>
 </body>

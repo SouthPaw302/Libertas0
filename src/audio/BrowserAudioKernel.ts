@@ -1,9 +1,10 @@
-export interface AudioKernelCapabilities {
-  audioContext: boolean;
-  audioWorklet: boolean;
-  crossOriginIsolated: boolean;
-  sharedArrayBuffer: boolean;
-}
+import {
+  BrowserAudioRuntime,
+  detectAudioRuntimeCapabilities,
+  type AudioRuntimeCapabilities,
+} from './BrowserAudioRuntime';
+
+export type AudioKernelCapabilities = AudioRuntimeCapabilities;
 
 export interface AudioKernelProcessorStatus {
   currentFrame: number;
@@ -34,32 +35,25 @@ interface PendingStatus {
   timeout: number;
 }
 
-export function detectAudioKernelCapabilities(): AudioKernelCapabilities {
-  return {
-    audioContext: typeof AudioContext !== 'undefined',
-    audioWorklet: typeof AudioWorkletNode !== 'undefined',
-    crossOriginIsolated: globalThis.crossOriginIsolated === true,
-    sharedArrayBuffer: typeof SharedArrayBuffer !== 'undefined',
-  };
-}
+export const detectAudioKernelCapabilities = detectAudioRuntimeCapabilities;
 
 export class BrowserAudioKernel {
-  private context: AudioContext | null = null;
   private node: AudioWorkletNode | null = null;
   private requestSequence = 1;
   private readonly pending = new Map<number, PendingStatus>();
+  private readonly runtime: BrowserAudioRuntime;
+  private readonly ownsRuntime: boolean;
+
+  constructor(runtime?: BrowserAudioRuntime) {
+    this.runtime = runtime ?? new BrowserAudioRuntime();
+    this.ownsRuntime = !runtime;
+  }
 
   async initialize(): Promise<void> {
-    if (this.context && this.node) return;
+    if (this.node) return;
 
-    const capabilities = detectAudioKernelCapabilities();
-    if (!capabilities.audioContext || !capabilities.audioWorklet) {
-      throw new Error('AudioContext + AudioWorklet are required for the browser audio kernel');
-    }
-
-    const context = new AudioContext({ latencyHint: 'interactive' });
-    await context.audioWorklet.addModule('/audio/libertas-kernel.worklet.js');
-
+    await this.runtime.ensureWorkletModule('/audio/libertas-kernel.worklet.js');
+    const context = this.runtime.context;
     const node = new AudioWorkletNode(context, 'libertas-kernel', {
       numberOfInputs: 0,
       numberOfOutputs: 1,
@@ -77,20 +71,14 @@ export class BrowserAudioKernel {
     };
 
     node.connect(context.destination);
-    this.context = context;
     this.node = node;
   }
 
   async startSignal(frequencyHz = 220, gain = 0.03): Promise<void> {
     await this.initialize();
-    const context = this.requireContext();
-    const node = this.requireNode();
+    await this.runtime.resume();
 
-    if (context.state !== 'running') {
-      await context.resume();
-    }
-
-    node.port.postMessage({
+    this.requireNode().port.postMessage({
       type: 'configure',
       signalRunning: true,
       frequencyHz,
@@ -134,14 +122,13 @@ export class BrowserAudioKernel {
     this.node?.disconnect();
     this.node = null;
 
-    if (this.context && this.context.state !== 'closed') {
-      await this.context.close();
+    if (this.ownsRuntime) {
+      await this.runtime.close();
     }
-    this.context = null;
   }
 
   private mergeStatus(message: StatusMessage): AudioKernelStatus {
-    const context = this.requireContext();
+    const context = this.runtime.context;
     return {
       currentFrame: message.currentFrame,
       sampleRate: message.sampleRate,
@@ -159,11 +146,6 @@ export class BrowserAudioKernel {
           ? context.outputLatency
           : null,
     };
-  }
-
-  private requireContext(): AudioContext {
-    if (!this.context) throw new Error('audio kernel is not initialized');
-    return this.context;
   }
 
   private requireNode(): AudioWorkletNode {
