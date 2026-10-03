@@ -5,14 +5,16 @@
     {
       "id": "dev.github-actions",
       "class": "development",
-      "status": "configured",
-      "provider": "github-actions"
+      "status": "proven",
+      "provider": "github-actions",
+      "evidence": "evidence/verification-fabric/phase1-selftest/RESULT.json"
     },
     {
       "id": "dev.local-debug-bus",
       "class": "development",
-      "status": "implementing",
-      "provider": "github-issue-1+validation/local-debug"
+      "status": "proven",
+      "provider": "github-issue-1+validation/local-debug",
+      "evidence": "evidence/verification-fabric/phase1-selftest/RESULT.json"
     },
     {
       "id": "dev.local-debug-agent",
@@ -23,19 +25,19 @@
     {
       "id": "audio.browser-worklet",
       "class": "realtime",
-      "status": "planned",
+      "status": "research",
       "provider": "AudioWorklet"
     },
     {
       "id": "compute.wasm",
       "class": "compute",
-      "status": "planned",
+      "status": "research",
       "provider": "WebAssembly"
     },
     {
       "id": "compute.shared-memory",
       "class": "compute",
-      "status": "planned",
+      "status": "research",
       "provider": "SharedArrayBuffer+Atomics"
     },
     {

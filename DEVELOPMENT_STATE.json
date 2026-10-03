@@ -1,13 +1,14 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "verification_fabric",
-  "active_module": "verification-fabric",
-  "active_branch": "system/phase-1-verification-fabric",
-  "status": "IMPLEMENTING",
-  "current_objective": "Establish persistent project authority and prove the GitHub runner-backed local debug bus end-to-end without requiring the real local agent.",
-  "last_passing_gate": null,
+  "phase": "audio_kernel",
+  "active_module": "audio-kernel",
+  "active_branch": "module/audio-kernel",
+  "status": "RESEARCH",
+  "current_objective": "Research, contract, implement, and automatically prove the minimum realtime audio kernel before requesting real local-machine audio validation.",
+  "last_passing_gate": "phase1-verification-fabric",
+  "last_evidence": "evidence/verification-fabric/phase1-selftest/RESULT.json",
   "blockers": [],
-  "exact_next_action": "Commit Phase 1 fabric, run system-contract Action, create validation/local-debug from the tested commit, and complete a synthetic report relay through issue #1.",
-  "product_code_authorized": false
+  "exact_next_action": "Research current browser realtime-audio execution options, write the audio-kernel contract, choose candidate architecture from evidence, then implement automated/runtime gates.",
+  "product_code_authorized": true
 }

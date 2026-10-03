@@ -19,3 +19,8 @@ Previous implementations are reference/candidate material. Nothing becomes canon
 Status: ACCEPTED
 
 UI, agents, inference, network, storage, CI, and browser UI timers may request actions but never own realtime musical execution.
+
+## D-0005 — Phase 1 verification fabric promoted
+Status: ACCEPTED
+
+The system-contract runner and synthetic local-debug round trip both passed on exact recorded SHAs. The runner-backed bus is promoted as development infrastructure. This is not evidence that the physical local agent or audio hardware has been tested yet.

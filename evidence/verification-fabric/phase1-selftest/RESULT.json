@@ -1,0 +1,35 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "verification-fabric",
+  "gate": "phase1-debug-bus-roundtrip",
+  "status": "PASS",
+  "system_sha": "ff5a87395fe195a9cf429efd79b00f4121df429f",
+  "system_contract_run": {
+    "id": 37103985730,
+    "conclusion": "success"
+  },
+  "debug_report_sha": "eadee4d2c06942b4707742e9d7739d0824e08463",
+  "debug_bus_run": {
+    "id": 37104026028,
+    "conclusion": "success"
+  },
+  "artifact": {
+    "id": 11267625704,
+    "name": "local-debug-eadee4d2c06942b4707742e9d7739d0824e08463",
+    "digest": "sha256:b2ffa24c4b8085689d2f4f9a16f2f6a2ab7d47baae38c08012660f16be61c056",
+    "expires_at": "2026-10-17T06:44:28Z"
+  },
+  "issue": {
+    "number": 1,
+    "comment_id": 5966465175
+  },
+  "assertions": {
+    "system_contract_passed": true,
+    "evidence_only_branch_guard_passed": true,
+    "structured_report_validated": true,
+    "artifact_uploaded": true,
+    "issue_relay_passed": true,
+    "real_local_machine_used": false
+  },
+  "note": "This proves the GitHub runner-backed debug-bus fabric only. The real local debug agent remains unverified until a physical/runtime task is issued."
+}

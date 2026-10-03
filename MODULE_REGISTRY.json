@@ -3,7 +3,7 @@
   "modules": [
     {
       "id": "development-os",
-      "state": "AUTOMATED_TEST",
+      "state": "LOCKED",
       "depends_on": [],
       "required_gates": [
         "bootstrap",
@@ -12,7 +12,7 @@
     },
     {
       "id": "verification-fabric",
-      "state": "IMPLEMENTING",
+      "state": "LOCKED",
       "depends_on": [
         "development-os"
       ],
@@ -24,7 +24,7 @@
     },
     {
       "id": "audio-kernel",
-      "state": "PLANNED",
+      "state": "RESEARCH",
       "depends_on": [
         "verification-fabric"
       ],
