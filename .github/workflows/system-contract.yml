@@ -1,0 +1,46 @@
+name: Libertas System Contract
+
+on:
+  push:
+    branches:
+      - main
+      - 'system/**'
+      - 'module/**'
+      - 'research/**'
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bootstrap Libertas
+        run: python bootstrap.py
+      - name: Validate system contracts
+        run: python scripts/validate_system.py
+      - name: Validate JSON syntax
+        shell: bash
+        run: |
+          python -m json.tool SYSTEM_CONTRACT.json >/dev/null
+          python -m json.tool CAPABILITY_REGISTRY.json >/dev/null
+          python -m json.tool MODULE_REGISTRY.json >/dev/null
+          python -m json.tool DEVELOPMENT_STATE.json >/dev/null
+          python -m json.tool orchestrator/TASK_SCHEMA.json >/dev/null
+          python -m json.tool orchestrator/RESULT_SCHEMA.json >/dev/null
+      - name: Upload boot evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: libertas-system-contract-${{ github.sha }}
+          path: .libertas/
+          retention-days: 7

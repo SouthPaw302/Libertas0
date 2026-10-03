@@ -1,0 +1,151 @@
+{
+  "schema": "libertas.modules.v1",
+  "modules": [
+    {
+      "id": "development-os",
+      "state": "AUTOMATED_TEST",
+      "depends_on": [],
+      "required_gates": [
+        "bootstrap",
+        "contract-validation"
+      ]
+    },
+    {
+      "id": "verification-fabric",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "development-os"
+      ],
+      "required_gates": [
+        "runner",
+        "debug-bus-roundtrip",
+        "artifact-retention"
+      ]
+    },
+    {
+      "id": "audio-kernel",
+      "state": "PLANNED",
+      "depends_on": [
+        "verification-fabric"
+      ],
+      "required_gates": [
+        "unit",
+        "runtime",
+        "local-debug"
+      ]
+    },
+    {
+      "id": "deck-a",
+      "state": "PLANNED",
+      "depends_on": [
+        "audio-kernel"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime",
+        "local-debug"
+      ]
+    },
+    {
+      "id": "deck-b-mixer",
+      "state": "PLANNED",
+      "depends_on": [
+        "deck-a"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime",
+        "local-debug"
+      ]
+    },
+    {
+      "id": "musical-clock",
+      "state": "PLANNED",
+      "depends_on": [
+        "deck-b-mixer"
+      ],
+      "required_gates": [
+        "unit",
+        "simulation",
+        "integration"
+      ]
+    },
+    {
+      "id": "sync",
+      "state": "PLANNED",
+      "depends_on": [
+        "musical-clock"
+      ],
+      "required_gates": [
+        "unit",
+        "simulation",
+        "integration",
+        "runtime",
+        "local-debug",
+        "human-listening"
+      ]
+    },
+    {
+      "id": "performance-transport",
+      "state": "PLANNED",
+      "depends_on": [
+        "sync"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime",
+        "local-debug"
+      ]
+    },
+    {
+      "id": "mixer-dsp",
+      "state": "PLANNED",
+      "depends_on": [
+        "performance-transport"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime",
+        "local-debug"
+      ]
+    },
+    {
+      "id": "intelligence",
+      "state": "PLANNED",
+      "depends_on": [
+        "mixer-dsp"
+      ],
+      "required_gates": [
+        "unit",
+        "runtime"
+      ]
+    },
+    {
+      "id": "library-midi-recording-automation",
+      "state": "PLANNED",
+      "depends_on": [
+        "intelligence"
+      ],
+      "required_gates": [
+        "integration",
+        "runtime",
+        "local-debug"
+      ]
+    },
+    {
+      "id": "distributed",
+      "state": "PLANNED",
+      "depends_on": [
+        "library-midi-recording-automation"
+      ],
+      "required_gates": [
+        "integration",
+        "runtime"
+      ]
+    }
+  ]
+}

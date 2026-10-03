@@ -1,0 +1,77 @@
+name: Libertas Local Debug Bus
+
+on:
+  push:
+    branches: [validation/local-debug]
+    paths:
+      - 'reports/local-debug/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  relay:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Enforce evidence-only report branch
+        if: github.event_name == 'push'
+        shell: bash
+        run: |
+          changed="$(git diff --name-only HEAD^ HEAD)"
+          printf '%s\n' "$changed"
+          bad="$(printf '%s\n' "$changed" | grep -v '^reports/local-debug/' || true)"
+          if [ -n "$bad" ]; then
+            echo "FAIL: validation/local-debug may only modify reports/local-debug/**"
+            printf '%s\n' "$bad"
+            exit 1
+          fi
+      - name: Validate structured result
+        run: python scripts/validate_local_report.py reports/local-debug/LATEST.json
+      - name: Upload local-debug evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: local-debug-${{ github.sha }}
+          path: reports/local-debug/
+          retention-days: 14
+      - name: Relay result to issue 1
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const result = JSON.parse(fs.readFileSync('reports/local-debug/LATEST.json','utf8'));
+            const env = fs.existsSync('reports/local-debug/ENVIRONMENT.json') ? fs.readFileSync('reports/local-debug/ENVIRONMENT.json','utf8') : '{}';
+            const log = fs.existsSync('reports/local-debug/SESSION_LOG.md') ? fs.readFileSync('reports/local-debug/SESSION_LOG.md','utf8') : '(no session log)';
+            const clip = (s,n=9000) => s.length <= n ? s : s.slice(0,n) + '\n…truncated…';
+            const body = [
+              '## Local debug report',
+              '',
+              '- Report commit: `' + context.sha + '`',
+              '- Task: `' + result.task_id + '`',
+              '- Tested SHA: `' + result.tested_sha + '`',
+              '- Result: **' + result.status + '**',
+              '',
+              '### Measurements',
+              '```json',
+              JSON.stringify(result.measurements || {}, null, 2),
+              '```',
+              '',
+              '### Environment',
+              '```json',
+              clip(env, 5000),
+              '```',
+              '',
+              '### Session log',
+              clip(log),
+              '',
+              '_Master developer: read this evidence before issuing the next test SHA._'
+            ].join('\n');
+            await github.rest.issues.createComment({ owner: context.repo.owner, repo: context.repo.repo, issue_number: 1, body });

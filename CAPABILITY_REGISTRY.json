@@ -1,0 +1,78 @@
+{
+  "schema": "libertas.capabilities.v1",
+  "policy": "Documentation is not runtime availability. Detect and evidence capability state before use.",
+  "capabilities": [
+    {
+      "id": "dev.github-actions",
+      "class": "development",
+      "status": "configured",
+      "provider": "github-actions"
+    },
+    {
+      "id": "dev.local-debug-bus",
+      "class": "development",
+      "status": "implementing",
+      "provider": "github-issue-1+validation/local-debug"
+    },
+    {
+      "id": "dev.local-debug-agent",
+      "class": "development",
+      "status": "registered-unverified",
+      "provider": "runner-backed-debug-bus"
+    },
+    {
+      "id": "audio.browser-worklet",
+      "class": "realtime",
+      "status": "planned",
+      "provider": "AudioWorklet"
+    },
+    {
+      "id": "compute.wasm",
+      "class": "compute",
+      "status": "planned",
+      "provider": "WebAssembly"
+    },
+    {
+      "id": "compute.shared-memory",
+      "class": "compute",
+      "status": "planned",
+      "provider": "SharedArrayBuffer+Atomics"
+    },
+    {
+      "id": "compute.webworker",
+      "class": "background",
+      "status": "planned",
+      "provider": "Web Worker"
+    },
+    {
+      "id": "compute.webgpu",
+      "class": "inference",
+      "status": "research",
+      "provider": "WebGPU"
+    },
+    {
+      "id": "compute.webnn",
+      "class": "inference",
+      "status": "research",
+      "provider": "WebNN"
+    },
+    {
+      "id": "compute.npu",
+      "class": "inference",
+      "status": "research",
+      "provider": "runtime-specific"
+    },
+    {
+      "id": "model.onnx",
+      "class": "inference",
+      "status": "research",
+      "provider": "ONNX Runtime"
+    },
+    {
+      "id": "audio.native",
+      "class": "realtime",
+      "status": "research",
+      "provider": "native provider"
+    }
+  ]
+}

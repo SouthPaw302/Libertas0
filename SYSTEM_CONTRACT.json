@@ -1,0 +1,68 @@
+{
+  "schema": "libertas.system-contract.v1",
+  "authority": [
+    "current_user_instruction",
+    "active_branch_machine_state",
+    "soul_and_agent_contract",
+    "accepted_evidence",
+    "historical_reference"
+  ],
+  "module_states": [
+    "PLANNED",
+    "RESEARCH",
+    "CONTRACTED",
+    "IMPLEMENTING",
+    "AUTOMATED_TEST",
+    "RUNTIME_TEST",
+    "LOCAL_DEBUG",
+    "PROVEN",
+    "LOCKED",
+    "REGRESSION"
+  ],
+  "promotion": {
+    "rule": "A module may be PROVEN only after every required gate declared by that module passes with recorded evidence.",
+    "regression_rule": "A regression returns the module to REGRESSION and blocks dependent promotion.",
+    "no_greenwash": true
+  },
+  "realtime": {
+    "authority": "deterministic_audio_engine",
+    "forbidden_authorities": [
+      "react_render",
+      "setTimeout",
+      "setInterval",
+      "requestAnimationFrame",
+      "network",
+      "agent",
+      "model_inference",
+      "filesystem",
+      "persistence"
+    ]
+  },
+  "testing": [
+    "unit",
+    "simulation",
+    "integration",
+    "runtime",
+    "physical_local"
+  ],
+  "local_debug": {
+    "issue": 1,
+    "report_branch": "validation/local-debug",
+    "product_changes_from_report_branch": false,
+    "exact_sha_required": true
+  },
+  "phases": [
+    "development_os",
+    "verification_fabric",
+    "audio_kernel",
+    "deck_a",
+    "deck_b_mixer",
+    "musical_clock",
+    "sync",
+    "performance_transport",
+    "mixer_dsp",
+    "intelligence",
+    "library_midi_recording_automation",
+    "distributed"
+  ]
+}

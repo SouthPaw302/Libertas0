@@ -1,0 +1,14 @@
+{
+  "task_id": "phase1-not-issued",
+  "tested_sha": "0000000000000000000000000000000000000000",
+  "status": "BLOCKED",
+  "environment": {
+    "reason": "No report issued yet."
+  },
+  "measurements": {},
+  "artifacts": [],
+  "logs": [],
+  "reproduction": [],
+  "notes": "Placeholder. Phase 1 replaces this with a validated synthetic bus report before real local testing.",
+  "completed_at": "1970-01-01T00:00:00Z"
+}

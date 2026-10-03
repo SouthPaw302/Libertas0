@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "libertas.result.v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "task_id",
+    "tested_sha",
+    "status",
+    "environment",
+    "measurements",
+    "artifacts",
+    "logs",
+    "reproduction",
+    "notes",
+    "completed_at"
+  ],
+  "properties": {
+    "task_id": {
+      "type": "string",
+      "minLength": 3
+    },
+    "tested_sha": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "FAIL",
+        "BLOCKED"
+      ]
+    },
+    "environment": {
+      "type": "object"
+    },
+    "measurements": {
+      "type": "object"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "logs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "reproduction": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "notes": {
+      "type": "string"
+    },
+    "completed_at": {
+      "type": "string",
+      "minLength": 1
+    }
+  }
+}
