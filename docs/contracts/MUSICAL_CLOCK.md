@@ -69,6 +69,8 @@ Negative beat positions before the first beat are valid.
 
 These machine semantics stay zero-based. UI presentation may later render human-friendly 1-based bar/beat labels.
 
+All frame expectations must derive from the deck's actual decoded `sourceSampleRate`; tests and runtime logic must never assume 48 kHz.
+
 ## Quantization
 Phase 5 computes quantized source-frame targets only.
 
