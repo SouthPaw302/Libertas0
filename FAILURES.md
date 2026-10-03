@@ -41,3 +41,13 @@
 - evidence: Deck A Gate run `37107015643`.
 - cause: the partition list summed to 48,064 output frames while the reference advanced 48,000; the long simulation also used a decimal matcher threshold slightly tighter than the observed IEEE-754 accumulation error.
 - disposition: test specification corrected. Product transport code was not changed by this fix.
+
+## F-0004 — Audio-kernel regression test coupled to diagnostic UI visibility
+- date: 2026-10-03
+- exact SHA: `ada06e1fa91d679acfc553c5350c5ebe10aa77e2`
+- module: deck-a / audio-kernel regression
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: all Deck A Chrome tests passed, but two audio-kernel regression tests timed out attempting to click `#activate`.
+- evidence: Deck A Gate run `37107063267`.
+- cause: the diagnostic kernel controls were moved into a collapsed `<details>` element as Deck A became the primary harness, while the regression test remained coupled to a visible button.
+- disposition: regression test now invokes the stable kernel test API directly. Product audio behavior was not changed.

@@ -9,7 +9,7 @@ test('AudioWorklet clock advances while the browser main thread is blocked', asy
   expect(capabilities.crossOriginIsolated).toBe(true);
   expect(capabilities.sharedArrayBuffer).toBe(true);
 
-  await page.click('#activate');
+  await page.evaluate(() => window.__libertasKernelTest.start());
 
   const before = await page.evaluate(async () => {
     await new Promise((resolve) => setTimeout(resolve, 150));
@@ -44,7 +44,7 @@ test('AudioWorklet clock advances while the browser main thread is blocked', asy
 
 test('kernel reports actual runtime quantum instead of assuming 128 frames', async ({ page }) => {
   await page.goto('/');
-  await page.click('#activate');
+  await page.evaluate(() => window.__libertasKernelTest.start());
   const status = await page.evaluate(async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
     return window.__libertasKernelTest.status();
