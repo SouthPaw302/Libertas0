@@ -51,3 +51,13 @@
 - evidence: Deck A Gate run `37107063267`.
 - cause: the diagnostic kernel controls were moved into a collapsed `<details>` element as Deck A became the primary harness, while the regression test remained coupled to a visible button.
 - disposition: regression test now invokes the stable kernel test API directly. Product audio behavior was not changed.
+
+## F-0005 — Musical-clock browser assertions assumed 48 kHz decode
+- date: 2026-10-03
+- exact SHA: `ea2f1d9cfd61e02e43099788aac3d6c44f44c76e`
+- module: musical-clock
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: two Phase 5 browser tests failed while 11 other runtime/regression tests passed.
+- evidence: Musical Clock Gate run `37111277250`.
+- cause: the browser AudioContext ran at 44.1 kHz and `decodeAudioData` resampled generated PCM accordingly, but the test expected frame coordinates calculated for 48 kHz.
+- disposition: corrected tests to derive all expected musical/source-frame coordinates from the deck's actual `sourceSampleRate`. Musical-clock implementation was unchanged.

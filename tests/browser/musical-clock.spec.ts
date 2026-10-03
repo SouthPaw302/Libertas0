@@ -19,8 +19,12 @@ test('manual grids map independent Deck A/B source frames into deterministic mus
     });
   });
 
-  await page.evaluate(() => window.__libertasDeckATest.seekFrame(96_000));
-  await page.evaluate(() => window.__libertasDeckBTest.seekFrame(96_000));
+  const targetA = loaded.a.sourceSampleRate * 2;
+  const targetB =
+    12_000 + 2.625 * ((loaded.b.sourceSampleRate * 60) / 90);
+
+  await page.evaluate((frame) => window.__libertasDeckATest.seekFrame(frame), targetA);
+  await page.evaluate((frame) => window.__libertasDeckBTest.seekFrame(frame), targetB);
   const snapshots = await page.evaluate(() => window.__libertasMusicalClockTest.snapshotBoth());
 
   expect(snapshots.a.position.beatPosition).toBeCloseTo(4, 10);
@@ -79,12 +83,16 @@ test('quantization is deterministic and does not move deck transport', async ({ 
   await page.evaluate(() => window.__libertasMusicalClockTest.snapshot('A'));
 
   const before = await page.evaluate(() => window.__libertasDeckATest.status());
-  const quantized = await page.evaluate(() =>
-    window.__libertasMusicalClockTest.quantize('A', 81_600, 1, 'nearest'),
-  );
+  const framesPerBeat = (before.sourceSampleRate * 60) / 120;
+  const source = 24_000 + 2.4 * framesPerBeat;
+  const expected = 24_000 + 2 * framesPerBeat;
+
+  const quantized = await page.evaluate((frame) =>
+    window.__libertasMusicalClockTest.quantize('A', frame, 1, 'nearest'),
+  source);
   const after = await page.evaluate(() => window.__libertasDeckATest.status());
 
-  expect(quantized).toBe(72_000);
+  expect(quantized).toBeCloseTo(expected, 8);
   expect(after.sourceFrame).toBeCloseTo(before.sourceFrame, 10);
 
   await page.evaluate(() => window.__libertasDualDeckTest.close());
