@@ -41,6 +41,11 @@ The kernel exposes:
 
 `frameDiscontinuities` measures unexpected gaps in the worklet sample-frame sequence. It is not claimed to be a hardware xrun counter.
 
+## Test-runner ownership
+- Vitest owns unit tests under `src/**`.
+- Playwright owns browser/runtime tests under `tests/browser/**`.
+- One runner must never discover and execute the other runner's suites.
+
 ## Phase 2 gates
 
 ### T1 — Unit
