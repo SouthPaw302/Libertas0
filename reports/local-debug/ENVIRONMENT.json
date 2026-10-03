@@ -1,4 +1,7 @@
 {
   "schema": "libertas.local-environment.v1",
-  "status": "not-reported"
+  "status": "synthetic",
+  "executor": "github-connector-generated report",
+  "local_agent": false,
+  "tested_sha": "ff5a87395fe195a9cf429efd79b00f4121df429f"
 }

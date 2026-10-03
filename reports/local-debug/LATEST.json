@@ -1,14 +1,29 @@
 {
-  "task_id": "phase1-not-issued",
-  "tested_sha": "0000000000000000000000000000000000000000",
-  "status": "BLOCKED",
+  "task_id": "phase1-debug-bus-selftest",
+  "tested_sha": "ff5a87395fe195a9cf429efd79b00f4121df429f",
+  "status": "PASS",
   "environment": {
-    "reason": "No report issued yet."
+    "kind": "synthetic-runner-relay",
+    "purpose": "Validate report schema, branch guard, artifact upload, and GitHub issue relay before involving the real local debug agent."
   },
-  "measurements": {},
-  "artifacts": [],
-  "logs": [],
-  "reproduction": [],
-  "notes": "Placeholder. Phase 1 replaces this with a validated synthetic bus report before real local testing.",
-  "completed_at": "1970-01-01T00:00:00Z"
+  "measurements": {
+    "exact_sha_bound": true,
+    "report_scope": "reports/local-debug/**",
+    "local_machine_used": false,
+    "synthetic_roundtrip": true
+  },
+  "artifacts": [
+    "GitHub Actions artifact: local-debug-<report-sha>"
+  ],
+  "logs": [
+    "reports/local-debug/SESSION_LOG.md"
+  ],
+  "reproduction": [
+    "Create validation/local-debug from the exact Phase 1 system commit.",
+    "Modify only reports/local-debug/**.",
+    "Push a schema-valid LATEST.json naming the tested system SHA.",
+    "Verify Libertas Local Debug Bus Action completes and relays to issue #1."
+  ],
+  "notes": "Synthetic bus proof only. It validates the GitHub handoff fabric, not real hardware or local-agent execution.",
+  "completed_at": "2026-10-03T06:45:00Z"
 }
