@@ -4,11 +4,13 @@
   "phase": "deck_a",
   "active_module": "deck-a",
   "active_branch": "module/deck-a",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build Deck A on the shared AudioWorklet clock with replaceable decode provider, PCM transport, play/pause/seek, deterministic varispeed, volume and mute.",
-  "last_passing_gate": "audio-kernel-T5-local-physical",
-  "last_evidence": "evidence/audio-kernel/phase2-local/RESULT.json",
-  "blockers": [],
-  "exact_next_action": "Run Deck A unit/build/browser gates including audio-kernel regressions. Fix failures until T1-T4 pass, then issue the exact SHA to the local debug agent for physical T5.",
-  "product_code_authorized": true
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical Windows/browser/audio validation of Deck A and Volume A after automated T1-T4 passed.",
+  "last_passing_gate": "deck-a-T4-browser-runtime",
+  "last_evidence": "evidence/deck-a/phase3-automated/RESULT.json",
+  "blockers": [
+    "Physical T5 Deck A validation has not yet returned through the debug bus."
+  ],
+  "exact_next_action": "Local debug agent executes DECK-A-T5-001 against exact SHA 6bf34aa6a00004b29be21d847748f09b41081ad1. Do not begin Deck B until the report passes.",
+  "product_code_authorized": false
 }

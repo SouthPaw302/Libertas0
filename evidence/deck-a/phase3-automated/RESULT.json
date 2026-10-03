@@ -1,0 +1,52 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "deck-a",
+  "gate": "phase3-automated",
+  "status": "PASS",
+  "tested_sha": "6bf34aa6a00004b29be21d847748f09b41081ad1",
+  "system_contract": {
+    "run_id": 37107200363,
+    "conclusion": "success"
+  },
+  "deck_a_gate": {
+    "run_id": 37107200336,
+    "job_id": 111157948903,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_tests": {
+      "status": "PASS",
+      "passed": 7,
+      "files": 2
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 5,
+      "includes_audio_kernel_regression": true,
+      "deck_tests": [
+        "decode/transport/seek/rate/volume/mute",
+        "main-thread stall continuity",
+        "end-of-track and seek clamping"
+      ]
+    },
+    "stress_interval": {
+      "output_advanced_frames": 26880,
+      "source_advanced_frames": 26880,
+      "new_deck_frame_discontinuities": 0
+    }
+  },
+  "artifact": {
+    "id": 11268501107,
+    "name": "deck-a-6bf34aa6a00004b29be21d847748f09b41081ad1",
+    "digest": "sha256:9247e3e29f54e42ab4d2a6edc72d9ecabf6bc45a3a6c2062f312685d1961dd14",
+    "expires_at": "2026-10-17T07:42:39Z"
+  },
+  "limitations": [
+    "Headless Chrome proves runtime behavior and output amplitude through the analyser, not physical audible quality.",
+    "Phase 3 decoder provider is decodeAudioData; other decoder providers are not yet proven.",
+    "Playback-rate behavior is intentional varispeed, not tempo-preserving time stretch.",
+    "Physical T5 local validation is required before Deck A can be PROVEN/LOCKED."
+  ]
+}

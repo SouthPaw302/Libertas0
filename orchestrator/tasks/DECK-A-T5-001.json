@@ -1,0 +1,46 @@
+{
+  "task_id": "DECK-A-T5-001",
+  "requested_sha": "6bf34aa6a00004b29be21d847748f09b41081ad1",
+  "branch": "module/deck-a",
+  "module": "deck-a",
+  "objective": "Validate Deck A and Volume A on the real Windows browser/audio device before promotion.",
+  "scope": [
+    "Physical Deck A validation only.",
+    "Do not build Deck B, SYNC, loops, EQ, waveform, or other higher modules.",
+    "Do not patch product/system code from validation/local-debug."
+  ],
+  "steps": [
+    "Check out the exact requested SHA and run python bootstrap.py; require LIBERTAS BOOT: PASS.",
+    "Run npm install and npm run check.",
+    "Start Vite with the repository configuration and open the app in headed Edge/Chrome on the physical Windows audio device.",
+    "Load the generated/synthetic test path and confirm Deck A play, pause, seek, rate, volume, mute, and end-of-track behavior are audible and match status.",
+    "Load at least one ordinary local audio file if available through the Deck A file control; record its format, decoded channel count/sample rate/duration, and whether playback is clean.",
+    "Confirm volume can be swept from 1.0 to 0.0 and back without obvious zipper noise or transport interruption.",
+    "Confirm mute/unmute is clean and does not change source-frame position semantics.",
+    "Run playback at 0.5x, 1.0x, 1.5x, and 2.0x; confirm varispeed behavior is intentional and transport remains stable.",
+    "Perform at least 25 mixed transport operations: play/pause/seek/rate/volume/mute while watching status for state mismatch.",
+    "Run the provided 600 ms main-thread stress while Deck A is playing; record before/after outputCurrentFrame, sourceFrame, and frameDiscontinuities and listen for dropout.",
+    "Run continuous Deck A playback for at least 5 minutes on a track or generated signal long enough to cover the interval; report dropouts, clicks, exceptions, or state stalls.",
+    "Record browser console errors.",
+    "Write reports/local-debug/LATEST.json, ENVIRONMENT.json, SESSION_LOG.md, and small artifacts if useful on validation/local-debug, then push."
+  ],
+  "evidence_required": [
+    "Exact tested SHA and PASS/FAIL/BLOCKED.",
+    "Windows/browser/audio-device identity.",
+    "AudioContext sample rate, base/output latency, render quantum.",
+    "Decoder provider and decoded PCM metadata for each tested source.",
+    "Audible results for play/pause/seek/rate/volume/mute.",
+    "25-operation transport stress result.",
+    "600 ms main-thread stress frame deltas and new discontinuities.",
+    "5-minute continuous-run result.",
+    "Any console/runtime errors."
+  ],
+  "stop_conditions": [
+    "Stop BLOCKED if bootstrap or exact SHA checkout fails.",
+    "Stop FAIL if decoded PCM cannot load or physical audio cannot be produced.",
+    "Do not modify product/system code from validation/local-debug.",
+    "Do not begin Deck B."
+  ],
+  "requested_by": "Libertas0 master developer",
+  "created_at": "2026-10-03T03:43:00-04:00"
+}
