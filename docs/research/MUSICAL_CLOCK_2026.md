@@ -26,3 +26,6 @@ Later analysis systems may propose grid values, but the grid contract remains de
 
 ## Future extensibility
 The fixed-grid API is intentionally isolated. Variable-tempo/warped beat maps can later implement the same conceptual source-frame <-> musical-position contract without changing Deck A/B transport authority.
+
+## Gate target
+The first implementation checkpoint is `0d6632ca81c944680d9d60d8dbfbf289f178a4e6`. All Phase 5 unit, simulation, browser integration, and locked-dependency regression tests must pass before promotion.
