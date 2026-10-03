@@ -1,0 +1,55 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "musical-clock",
+  "gate": "phase5-automated-integration",
+  "status": "PASS",
+  "tested_sha": "ee7770e00b93cd90ce7ba6728b5ce8c8b4fc817d",
+  "system_contract": {
+    "run_id": 37111413819,
+    "conclusion": "success"
+  },
+  "musical_clock_gate": {
+    "run_id": 37111413832,
+    "job_id": 111169899455,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "status": "PASS",
+      "test_files": 3,
+      "tests_passed": 13,
+      "musical_clock_tests": 6
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 13,
+      "locked_regressions": {
+        "audio_kernel": "PASS",
+        "deck_a": "PASS",
+        "deck_b_mixer": "PASS"
+      },
+      "phase5_checks": [
+        "independent manual grids map live source frames",
+        "musical position follows varispeed source-frame velocity",
+        "paused transport freezes musical position",
+        "quantization returns deterministic frame targets without moving transport",
+        "musical positions remain coherent through 600 ms main-thread stress"
+      ]
+    },
+    "stress_interval": {
+      "deck_a_beat_delta": 1.2190476190476192,
+      "deck_b_beat_delta": 1.2190476190476192,
+      "beat_delta_difference": 0
+    }
+  },
+  "artifact": {
+    "id": 11269828022,
+    "name": "musical-clock-ee7770e00b93cd90ce7ba6728b5ce8c8b4fc817d",
+    "digest": "sha256:c7ae28f2c0c2a0da7ad4d6eaaf241d07cce23371e483998d85d75e0a64c9409d",
+    "expires_at": "2026-10-17T08:57:58Z"
+  },
+  "physical_gate_required": false,
+  "rationale": "Phase 5 adds deterministic coordinate mapping over already-proven deck sourceFrame state and introduces no new audio execution path or audible transport control."
+}

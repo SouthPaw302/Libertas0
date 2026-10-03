@@ -103,6 +103,14 @@
       "provider": "two-input AudioWorklet mixer",
       "contract": "docs/contracts/DECK_B_MIXER.md",
       "evidence": "evidence/deck-b-mixer/phase4-local/RESULT.json"
+    },
+    {
+      "id": "music.musical-clock",
+      "class": "deterministic-control",
+      "status": "proven",
+      "provider": "source-frame musical coordinate transform",
+      "contract": "docs/contracts/MUSICAL_CLOCK.md",
+      "evidence": "evidence/musical-clock/phase5-automated/RESULT.json"
     }
   ]
 }

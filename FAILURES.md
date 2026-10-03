@@ -61,3 +61,13 @@
 - evidence: Musical Clock Gate run `37111277250`.
 - cause: the browser AudioContext ran at 44.1 kHz and `decodeAudioData` resampled generated PCM accordingly, but the test expected frame coordinates calculated for 48 kHz.
 - disposition: corrected tests to derive all expected musical/source-frame coordinates from the deck's actual `sourceSampleRate`. Musical-clock implementation was unchanged.
+
+## F-0006 — Sample-rate test fix omitted decoded metadata binding
+- date: 2026-10-03
+- exact SHA: `51cb3e0b7cd33dbb207628376e1b63f89c80c833`
+- module: musical-clock
+- environment: GitHub Actions TypeScript 6
+- symptom: the corrected sample-rate-agnostic browser test failed typecheck because it referenced `loaded` without binding the return value from `loadGenerated`.
+- evidence: Musical Clock Gate run `37111377754`.
+- cause: test-edit defect only.
+- disposition: fixed at `ee7770e00b93cd90ce7ba6728b5ce8c8b4fc817d`; product and musical-clock implementation were unchanged.

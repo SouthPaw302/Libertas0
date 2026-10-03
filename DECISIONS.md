@@ -74,3 +74,8 @@ Each deck's proven `sourceFrame` remains transport truth. Musical position is de
 Status: ACCEPTED FOR PHASE 5
 
 Phase 5 uses explicit manual grids as ground truth for future SYNC work. Automatic BPM/downbeat systems may later propose grid values but cannot replace deterministic grid semantics.
+
+## D-0016 — Musical Clock promoted and locked
+Status: ACCEPTED
+
+Phase 5 passed deterministic unit/simulation and live Chrome integration on `ee7770e00b93cd90ce7ba6728b5ce8c8b4fc817d`. Manual per-deck grids, source-frame/beat round trips, signed pre-roll semantics, bar/beat phase, and non-mutating quantization are proven while all audio-kernel, Deck A, Deck B, and mixer regressions remain green. No new physical gate was required because Musical Clock does not create an audible execution path or control transport.
