@@ -31,3 +31,13 @@
 - evidence
 - confirmed/suspected cause
 - disposition: prohibited / unresolved / reconsiderable
+
+## F-0003 — Deck A unit-test arithmetic specification errors
+- date: 2026-10-03
+- exact SHA: `8d1980930e6d9fa75062f5fb2537c7a8f82bb44b`
+- module: deck-a
+- environment: GitHub Actions ubuntu-24.04, Node 24.21.0, Vitest 4.1.11
+- symptom: two source-frame unit tests failed before browser execution.
+- evidence: Deck A Gate run `37107015643`.
+- cause: the partition list summed to 48,064 output frames while the reference advanced 48,000; the long simulation also used a decimal matcher threshold slightly tighter than the observed IEEE-754 accumulation error.
+- disposition: test specification corrected. Product transport code was not changed by this fix.

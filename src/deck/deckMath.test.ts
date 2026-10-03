@@ -14,7 +14,7 @@ describe('Deck A source-frame math', () => {
     const oneBlock = advanceSourceFrame(0, 48_000, rate, totalFrames);
 
     let partitioned = 0;
-    for (const size of [64, 192, 128, 1024, 4096, 42560]) {
+    for (const size of [64, 192, 128, 1024, 4096, 42496]) {
       partitioned = advanceSourceFrame(partitioned, size, rate, totalFrames);
     }
 
@@ -40,6 +40,6 @@ describe('Deck A source-frame math', () => {
       totalOutputFrames += block;
     }
 
-    expect(position).toBeCloseTo(1234.5 + totalOutputFrames * rate, 6);
+    expect(Math.abs(position - (1234.5 + totalOutputFrames * rate))).toBeLessThan(1e-6);
   });
 });
