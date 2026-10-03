@@ -1,29 +1,12 @@
 {
-  "task_id": "phase1-debug-bus-selftest",
-  "tested_sha": "ff5a87395fe195a9cf429efd79b00f4121df429f",
+  "task_id": "AUDIO-KERNEL-T5-001",
+  "tested_sha": "c18f3e80d46aa58d0fbead3a6c7f3bb995b97917",
   "status": "PASS",
-  "environment": {
-    "kind": "synthetic-runner-relay",
-    "purpose": "Validate report schema, branch guard, artifact upload, and GitHub issue relay before involving the real local debug agent."
-  },
-  "measurements": {
-    "exact_sha_bound": true,
-    "report_scope": "reports/local-debug/**",
-    "local_machine_used": false,
-    "synthetic_roundtrip": true
-  },
-  "artifacts": [
-    "GitHub Actions artifact: local-debug-<report-sha>"
-  ],
-  "logs": [
-    "reports/local-debug/SESSION_LOG.md"
-  ],
-  "reproduction": [
-    "Create validation/local-debug from the exact Phase 1 system commit.",
-    "Modify only reports/local-debug/**.",
-    "Push a schema-valid LATEST.json naming the tested system SHA.",
-    "Verify Libertas Local Debug Bus Action completes and relays to issue #1."
-  ],
-  "notes": "Synthetic bus proof only. It validates the GitHub handoff fabric, not real hardware or local-agent execution.",
-  "completed_at": "2026-10-03T06:45:00Z"
+  "environment": {"schema": "libertas.local-environment.v1", "status": "real-local-runtime", "os": "Microsoft Windows 10 Home build 19045", "browser": "Microsoft Edge 154.0.4258.48 (Chrome-family, headed)", "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"], "python": "3.12.10", "node": "v24.18.0", "npm": "11.16.0", "git": "2.55.0.windows.2", "sample_rate_hz": 48000, "base_latency_seconds": 0.01, "output_latency_seconds": 0.041, "render_quantum_frames": 128, "audible_tone_confirmation": "PASS — user confirmed audible and clean"},
+  "measurements": {"exact_sha_bound": true, "bootstrap": "PASS", "npm_install": "PASS", "typecheck": "PASS", "unit_tests": "PASS (3 tests)", "production_build": "PASS", "capabilities": {"audioContext": true, "audioWorklet": true, "crossOriginIsolated": true, "sharedArrayBuffer": true}, "main_thread_stall_ms": 600, "stall_before_current_frame": 58112, "stall_after_current_frame": 88320, "stall_advanced_frames": 30208, "stall_new_frame_discontinuities": 0, "ten_start_stop_cycles": 10, "cycle_final_context_state": "running", "cycle_final_current_frame": 244864, "cycle_final_frame_discontinuities": 0, "continuous_run_duration_seconds": 300, "continuous_start_current_frame": 76416, "continuous_end_current_frame": 16312832, "continuous_advanced_frames": 16236416, "continuous_frame_discontinuities_observed": 0, "physical_audio_signal": "PASS — user confirmed the 220 Hz tone audible and clean"},
+  "artifacts": ["reports/local-debug/artifacts/AUDIO-KERNEL-T5-001-runtime.json"],
+  "logs": ["LIBERTAS BOOT: PASS; sha=c18f3e80d46aa58d0fbead3a6c7f3bb995b97917", "npm run check: typecheck PASS; unit PASS (3/3); build PASS", "headed Edge runtime: worklet advanced during 600 ms stall and five-minute run", "console error: Failed to load resource: the server responded with a status of 404 (Not Found) [2 occurrences; non-audio page resource]", "initial immediate status samples can report renderQuantum=0 before the first worklet quantum; settled samples report 128"],
+  "reproduction": ["Check out c18f3e80d46aa58d0fbead3a6c7f3bb995b97917.", "Run python bootstrap.py and require LIBERTAS BOOT: PASS.", "Run npm install and npm run check.", "Run Vite on the repository configuration, open the harness in headed Edge, click Start audio kernel, wait for a settled status, and observe 48 kHz / 128 frames.", "Run the 600 ms main-thread stall, perform 10 start/stop cycles, and leave the signal running for at least five minutes.", "Have a human verify the 220 Hz tone is audible and clean on Speakers / Headphones (Realtek Audio) to clear the remaining BLOCKED condition."],
+  "notes": "All required T5 checks passed on the exact product SHA, including human confirmation that the 220 Hz diagnostic tone was audible and clean. The report branch contains evidence only; no product files were changed.",
+  "completed_at": "2026-10-03T07:24:00Z"
 }
