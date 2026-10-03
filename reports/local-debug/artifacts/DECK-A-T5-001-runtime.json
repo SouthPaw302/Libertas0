@@ -1,0 +1,17 @@
+{
+  "task_id": "DECK-A-T5-001",
+  "tested_sha": "6bf34aa6a00004b29be21d847748f09b41081ad1",
+  "browser": "Microsoft Edge 154.0.4258.48 headed",
+  "audio_device": "Speakers / Headphones (Realtek Audio)",
+  "sample_rate_hz": 48000,
+  "render_quantum_frames": 128,
+  "base_latency_seconds": 0.01,
+  "output_latency_seconds": 0.048,
+  "generated": {"decoder_provider": "web-audio.decodeAudioData", "channels": 2, "sample_rate_hz": 48000, "frames": 960000, "duration_seconds": 20},
+  "ordinary_local_file": {"name": "silver-coin-remastered.wav", "channels": 2, "sample_rate_hz": 48000, "frames": 9957120, "duration_seconds": 207.44},
+  "varispeed_measured_rates": [0.5, 1, 1.5, 2],
+  "transport_operation_count": 30,
+  "stress": {"duration_ms": 600, "output_delta_frames": 29312, "source_delta_frames": 29312, "new_discontinuities": 0},
+  "continuous": {"duration_seconds": 300, "output_delta_frames": 14406784, "source_delta_frames": 14406784, "new_discontinuities": 0},
+  "audible_confirmation": "PENDING_USER_CONFIRMATION"
+}

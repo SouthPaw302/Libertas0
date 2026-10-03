@@ -1,34 +1,44 @@
 # Local Debug Session Log
 
-## AUDIO-KERNEL-T5-001 — 2026-10-03
+## DECK-A-T5-001 — 2026-10-03
 
-- Tested product SHA: `c18f3e80d46aa58d0fbead3a6c7f3bb995b97917`
+- Tested exact product SHA: `6bf34aa6a00004b29be21d847748f09b41081ad1`
 - Bootstrap: PASS
-- Automated gate: `npm run check` PASS — typecheck, 3 unit tests, production build
+- Automated gate: `npm run check` PASS — typecheck, 7 unit tests, production build
 - Browser: headed Microsoft Edge 154.0.4258.48
-- Physical endpoint detected: `Speakers / Headphones (Realtek Audio)`
-- Runtime: 48,000 Hz, 128-frame quantum, base latency 10 ms, output latency 41 ms
+- Physical endpoint: `Speakers / Headphones (Realtek Audio)`
+- Runtime: 48,000 Hz, 128-frame quantum, base latency 10 ms, output latency 48 ms
 
-### Main-thread stall
+### Generated and ordinary local audio
 
-- Before: frame `58112`, process calls `454`, discontinuities `0`
-- After 600 ms stall: frame `88320`, process calls `690`, discontinuities `0`
-- Delta: `30208` frames, `0` new discontinuities
+- Generated WAV: Web Audio decoder, stereo, 48 kHz, 20 seconds, loaded and played.
+- Ordinary local WAV: `silver-coin-remastered.wav`, Web Audio decoder, stereo, 48 kHz, 207.44 seconds.
 
-### Start/stop cycles
+### Transport and controls
 
-- Completed 10 cycles.
-- Final state: `running`; frame `244864`; discontinuities `0`.
+- Play advanced to source frame 11,136 after 500 ms.
+- Pause held source frame at 11,520 across a 300 ms wait.
+- Seek reached frame 72,000 for the 1.5 second target.
+- Measured varispeed: 0.5x, 1.0x, 1.5x, 2.0x exactly.
+- Volume RMS: 0.354 full, 0 at zero, 0.352 restored.
+- Mute RMS: 0.
+- Mixed transport/control operations: 30.
 
-### Continuous run
+### Main-thread stress
 
-- Duration: 300 seconds, with periodic status refreshes.
-- Start frame: `76416`; end frame: `16312832`.
-- Advanced frames: `16236416`; discontinuities observed: `0`.
+- 600 ms stall while playing.
+- Output delta: 29,312 frames.
+- Source delta: 29,312 frames.
+- New discontinuities: 0.
 
-### Console/log notes
+### Continuous playback
 
-- Two browser-generated `Failed to load resource: 404 (Not Found)` entries were observed; no audio-kernel runtime exception was observed.
-- Initial immediate status samples can report `renderQuantum=0` before the first worklet quantum; settled samples report `128`.
-- User listening confirmation: PASS — user reported the 220 Hz tone was audible and clean on the physical output device.
-- Final result: `PASS`.
+- Duration: 300 seconds.
+- Output delta: 14,406,784 frames.
+- Source delta: 14,406,784 frames.
+- New discontinuities: 0.
+
+### Console and physical listening
+
+- Two browser-generated 404 resource errors; no Deck A runtime exception observed.
+- Human audible confirmation is pending; report is currently `BLOCKED` only on that confirmation.
