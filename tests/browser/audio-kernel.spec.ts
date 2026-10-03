@@ -24,11 +24,16 @@ test('AudioWorklet clock advances while the browser main thread is blocked', asy
 
   const after = await page.evaluate(() => window.__libertasKernelTest.status());
   const advancedFrames = after.currentFrame - before.currentFrame;
+  const newDiscontinuities = after.frameDiscontinuities - before.frameDiscontinuities;
+
+  console.log('audio-kernel-before', before);
+  console.log('audio-kernel-after', after);
+  console.log('audio-kernel-stall-delta', { advancedFrames, newDiscontinuities });
 
   expect(after.contextState).toBe('running');
   expect(after.currentFrame).toBeGreaterThan(before.currentFrame);
   expect(advancedFrames).toBeGreaterThan(after.sampleRate * 0.25);
-  expect(after.frameDiscontinuities).toBe(0);
+  expect(newDiscontinuities).toBe(0);
   expect(after.renderQuantum).toBeGreaterThan(0);
 
   const stopped = await page.evaluate(() => window.__libertasKernelTest.stop());
