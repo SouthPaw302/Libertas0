@@ -49,7 +49,7 @@
     },
     {
       "id": "deck-b-mixer",
-      "state": "LOCAL_DEBUG",
+      "state": "LOCKED",
       "depends_on": [
         "deck-a"
       ],

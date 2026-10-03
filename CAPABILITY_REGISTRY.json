@@ -91,18 +91,18 @@
     {
       "id": "audio.deck-b",
       "class": "realtime",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "shared AudioWorklet deck transport",
       "contract": "docs/contracts/DECK_B_MIXER.md",
-      "evidence": "evidence/deck-b-mixer/phase4-automated/RESULT.json"
+      "evidence": "evidence/deck-b-mixer/phase4-local/RESULT.json"
     },
     {
       "id": "audio.mixer",
       "class": "realtime",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "two-input AudioWorklet mixer",
       "contract": "docs/contracts/DECK_B_MIXER.md",
-      "evidence": "evidence/deck-b-mixer/phase4-automated/RESULT.json"
+      "evidence": "evidence/deck-b-mixer/phase4-local/RESULT.json"
     }
   ]
 }

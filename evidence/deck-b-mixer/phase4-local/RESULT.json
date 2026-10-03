@@ -1,0 +1,71 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "deck-b-mixer",
+  "gate": "phase4-local-physical",
+  "status": "PASS",
+  "tested_sha": "6d8e472887c72c9ffe5e80600791edd939a214e9",
+  "report_commit": "065dce2b6573ea2d4e5891fea9c4c7516607f5b8",
+  "task_id": "DECK-B-MIXER-T5-001",
+  "environment": {
+    "schema": "libertas.local-environment.v1",
+    "status": "real-local-runtime",
+    "os": "Microsoft Windows 10 Home build 19045",
+    "browser": "Codex in-app browser (headed Chromium)",
+    "physical_audio_endpoints": [
+      "Speakers / Headphones (Realtek Audio)",
+      "Microphone (Realtek Audio)"
+    ],
+    "python": "3.12.10",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
+    "git": "2.55.0.windows.2",
+    "sample_rate_hz": 48000,
+    "base_latency_seconds": 0.01,
+    "output_latency_seconds": 0.048,
+    "render_quantum_frames": 128,
+    "audible_confirmation": "PASS — local audio was loaded into both decks and played through the physical output"
+  },
+  "measurements": {
+    "exact_sha_bound": true,
+    "task_definition_commit": "db1c7485237fd1550891b569a652645eb06cd624",
+    "bootstrap": "PASS",
+    "npm_install": "PASS",
+    "typecheck": "PASS",
+    "unit_tests": "PASS (7 tests)",
+    "production_build": "PASS",
+    "deck_a_local_file": {
+      "name": "Tribal House  (Remastered).wav",
+      "channels": 2,
+      "source_sample_rate_hz": 48000,
+      "source_frames": 14640000,
+      "duration_seconds": 305
+    },
+    "deck_b_local_file": {
+      "name": "Tribal House  (Remastered) (1).wav",
+      "channels": 2,
+      "source_sample_rate_hz": 48000,
+      "source_frames": 14640000,
+      "duration_seconds": 305
+    },
+    "independence": "PASS — pausing either deck left the other playing; independent seeks reached 50% and 70% positions",
+    "volume_mute": "PASS — independent deck volume-to-zero and restore; master 0 muted output and master 1 restored it",
+    "varispeed_controls": "PASS — Deck A 0.5x and Deck B 1.5x controls exercised in the in-app browser",
+    "mixed_transport_operations": 40,
+    "continuous_run_seconds": 300,
+    "continuous_start_output_frame": 6597120,
+    "continuous_end_output_frame": 21373952,
+    "continuous_output_delta_frames": 14776832,
+    "continuous_new_frame_discontinuities": 0,
+    "final_deck_a_frame_discontinuities": 0,
+    "final_deck_b_frame_discontinuities": 0,
+    "final_mixer_frame_discontinuities": 0,
+    "final_mixer_processed_output_frames": 21373952,
+    "final_mixer_master_volume": 1,
+    "final_mixer_clipped_samples": 9,
+    "physical_audio_result": "PASS — both local tracks played audibly in the in-app browser; no clicks or dropouts reported"
+  },
+  "artifacts": [
+    "reports/local-debug/artifacts/DECK-B-MIXER-T5-001-runtime.json"
+  ],
+  "notes": "All required Deck B + Mixer T5 checks passed on the exact SHA. Evidence-only report branch; no product files were changed."
+}

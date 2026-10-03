@@ -1,16 +1,14 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "deck_b_mixer",
-  "active_module": "deck-b-mixer",
-  "active_branch": "module/deck-b-mixer",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical two-deck and mixer validation after all automated Phase 4 and locked-dependency regressions passed.",
-  "last_passing_gate": "deck-b-mixer-T4-browser-runtime",
-  "last_evidence": "evidence/deck-b-mixer/phase4-automated/RESULT.json",
-  "blockers": [
-    "Physical T5 two-deck/mixer validation has not yet returned through the debug bus."
-  ],
-  "exact_next_action": "Local debug agent executes DECK-B-MIXER-T5-001 against exact SHA 6d8e472887c72c9ffe5e80600791edd939a214e9. Do not begin Phase 5 until PASS is recorded.",
+  "phase": "musical_clock",
+  "active_module": "musical-clock",
+  "active_branch": "main",
+  "status": "PLANNED",
+  "current_objective": "Phase 4 is complete. Deck A, Deck B, and mixer are locked with automated and physical evidence. Await explicit user instruction before beginning Phase 5 Musical Clock.",
+  "last_passing_gate": "deck-b-mixer-T5-local-physical",
+  "last_evidence": "evidence/deck-b-mixer/phase4-local/RESULT.json",
+  "blockers": [],
+  "exact_next_action": "Await explicit instruction to start Phase 5. When authorized, create module/musical-clock from this promoted main state and preserve Deck A, Deck B, and mixer as locked dependencies.",
   "product_code_authorized": false
 }

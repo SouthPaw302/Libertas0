@@ -59,3 +59,8 @@ Deck B is a second instance of the same deterministic deck controller/worklet co
 Status: ACCEPTED FOR PHASE 4
 
 Deck outputs feed explicit mixer inputs. The mixer owns realtime summing, master gain, peak telemetry, overload counting and a full-scale safety clamp. SYNC, crossfader law, EQ and final dynamics processing remain outside Phase 4.
+
+## D-0013 — Deck B + mixer promoted and locked
+Status: ACCEPTED
+
+Phase 4 passed automated T1-T4 on `6d8e472887c72c9ffe5e80600791edd939a214e9` and physical T5 through the runner-backed local debug bus. The physical run used two ordinary local WAV files simultaneously, verified independent deck transport/seek/volume/mute, master volume, 40 mixed operations, five minutes of simultaneous playback, and ended with zero frame discontinuities on Deck A, Deck B, and mixer.
