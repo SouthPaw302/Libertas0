@@ -4,11 +4,11 @@
   "phase": "audio_kernel",
   "active_module": "audio-kernel",
   "active_branch": "module/audio-kernel",
-  "status": "RESEARCH",
-  "current_objective": "Research, contract, implement, and automatically prove the minimum realtime audio kernel before requesting real local-machine audio validation.",
+  "status": "IMPLEMENTING",
+  "current_objective": "Build and automatically prove a minimal AudioWorklet-based realtime kernel whose sample-frame clock continues while the browser main thread is blocked.",
   "last_passing_gate": "phase1-verification-fabric",
   "last_evidence": "evidence/verification-fabric/phase1-selftest/RESULT.json",
   "blockers": [],
-  "exact_next_action": "Research current browser realtime-audio execution options, write the audio-kernel contract, choose candidate architecture from evidence, then implement automated/runtime gates.",
+  "exact_next_action": "Run system contract, unit/build gate, and Chrome runtime main-thread-stall test on the exact audio-kernel commit. Fix failures before requesting local physical validation.",
   "product_code_authorized": true
 }

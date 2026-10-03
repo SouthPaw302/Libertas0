@@ -23,4 +23,9 @@ UI, agents, inference, network, storage, CI, and browser UI timers may request a
 ## D-0005 — Phase 1 verification fabric promoted
 Status: ACCEPTED
 
-The system-contract runner and synthetic local-debug round trip both passed on exact recorded SHAs. The runner-backed bus is promoted as development infrastructure. This is not evidence that the physical local agent or audio hardware has been tested yet.
+The system-contract runner and synthetic local-debug round trip passed on exact recorded SHAs. This proves the bus infrastructure, not physical local execution.
+
+## D-0006 — AudioWorklet is the Phase 2 browser reference kernel
+Status: ACCEPTED FOR IMPLEMENTATION
+
+Current Web Audio provides sample-frame authority on the render thread. The reference kernel must use runtime block length and device sample rate rather than assuming 128 frames or 48 kHz. Shared memory and WASM are optional later providers, not prerequisites for the reference proof.

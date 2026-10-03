@@ -1,0 +1,20 @@
+{
+  "name": "libertas0",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "typecheck": "tsc --noEmit",
+    "test:unit": "vitest run",
+    "test:browser": "playwright test",
+    "check": "npm run typecheck && npm run test:unit && npm run build"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0",
+    "typescript": "^6.0.0",
+    "vite": "^8.1.0",
+    "vitest": "^4.1.0"
+  }
+}

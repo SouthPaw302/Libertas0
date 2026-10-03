@@ -25,8 +25,9 @@
     {
       "id": "audio.browser-worklet",
       "class": "realtime",
-      "status": "research",
-      "provider": "AudioWorklet"
+      "status": "implementing",
+      "provider": "AudioWorklet",
+      "contract": "docs/contracts/AUDIO_KERNEL.md"
     },
     {
       "id": "compute.wasm",
@@ -37,7 +38,7 @@
     {
       "id": "compute.shared-memory",
       "class": "compute",
-      "status": "research",
+      "status": "runtime-gated",
       "provider": "SharedArrayBuffer+Atomics"
     },
     {
