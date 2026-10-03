@@ -36,7 +36,7 @@
     },
     {
       "id": "deck-a",
-      "state": "LOCAL_DEBUG",
+      "state": "LOCKED",
       "depends_on": [
         "audio-kernel"
       ],

@@ -1,16 +1,14 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "deck_a",
-  "active_module": "deck-a",
-  "active_branch": "module/deck-a",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical Windows/browser/audio validation of Deck A and Volume A after automated T1-T4 passed.",
-  "last_passing_gate": "deck-a-T4-browser-runtime",
-  "last_evidence": "evidence/deck-a/phase3-automated/RESULT.json",
-  "blockers": [
-    "Physical T5 Deck A validation has not yet returned through the debug bus."
-  ],
-  "exact_next_action": "Local debug agent executes DECK-A-T5-001 against exact SHA 6bf34aa6a00004b29be21d847748f09b41081ad1. Do not begin Deck B until the report passes.",
+  "phase": "deck_b_mixer",
+  "active_module": "deck-b-mixer",
+  "active_branch": "main",
+  "status": "PLANNED",
+  "current_objective": "Phase 3 is complete. Deck A is locked with automated and physical evidence. Await explicit user instruction before beginning Phase 4 Deck B + mixer.",
+  "last_passing_gate": "deck-a-T5-local-physical",
+  "last_evidence": "evidence/deck-a/phase3-local/RESULT.json",
+  "blockers": [],
+  "exact_next_action": "Await explicit instruction to start Phase 4. When authorized, create module/deck-b-mixer from this promoted main state and preserve Deck A as a locked dependency.",
   "product_code_authorized": false
 }

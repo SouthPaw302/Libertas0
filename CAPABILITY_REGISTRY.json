@@ -79,6 +79,14 @@
       "class": "realtime",
       "status": "research",
       "provider": "native provider"
+    },
+    {
+      "id": "audio.deck-a",
+      "class": "realtime",
+      "status": "proven",
+      "provider": "AudioWorklet PCM deck + decodeAudioData provider",
+      "contract": "docs/contracts/DECK_A.md",
+      "evidence": "evidence/deck-a/phase3-local/RESULT.json"
     }
   ]
 }

@@ -1,0 +1,94 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "deck-a",
+  "gate": "phase3-local-physical",
+  "status": "PASS",
+  "tested_sha": "6bf34aa6a00004b29be21d847748f09b41081ad1",
+  "report_commit": "03647442d09e58b410a3ce8a69b01d538d000083",
+  "task_id": "DECK-A-T5-001",
+  "environment": {
+    "schema": "libertas.local-environment.v1",
+    "status": "real-local-runtime",
+    "os": "Microsoft Windows 10 Home build 19045",
+    "browser": "Microsoft Edge 154.0.4258.48 (Chrome-family, headed)",
+    "physical_audio_endpoints": [
+      "Speakers / Headphones (Realtek Audio)",
+      "Microphone (Realtek Audio)"
+    ],
+    "python": "3.12.10",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
+    "git": "2.55.0.windows.2",
+    "sample_rate_hz": 48000,
+    "base_latency_seconds": 0.01,
+    "output_latency_seconds": 0.048,
+    "render_quantum_frames": 128,
+    "audible_confirmation": "PASS — user loaded an ordinary local audio file and confirmed it played fine"
+  },
+  "measurements": {
+    "exact_sha_bound": true,
+    "bootstrap": "PASS",
+    "npm_install": "PASS",
+    "typecheck": "PASS",
+    "unit_tests": "PASS (7 tests)",
+    "production_build": "PASS",
+    "capabilities": {
+      "audioContext": true,
+      "audioWorklet": true,
+      "crossOriginIsolated": true,
+      "sharedArrayBuffer": true
+    },
+    "generated_source": {
+      "decoder_provider": "web-audio.decodeAudioData",
+      "channels": 2,
+      "sample_rate_hz": 48000,
+      "frames": 960000,
+      "duration_seconds": 20
+    },
+    "generated_playback": {
+      "playing": true,
+      "source_frame_after_500ms": 11136,
+      "output_peak": 0.499969482421875
+    },
+    "pause_freeze": {
+      "source_frame_at_pause": 11520,
+      "source_frame_after_300ms": 11520
+    },
+    "varispeed_measured_rates": {
+      "0.5": 0.5,
+      "1.0": 1,
+      "1.5": 1.5,
+      "2.0": 2
+    },
+    "volume_rms": {
+      "full": 0.35415803010169583,
+      "zero": 0,
+      "restored": 0.3522571966894597
+    },
+    "mute_rms": 0,
+    "transport_operations": 30,
+    "ordinary_local_file": {
+      "name": "silver-coin-remastered.wav",
+      "decoder_provider": "web-audio.decodeAudioData",
+      "channels": 2,
+      "source_sample_rate_hz": 48000,
+      "source_frames": 9957120,
+      "duration_seconds": 207.44
+    },
+    "main_thread_stress_ms": 600,
+    "stress_output_delta_frames": 29312,
+    "stress_source_delta_frames": 29312,
+    "stress_new_frame_discontinuities": 0,
+    "continuous_run_seconds": 300,
+    "continuous_start_output_frame": 115712,
+    "continuous_end_output_frame": 14522496,
+    "continuous_output_delta_frames": 14406784,
+    "continuous_source_delta_frames": 14406784,
+    "continuous_new_frame_discontinuities": 0,
+    "physical_audio_result": "PASS — user confirmed ordinary local file playback was fine"
+  },
+  "artifacts": [
+    "reports/local-debug/artifacts/DECK-A-T5-001-runtime.json"
+  ],
+  "notes": "All required Deck A T5 checks passed on the exact SHA. User confirmed an ordinary local audio file loaded and played fine on the physical output. Report branch contains evidence only; no product files were changed."
+}

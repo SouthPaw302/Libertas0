@@ -44,3 +44,8 @@ The reference provider is Web Audio `decodeAudioData`: broadly available, comple
 Status: ACCEPTED FOR PHASE 3
 
 After decode, the worklet owns source-frame position, interpolation, play/pause, seek, varispeed and output. HTML media and main-thread timers are not transport authorities. Phase 3 volume is audio-timeline automation through an AudioParam.
+
+## D-0010 — Deck A promoted and locked
+Status: ACCEPTED
+
+Deck A passed automated T1-T4 on `6bf34aa6a00004b29be21d847748f09b41081ad1` and physical T5 on the real Windows/Edge/Realtek path. Local validation included 30 mixed transport operations, exact 0.5x/1x/1.5x/2x varispeed behavior, volume/mute, a 600 ms main-thread stall with 0 new discontinuities, five minutes of continuous playback with 0 new discontinuities, generated WAV decode, and an ordinary local WAV decode/playback with human audible confirmation.
