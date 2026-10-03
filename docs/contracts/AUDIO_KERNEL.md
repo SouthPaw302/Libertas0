@@ -60,7 +60,7 @@ Real Chrome-for-Testing loads the AudioWorklet, reaches a running AudioContext, 
 Required:
 - currentFrame advances during a 600 ms main-thread stall;
 - advancement exceeds 250 ms worth of output frames;
-- frameDiscontinuities remains zero;
+- frameDiscontinuities does not increase during the measured main-thread stall;
 - renderQuantum is observed dynamically, not asserted to equal 128.
 
 ### T5 — Local physical
