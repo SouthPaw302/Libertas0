@@ -1,0 +1,55 @@
+{
+  "task_id": "DECK-B-MIXER-T5-001",
+  "requested_sha": "6d8e472887c72c9ffe5e80600791edd939a214e9",
+  "branch": "module/deck-b-mixer",
+  "module": "deck-b-mixer",
+  "objective": "Validate two independent physical decks and the realtime mixer on the real Windows browser/audio device. Do not evaluate musical SYNC in this phase.",
+  "scope": [
+    "Deck A + Deck B + mixer physical/runtime validation only.",
+    "No SYNC expectation: the two tracks are allowed to be musically unrelated and unsynchronized.",
+    "Do not patch product/system code from validation/local-debug.",
+    "Do not build the musical-clock or SYNC modules."
+  ],
+  "steps": [
+    "Check out the exact requested SHA and run python bootstrap.py; require LIBERTAS BOOT: PASS.",
+    "Run npm install and npm run check.",
+    "Start Vite and open the app in headed Edge/Chrome on the normal physical Windows audio output.",
+    "Load an ordinary local audio file into Deck A and a second ordinary local audio file into Deck B when available; generated sources may supplement but not replace the two-file test if two files are available.",
+    "Start both decks simultaneously and confirm both are audible through the mixer with no crackle, dropout, obvious corruption, or state mismatch.",
+    "Pause Deck A while Deck B continues. Confirm Deck B transport and audio continue unchanged. Resume A.",
+    "Pause Deck B while Deck A continues. Confirm Deck A transport and audio continue unchanged. Resume B.",
+    "Seek Deck A several times while Deck B continues; then seek Deck B while Deck A continues. Confirm the untouched deck does not jump, pause, reset, or change rate.",
+    "Exercise Deck A volume 1->0->1 while Deck B remains audible and advancing. Repeat for Deck B while Deck A remains audible and advancing.",
+    "Mute/unmute A independently, then B independently. Confirm muted deck transport continues advancing and the other deck is unaffected.",
+    "Test independent varispeed on each deck at 0.5x, 1x, 1.5x, and 2x while the other deck remains running.",
+    "Sweep master volume 1->0.25->0->1. Confirm it affects the mixed output without altering either deck transport.",
+    "Perform at least 40 mixed operations across both decks: play, pause, seek, rate, volume, mute/unmute, and master-volume changes.",
+    "Capture A/B/mixer status, run the provided 600 ms main-thread block, capture status again, and compute source/output frame deltas and new discontinuities for all three realtime processors.",
+    "Run both decks simultaneously for at least 5 minutes. Record audible dropouts/clicks, state stalls, console/runtime errors, and discontinuity deltas.",
+    "Refresh mixer status and record inputAPeak, inputBPeak, summedPeakBeforeClamp, outputPeak, clippedSamples, and masterVolume.",
+    "Write reports/local-debug/LATEST.json, ENVIRONMENT.json, SESSION_LOG.md, and small evidence artifacts if useful on validation/local-debug, then push."
+  ],
+  "evidence_required": [
+    "Exact tested SHA and PASS/FAIL/BLOCKED.",
+    "Windows/browser/physical-output identity and AudioContext rate/latencies/render quantum.",
+    "Deck A and Deck B local file names/formats, decoder provider, channels, sample rate, frame count/duration.",
+    "Audible confirmation that simultaneous two-deck playback is clean.",
+    "Independent pause/resume and seek results.",
+    "Independent Deck A/B volume and mute results.",
+    "Independent A/B varispeed results.",
+    "Master-volume result.",
+    "At least 40 mixed operations result.",
+    "600 ms stress: A source delta, B source delta, mixer output delta, and new discontinuities for A/B/mixer.",
+    "Five-minute simultaneous-run results and final discontinuities.",
+    "Mixer telemetry and browser console/runtime errors."
+  ],
+  "stop_conditions": [
+    "Stop BLOCKED if exact SHA checkout or bootstrap fails.",
+    "Stop FAIL if either deck cannot decode/play or the mixer cannot produce physical output.",
+    "Do not mark failure merely because the tracks are not beat-synchronized; SYNC is not part of Phase 4.",
+    "Do not modify product/system code from validation/local-debug.",
+    "Do not begin Phase 5."
+  ],
+  "requested_by": "Libertas0 master developer",
+  "created_at": "2026-10-03T04:17:00-04:00"
+}

@@ -49,7 +49,7 @@
     },
     {
       "id": "deck-b-mixer",
-      "state": "IMPLEMENTING",
+      "state": "LOCAL_DEBUG",
       "depends_on": [
         "deck-a"
       ],

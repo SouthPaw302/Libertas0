@@ -1,0 +1,61 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "deck-b-mixer",
+  "gate": "phase4-automated",
+  "status": "PASS",
+  "tested_sha": "6d8e472887c72c9ffe5e80600791edd939a214e9",
+  "system_contract": {
+    "run_id": 37109010345,
+    "conclusion": "success"
+  },
+  "phase4_gate": {
+    "run_id": 37109010381,
+    "job_id": 111163110575,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_tests": {
+      "status": "PASS",
+      "passed": 7,
+      "files": 2
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 9,
+      "prior_audio_kernel_regressions": "PASS",
+      "prior_deck_a_regressions": "PASS",
+      "phase4_tests": [
+        "Deck A and B simultaneous independent transport",
+        "independent Deck A/B volume plus post-sum master gain",
+        "dual-deck + mixer main-thread-stall continuity",
+        "mixer overload telemetry and full-scale safety clamp"
+      ]
+    },
+    "stress_interval": {
+      "deck_a_source_advanced_frames": 26368,
+      "deck_b_source_advanced_frames": 26368,
+      "mixer_output_advanced_frames": 26368,
+      "deck_a_new_discontinuities": 0,
+      "deck_b_new_discontinuities": 0,
+      "mixer_new_discontinuities": 0
+    },
+    "overload_gate": {
+      "status": "PASS",
+      "requirement": "summedPeakBeforeClamp > 1, outputPeak <= 1, clippedSamples > 0"
+    }
+  },
+  "artifact": {
+    "id": 11269410712,
+    "name": "deck-b-mixer-6d8e472887c72c9ffe5e80600791edd939a214e9",
+    "digest": "sha256:be45a647cee2debb010d9954af2579cf04a632e04e2b1b2585ca46c749ba7157",
+    "expires_at": "2026-10-17T08:15:33Z"
+  },
+  "limitations": [
+    "Headless Chrome cannot establish physical two-deck audible quality.",
+    "Phase 4 does not implement or claim SYNC.",
+    "The full-scale clamp is a safety boundary, not a final mastering limiter.",
+    "Physical T5 is required before Deck B + mixer can be PROVEN/LOCKED."
+  ]
+}

@@ -87,6 +87,22 @@
       "provider": "AudioWorklet PCM deck + decodeAudioData provider",
       "contract": "docs/contracts/DECK_A.md",
       "evidence": "evidence/deck-a/phase3-local/RESULT.json"
+    },
+    {
+      "id": "audio.deck-b",
+      "class": "realtime",
+      "status": "runtime-proven-local-pending",
+      "provider": "shared AudioWorklet deck transport",
+      "contract": "docs/contracts/DECK_B_MIXER.md",
+      "evidence": "evidence/deck-b-mixer/phase4-automated/RESULT.json"
+    },
+    {
+      "id": "audio.mixer",
+      "class": "realtime",
+      "status": "runtime-proven-local-pending",
+      "provider": "two-input AudioWorklet mixer",
+      "contract": "docs/contracts/DECK_B_MIXER.md",
+      "evidence": "evidence/deck-b-mixer/phase4-automated/RESULT.json"
     }
   ]
 }

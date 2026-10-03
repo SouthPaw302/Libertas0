@@ -4,11 +4,13 @@
   "phase": "deck_b_mixer",
   "active_module": "deck-b-mixer",
   "active_branch": "module/deck-b-mixer",
-  "status": "IMPLEMENTING",
-  "current_objective": "Prove two independent simultaneous deck instances feeding a dedicated two-input realtime mixer with independent deck volume controls, master volume, overload telemetry, and no regression of Deck A/audio kernel.",
-  "last_passing_gate": "deck-a-T5-local-physical",
-  "last_evidence": "evidence/deck-a/phase3-local/RESULT.json",
-  "blockers": [],
-  "exact_next_action": "Run Phase 4 typecheck/unit/build and Chrome two-deck mixer gates. Fix failures until all T1-T4 and prior regressions pass, then issue the exact SHA for local physical T5.",
-  "product_code_authorized": true
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical two-deck and mixer validation after all automated Phase 4 and locked-dependency regressions passed.",
+  "last_passing_gate": "deck-b-mixer-T4-browser-runtime",
+  "last_evidence": "evidence/deck-b-mixer/phase4-automated/RESULT.json",
+  "blockers": [
+    "Physical T5 two-deck/mixer validation has not yet returned through the debug bus."
+  ],
+  "exact_next_action": "Local debug agent executes DECK-B-MIXER-T5-001 against exact SHA 6d8e472887c72c9ffe5e80600791edd939a214e9. Do not begin Phase 5 until PASS is recorded.",
+  "product_code_authorized": false
 }
