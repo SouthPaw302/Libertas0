@@ -64,3 +64,13 @@ Deck outputs feed explicit mixer inputs. The mixer owns realtime summing, master
 Status: ACCEPTED
 
 Phase 4 passed automated T1-T4 on `6d8e472887c72c9ffe5e80600791edd939a214e9` and physical T5 through the runner-backed local debug bus. The physical run used two ordinary local WAV files simultaneously, verified independent deck transport/seek/volume/mute, master volume, 40 mixed operations, five minutes of simultaneous playback, and ended with zero frame discontinuities on Deck A, Deck B, and mixer.
+
+## D-0014 — Musical clock is a coordinate transform, not another timer
+Status: ACCEPTED FOR PHASE 5
+
+Each deck's proven `sourceFrame` remains transport truth. Musical position is derived absolutely from source frame, sample rate, BPM, and first-beat anchor. No JavaScript wall clock, UI timer, or iterative beat counter owns musical time.
+
+## D-0015 — Manual fixed grids precede automatic analysis
+Status: ACCEPTED FOR PHASE 5
+
+Phase 5 uses explicit manual grids as ground truth for future SYNC work. Automatic BPM/downbeat systems may later propose grid values but cannot replace deterministic grid semantics.

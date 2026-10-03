@@ -9,6 +9,7 @@ import { DeckBController, type DeckBStatus } from './deck/DeckBController';
 import type { DeckController, DeckStatus } from './deck/DeckController';
 import { MixerController, type MixerStatus } from './mixer/MixerController';
 import { createSineWav } from './testing/wavFixture';
+import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 
 interface LibertasKernelTestApi {
   start(): Promise<AudioKernelStatus>;
@@ -39,6 +40,18 @@ interface LibertasMixerTestApi {
   rms(): number;
 }
 
+interface MusicalClockSnapshot {
+  grid: BeatGrid;
+  position: MusicalPosition;
+}
+
+interface LibertasMusicalClockTestApi {
+  setGrid(deck: 'A' | 'B', grid: BeatGrid): void;
+  snapshot(deck: 'A' | 'B'): Promise<MusicalClockSnapshot>;
+  snapshotBoth(): Promise<{ a: MusicalClockSnapshot; b: MusicalClockSnapshot }>;
+  quantize(deck: 'A' | 'B', sourceFrame: number, quantumBeats?: number, direction?: 'previous' | 'nearest' | 'next'): number;
+}
+
 interface LibertasDualDeckTestApi {
   loadGenerated(
     durationSeconds?: number,
@@ -60,6 +73,7 @@ declare global {
     __libertasDeckBTest: LibertasDeckTestApi;
     __libertasMixerTest: LibertasMixerTestApi;
     __libertasDualDeckTest: LibertasDualDeckTestApi;
+    __libertasMusicalClockTest: LibertasMusicalClockTestApi;
   }
 }
 
@@ -71,12 +85,19 @@ await mixer.initialize();
 const deckA = new DeckAController(runtime, undefined, { node: mixer.inputNode, input: 0 });
 const deckB = new DeckBController(runtime, undefined, { node: mixer.inputNode, input: 1 });
 
+const musicalClocks = new Map<'A' | 'B', MusicalClock>();
+const pendingGrids = new Map<'A' | 'B', BeatGrid>([
+  ['A', { bpm: 120, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 }],
+  ['B', { bpm: 120, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 }],
+]);
+
 const kernelStatusElement = document.querySelector<HTMLPreElement>('#status');
 const activateButton = document.querySelector<HTMLButtonElement>('#activate');
 const stopButton = document.querySelector<HTMLButtonElement>('#stop');
 const mixerStatusElement = document.querySelector<HTMLPreElement>('#mixer-status');
 const mixerMaster = document.querySelector<HTMLInputElement>('#mixer-master');
 const mixerStatusButton = document.querySelector<HTMLButtonElement>('#mixer-status-button');
+const clockRefreshButton = document.querySelector<HTMLButtonElement>('#clock-refresh');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -160,6 +181,67 @@ function bindDeck(prefix: 'a' | 'b', deck: DeckController): void {
 bindDeck('a', deckA);
 bindDeck('b', deckB);
 
+function getDeck(deck: 'A' | 'B'): DeckController {
+  return deck === 'A' ? deckA : deckB;
+}
+
+function getMusicalClock(deck: 'A' | 'B', sampleRate: number): MusicalClock {
+  const existing = musicalClocks.get(deck);
+  if (existing) return existing;
+  const clock = new MusicalClock(sampleRate, pendingGrids.get(deck)!);
+  musicalClocks.set(deck, clock);
+  return clock;
+}
+
+async function musicalSnapshot(deck: 'A' | 'B'): Promise<MusicalClockSnapshot> {
+  const status = await getDeck(deck).requestStatus();
+  if (!status.loaded || status.sourceSampleRate <= 0) {
+    throw new Error(`Deck ${deck} must have loaded PCM before musical position is available`);
+  }
+  const clock = getMusicalClock(deck, status.sourceSampleRate);
+  return { grid: clock.getGrid(), position: clock.positionAt(status.sourceFrame) };
+}
+
+function setMusicalGrid(deck: 'A' | 'B', grid: BeatGrid): void {
+  pendingGrids.set(deck, { ...grid });
+  const clock = musicalClocks.get(deck);
+  if (clock) clock.setGrid(grid);
+}
+
+function bindClockControls(deck: 'A' | 'B', prefix: 'a' | 'b'): void {
+  const bpm = document.querySelector<HTMLInputElement>(`#clock-${prefix}-bpm`)!;
+  const origin = document.querySelector<HTMLInputElement>(`#clock-${prefix}-origin`)!;
+  const beatsBar = document.querySelector<HTMLInputElement>(`#clock-${prefix}-beats-bar`)!;
+  const apply = document.querySelector<HTMLButtonElement>(`#clock-${prefix}-apply`)!;
+  const statusElement = document.querySelector<HTMLPreElement>(`#clock-${prefix}-status`);
+
+  apply.addEventListener('click', () => {
+    try {
+      setMusicalGrid(deck, {
+        bpm: Number(bpm.value),
+        firstBeatFrame: Number(origin.value),
+        beatsPerBar: Number(beatsBar.value),
+        beatUnit: 4,
+      });
+      void musicalSnapshot(deck)
+        .then((snapshot) => render(statusElement, snapshot))
+        .catch((error: unknown) => render(statusElement, { grid: pendingGrids.get(deck), note: String(error) }));
+    } catch (error) {
+      render(statusElement, { error: String(error) });
+    }
+  });
+}
+
+bindClockControls('A', 'a');
+bindClockControls('B', 'b');
+
+clockRefreshButton?.addEventListener('click', () => {
+  void Promise.allSettled([musicalSnapshot('A'), musicalSnapshot('B')]).then(([a, b]) => {
+    render(document.querySelector('#clock-a-status'), a.status === 'fulfilled' ? a.value : { error: String(a.reason) });
+    render(document.querySelector('#clock-b-status'), b.status === 'fulfilled' ? b.value : { error: String(b.reason) });
+  });
+});
+
 activateButton?.addEventListener('click', () => {
   void kernelStart().catch((error: unknown) => renderKernel({ error: String(error) }));
 });
@@ -229,6 +311,20 @@ window.__libertasMixerTest = {
   status: () => mixer.requestStatus(),
   setMasterVolume: (volume) => mixer.setMasterVolume(volume),
   rms: () => mixer.measureRms(),
+};
+
+window.__libertasMusicalClockTest = {
+  setGrid: setMusicalGrid,
+  snapshot: musicalSnapshot,
+  async snapshotBoth() {
+    const [a, b] = await Promise.all([musicalSnapshot('A'), musicalSnapshot('B')]);
+    return { a, b };
+  },
+  quantize(deck, sourceFrame, quantumBeats = 1, direction = 'nearest') {
+    const clock = musicalClocks.get(deck);
+    if (!clock) throw new Error(`Deck ${deck} musical clock is not initialized; load PCM and request a snapshot first`);
+    return clock.quantize(sourceFrame, quantumBeats, direction);
+  },
 };
 
 window.__libertasDualDeckTest = {

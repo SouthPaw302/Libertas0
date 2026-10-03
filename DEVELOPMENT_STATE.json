@@ -3,12 +3,12 @@
   "project": "Libertas0",
   "phase": "musical_clock",
   "active_module": "musical-clock",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 4 is complete. Deck A, Deck B, and mixer are locked with automated and physical evidence. Await explicit user instruction before beginning Phase 5 Musical Clock.",
+  "active_branch": "module/musical-clock",
+  "status": "IMPLEMENTING",
+  "current_objective": "Build deterministic manual musical coordinates over each deck source-frame domain: frame↔beat, bar/beat/phase and quantization, without creating a second realtime clock or controlling transport.",
   "last_passing_gate": "deck-b-mixer-T5-local-physical",
   "last_evidence": "evidence/deck-b-mixer/phase4-local/RESULT.json",
   "blockers": [],
-  "exact_next_action": "Await explicit instruction to start Phase 5. When authorized, create module/musical-clock from this promoted main state and preserve Deck A, Deck B, and mixer as locked dependencies.",
-  "product_code_authorized": false
+  "exact_next_action": "Run unit/simulation/build and browser integration gates with all locked audio/deck/mixer regressions. Fix failures until Phase 5 is provable without introducing a new audible execution path.",
+  "product_code_authorized": true
 }

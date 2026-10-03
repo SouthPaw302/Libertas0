@@ -62,7 +62,7 @@
     },
     {
       "id": "musical-clock",
-      "state": "PLANNED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "deck-b-mixer"
       ],
