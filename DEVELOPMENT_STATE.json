@@ -4,11 +4,13 @@
   "phase": "audio_kernel",
   "active_module": "audio-kernel",
   "active_branch": "module/audio-kernel",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build and automatically prove a minimal AudioWorklet-based realtime kernel whose sample-frame clock continues while the browser main thread is blocked.",
-  "last_passing_gate": "phase1-verification-fabric",
-  "last_evidence": "evidence/verification-fabric/phase1-selftest/RESULT.json",
-  "blockers": [],
-  "exact_next_action": "Run system contract, unit/build gate, and Chrome runtime main-thread-stall test on the exact audio-kernel commit. Fix failures before requesting local physical validation.",
-  "product_code_authorized": true
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical Windows/browser/audio validation of the automatically proven AudioWorklet kernel.",
+  "last_passing_gate": "audio-kernel-T4-browser-runtime",
+  "last_evidence": "evidence/audio-kernel/phase2-automated/RESULT.json",
+  "blockers": [
+    "Physical T5 local audio validation has not yet run."
+  ],
+  "exact_next_action": "Local debug agent executes AUDIO-KERNEL-T5-001 against the exact finalized module/audio-kernel SHA and reports through validation/local-debug + issue #1. Do not begin Deck A until this passes.",
+  "product_code_authorized": false
 }

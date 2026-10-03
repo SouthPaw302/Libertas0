@@ -1,0 +1,53 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "audio-kernel",
+  "gate": "phase2-automated",
+  "status": "PASS",
+  "tested_sha": "c18f3e80d46aa58d0fbead3a6c7f3bb995b97917",
+  "system_contract": {
+    "run_id": 37104716665,
+    "conclusion": "success"
+  },
+  "audio_kernel_gate": {
+    "run_id": 37104716592,
+    "job_id": 111150877746,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_tests": {
+      "status": "PASS",
+      "passed": 3
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 2,
+      "browser": "Chrome for Testing 153.0.8010.12"
+    },
+    "stress_interval": {
+      "sample_rate_hz": 44100,
+      "before_current_frame": 8448,
+      "after_current_frame": 34944,
+      "advanced_frames": 26496,
+      "before_frame_discontinuities": 1,
+      "after_frame_discontinuities": 1,
+      "new_discontinuities": 0,
+      "base_latency_seconds": 0.01,
+      "output_latency_seconds": 0.032,
+      "observed_render_quantum_frames": 128,
+      "note": "128 was observed on this runtime; the implementation does not assume a fixed render quantum."
+    }
+  },
+  "artifact": {
+    "id": 11267217189,
+    "name": "audio-kernel-c18f3e80d46aa58d0fbead3a6c7f3bb995b97917",
+    "digest": "sha256:125955558e56c178763fe4d546d8c4d90adf00ae52de71fed531e406f2363429",
+    "expires_at": "2026-10-17T06:58:07Z"
+  },
+  "limitations": [
+    "Headless/runner browser evidence does not prove audible output on the user's physical Windows audio device.",
+    "The lifetime frameDiscontinuities count included one startup/resume boundary; no new discontinuities occurred during the measured 600 ms main-thread stall.",
+    "Physical T5 validation is still required before audio-kernel can be PROVEN/LOCKED."
+  ]
+}

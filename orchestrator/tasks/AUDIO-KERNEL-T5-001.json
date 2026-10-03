@@ -1,0 +1,45 @@
+{
+  "task_id": "AUDIO-KERNEL-T5-001",
+  "requested_sha": "c18f3e80d46aa58d0fbead3a6c7f3bb995b97917",
+  "branch": "module/audio-kernel",
+  "module": "audio-kernel",
+  "objective": "Validate the Phase 2 AudioWorklet kernel on the real local Windows browser and physical audio device before promotion.",
+  "scope": [
+    "Physical browser/audio validation only.",
+    "Do not patch product or system code.",
+    "Write results only under reports/local-debug/** on validation/local-debug."
+  ],
+  "steps": [
+    "Fetch the exact requested SHA and run python bootstrap.py; require LIBERTAS BOOT: PASS.",
+    "Install dependencies with npm install.",
+    "Start the Vite development server with the repository's configured cross-origin-isolation headers.",
+    "Open the app in the normal local Chromium/Chrome-family browser used for testing.",
+    "Click Start audio kernel and confirm the 220 Hz diagnostic tone is audible and clean.",
+    "Record browser/version, Windows version, selected physical audio output device, context sample rate, baseLatency, outputLatency if exposed, renderQuantum, and frameDiscontinuities.",
+    "While tone is playing, deliberately stress/block the page main thread using the provided harness and verify audio remains continuous by listening.",
+    "Repeat start/stop at least 10 times and note clicks, gaps, failure to resume, or state mismatch.",
+    "Leave the tone running for at least 5 minutes while using the browser normally; report any audible dropout/glitch.",
+    "Capture before/after status snapshots for the stress interval and compute new frame discontinuities.",
+    "Write reports/local-debug/LATEST.json matching RESULT_SCHEMA.json, ENVIRONMENT.json, and SESSION_LOG.md on validation/local-debug; push the report branch so the runner-backed debug bus relays it to issue #1."
+  ],
+  "evidence_required": [
+    "Exact tested SHA.",
+    "PASS/FAIL/BLOCKED.",
+    "Browser/version and Windows version.",
+    "Physical audio output device identity.",
+    "AudioContext sample rate, base latency, output latency when available, observed render quantum.",
+    "Before/after currentFrame and frameDiscontinuities around main-thread stress.",
+    "Audible assessment: clean tone / clicks / gaps / dropouts.",
+    "10-cycle start/stop result.",
+    "5-minute continuous-run result.",
+    "Any browser console errors."
+  ],
+  "stop_conditions": [
+    "If bootstrap fails, stop and report BLOCKED.",
+    "If the exact requested SHA cannot be checked out, stop and report BLOCKED.",
+    "If the browser cannot create/resume AudioContext or AudioWorklet, stop and report FAIL with console evidence.",
+    "Do not modify product/system code from validation/local-debug."
+  ],
+  "requested_by": "Libertas0 master developer",
+  "created_at": "2026-10-03T07:00:00-04:00"
+}

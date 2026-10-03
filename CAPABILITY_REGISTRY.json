@@ -25,9 +25,10 @@
     {
       "id": "audio.browser-worklet",
       "class": "realtime",
-      "status": "implementing",
+      "status": "runtime-proven-local-pending",
       "provider": "AudioWorklet",
-      "contract": "docs/contracts/AUDIO_KERNEL.md"
+      "contract": "docs/contracts/AUDIO_KERNEL.md",
+      "evidence": "evidence/audio-kernel/phase2-automated/RESULT.json"
     },
     {
       "id": "compute.wasm",

@@ -24,7 +24,7 @@
     },
     {
       "id": "audio-kernel",
-      "state": "IMPLEMENTING",
+      "state": "LOCAL_DEBUG",
       "depends_on": [
         "verification-fabric"
       ],
