@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 
 test('manual grids map independent Deck A/B source frames into deterministic musical positions', async ({ page }) => {
   await page.goto('/');
-  await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(12, 330, 550, 0.2));
+  const loaded = await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(12, 330, 550, 0.2));
 
   await page.evaluate(() => {
     window.__libertasMusicalClockTest.setGrid('A', {
