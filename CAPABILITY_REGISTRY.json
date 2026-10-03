@@ -19,16 +19,17 @@
     {
       "id": "dev.local-debug-agent",
       "class": "development",
-      "status": "registered-unverified",
-      "provider": "runner-backed-debug-bus"
+      "status": "proven",
+      "provider": "runner-backed-debug-bus",
+      "evidence": "evidence/audio-kernel/phase2-local/RESULT.json"
     },
     {
       "id": "audio.browser-worklet",
       "class": "realtime",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "AudioWorklet",
       "contract": "docs/contracts/AUDIO_KERNEL.md",
-      "evidence": "evidence/audio-kernel/phase2-automated/RESULT.json"
+      "evidence": "evidence/audio-kernel/phase2-local/RESULT.json"
     },
     {
       "id": "compute.wasm",
@@ -39,8 +40,9 @@
     {
       "id": "compute.shared-memory",
       "class": "compute",
-      "status": "runtime-gated",
-      "provider": "SharedArrayBuffer+Atomics"
+      "status": "available-local-runtime",
+      "provider": "SharedArrayBuffer+Atomics",
+      "evidence": "evidence/audio-kernel/phase2-local/RESULT.json"
     },
     {
       "id": "compute.webworker",

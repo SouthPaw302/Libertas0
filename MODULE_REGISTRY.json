@@ -24,7 +24,7 @@
     },
     {
       "id": "audio-kernel",
-      "state": "LOCAL_DEBUG",
+      "state": "LOCKED",
       "depends_on": [
         "verification-fabric"
       ],
@@ -36,7 +36,7 @@
     },
     {
       "id": "deck-a",
-      "state": "PLANNED",
+      "state": "RESEARCH",
       "depends_on": [
         "audio-kernel"
       ],

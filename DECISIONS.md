@@ -29,3 +29,8 @@ The system-contract runner and synthetic local-debug round trip passed on exact 
 Status: ACCEPTED FOR IMPLEMENTATION
 
 Current Web Audio provides sample-frame authority on the render thread. The reference kernel must use runtime block length and device sample rate rather than assuming 128 frames or 48 kHz. Shared memory and WASM are optional later providers, not prerequisites for the reference proof.
+
+## D-0007 — Audio kernel promoted and locked
+Status: ACCEPTED
+
+Audio kernel passed T1-T4 in GitHub/Chrome and T5 on the real local Windows/Edge/Realtek audio path. The exact physical test targeted `c18f3e80d46aa58d0fbead3a6c7f3bb995b97917` and returned zero new discontinuities during the stress interval and zero observed discontinuities during the five-minute run.

@@ -1,16 +1,14 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "audio_kernel",
-  "active_module": "audio-kernel",
-  "active_branch": "module/audio-kernel",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical Windows/browser/audio validation of the automatically proven AudioWorklet kernel.",
-  "last_passing_gate": "audio-kernel-T4-browser-runtime",
-  "last_evidence": "evidence/audio-kernel/phase2-automated/RESULT.json",
-  "blockers": [
-    "Physical T5 local audio validation has not yet run."
-  ],
-  "exact_next_action": "Local debug agent executes AUDIO-KERNEL-T5-001 against the exact finalized module/audio-kernel SHA and reports through validation/local-debug + issue #1. Do not begin Deck A until this passes.",
-  "product_code_authorized": false
+  "phase": "deck_a",
+  "active_module": "deck-a",
+  "active_branch": "module/deck-a",
+  "status": "RESEARCH",
+  "current_objective": "Define and build Deck A as a deterministic PCM transport on the proven AudioWorklet clock, including load/decode, play/pause, seek, rate, source position, mute, and realtime volume.",
+  "last_passing_gate": "audio-kernel-T5-local-physical",
+  "last_evidence": "evidence/audio-kernel/phase2-local/RESULT.json",
+  "blockers": [],
+  "exact_next_action": "Research current browser decode/PCM-transfer options, write Deck A contract, then implement against synthetic PCM and browser runtime gates before local physical testing.",
+  "product_code_authorized": true
 }
