@@ -13,5 +13,5 @@
   "transport_operation_count": 30,
   "stress": {"duration_ms": 600, "output_delta_frames": 29312, "source_delta_frames": 29312, "new_discontinuities": 0},
   "continuous": {"duration_seconds": 300, "output_delta_frames": 14406784, "source_delta_frames": 14406784, "new_discontinuities": 0},
-  "audible_confirmation": "PENDING_USER_CONFIRMATION"
+  "audible_confirmation": "PASS — user confirmed ordinary local file playback was fine"
 }

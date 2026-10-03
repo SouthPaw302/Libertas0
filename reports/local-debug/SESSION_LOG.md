@@ -41,4 +41,5 @@
 ### Console and physical listening
 
 - Two browser-generated 404 resource errors; no Deck A runtime exception observed.
-- Human audible confirmation is pending; report is currently `BLOCKED` only on that confirmation.
+- User confirmation: PASS — an ordinary local Deck A audio file was loaded and played fine on the physical output.
+- Final result: `PASS`.
