@@ -3,12 +3,12 @@
   "project": "Libertas0",
   "phase": "deck_b_mixer",
   "active_module": "deck-b-mixer",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 3 is complete. Deck A is locked with automated and physical evidence. Await explicit user instruction before beginning Phase 4 Deck B + mixer.",
+  "active_branch": "module/deck-b-mixer",
+  "status": "IMPLEMENTING",
+  "current_objective": "Prove two independent simultaneous deck instances feeding a dedicated two-input realtime mixer with independent deck volume controls, master volume, overload telemetry, and no regression of Deck A/audio kernel.",
   "last_passing_gate": "deck-a-T5-local-physical",
   "last_evidence": "evidence/deck-a/phase3-local/RESULT.json",
   "blockers": [],
-  "exact_next_action": "Await explicit instruction to start Phase 4. When authorized, create module/deck-b-mixer from this promoted main state and preserve Deck A as a locked dependency.",
-  "product_code_authorized": false
+  "exact_next_action": "Run Phase 4 typecheck/unit/build and Chrome two-deck mixer gates. Fix failures until all T1-T4 and prior regressions pass, then issue the exact SHA for local physical T5.",
+  "product_code_authorized": true
 }

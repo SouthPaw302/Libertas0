@@ -49,3 +49,13 @@ After decode, the worklet owns source-frame position, interpolation, play/pause,
 Status: ACCEPTED
 
 Deck A passed automated T1-T4 on `6bf34aa6a00004b29be21d847748f09b41081ad1` and physical T5 on the real Windows/Edge/Realtek path. Local validation included 30 mixed transport operations, exact 0.5x/1x/1.5x/2x varispeed behavior, volume/mute, a 600 ms main-thread stall with 0 new discontinuities, five minutes of continuous playback with 0 new discontinuities, generated WAV decode, and an ordinary local WAV decode/playback with human audible confirmation.
+
+## D-0011 — Deck A and Deck B share one transport implementation
+Status: ACCEPTED FOR PHASE 4
+
+Deck B is a second instance of the same deterministic deck controller/worklet contract, not a copied transport stack. Each instance owns separate PCM and state while sharing the proven AudioContext render timeline.
+
+## D-0012 — Two-input AudioWorklet mixer owns summing
+Status: ACCEPTED FOR PHASE 4
+
+Deck outputs feed explicit mixer inputs. The mixer owns realtime summing, master gain, peak telemetry, overload counting and a full-scale safety clamp. SYNC, crossfader law, EQ and final dynamics processing remain outside Phase 4.

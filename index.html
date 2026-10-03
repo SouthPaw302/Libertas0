@@ -3,46 +3,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Libertas0 — Deck A</title>
+  <title>Libertas0 — Deck A/B + Mixer</title>
   <style>
-    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 960px; }
-    fieldset { margin: 1rem 0; padding: 1rem; }
+    body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 1200px; }
+    .decks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+    fieldset { margin: 1rem 0; padding: 1rem; min-width: 0; }
     .row { display: flex; gap: .75rem; align-items: center; flex-wrap: wrap; margin: .5rem 0; }
     label { display: flex; gap: .5rem; align-items: center; }
-    input[type="range"] { width: 240px; }
-    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #111; color: #eee; padding: 1rem; }
+    input[type="range"] { width: 220px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; background: #111; color: #eee; padding: 1rem; max-height: 320px; overflow: auto; }
+    @media (max-width: 800px) { .decks { grid-template-columns: 1fr; } }
   </style>
 </head>
 <body>
   <main>
-    <h1>Libertas0 — Deck A</h1>
+    <h1>Libertas0 — Deck A/B + Mixer</h1>
+
+    <div class="decks">
+      <fieldset>
+        <legend>Deck A</legend>
+        <div class="row">
+          <input id="deck-a-file" type="file" accept="audio/*" />
+          <button id="deck-a-load" type="button">Load A</button>
+          <button id="deck-a-play" type="button">Play A</button>
+          <button id="deck-a-pause" type="button">Pause A</button>
+        </div>
+        <div class="row">
+          <label>Seek A <input id="deck-a-seek" type="range" min="0" max="1000" value="0" /></label>
+          <label>Rate A <input id="deck-a-rate" type="number" min="0.25" max="4" step="0.01" value="1" /></label>
+        </div>
+        <div class="row">
+          <label>Volume A <input id="deck-a-volume" type="range" min="0" max="1" step="0.01" value="1" /></label>
+          <label><input id="deck-a-mute" type="checkbox" /> Mute A</label>
+        </div>
+        <pre id="deck-a-status">Deck A ready</pre>
+      </fieldset>
+
+      <fieldset>
+        <legend>Deck B</legend>
+        <div class="row">
+          <input id="deck-b-file" type="file" accept="audio/*" />
+          <button id="deck-b-load" type="button">Load B</button>
+          <button id="deck-b-play" type="button">Play B</button>
+          <button id="deck-b-pause" type="button">Pause B</button>
+        </div>
+        <div class="row">
+          <label>Seek B <input id="deck-b-seek" type="range" min="0" max="1000" value="0" /></label>
+          <label>Rate B <input id="deck-b-rate" type="number" min="0.25" max="4" step="0.01" value="1" /></label>
+        </div>
+        <div class="row">
+          <label>Volume B <input id="deck-b-volume" type="range" min="0" max="1" step="0.01" value="1" /></label>
+          <label><input id="deck-b-mute" type="checkbox" /> Mute B</label>
+        </div>
+        <pre id="deck-b-status">Deck B ready</pre>
+      </fieldset>
+    </div>
 
     <fieldset>
-      <legend>Deck A transport</legend>
+      <legend>Mixer</legend>
       <div class="row">
-        <input id="deck-file" type="file" accept="audio/*" />
-        <button id="deck-load" type="button">Load</button>
-        <button id="deck-play" type="button">Play</button>
-        <button id="deck-pause" type="button">Pause</button>
+        <label>Master <input id="mixer-master" type="range" min="0" max="1" step="0.01" value="1" /></label>
+        <button id="mixer-status-button" type="button">Refresh mixer status</button>
       </div>
-      <div class="row">
-        <label>Seek
-          <input id="deck-seek" type="range" min="0" max="1000" value="0" />
-        </label>
-        <label>Rate
-          <input id="deck-rate" type="number" min="0.25" max="4" step="0.01" value="1" />
-        </label>
-      </div>
-      <div class="row">
-        <label>Volume
-          <input id="deck-volume" type="range" min="0" max="1" step="0.01" value="1" />
-        </label>
-        <label>
-          <input id="deck-mute" type="checkbox" />
-          Mute
-        </label>
-      </div>
-      <pre id="deck-status">Deck A not initialized</pre>
+      <pre id="mixer-status">Mixer ready</pre>
     </fieldset>
 
     <details>

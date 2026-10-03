@@ -49,7 +49,7 @@
     },
     {
       "id": "deck-b-mixer",
-      "state": "PLANNED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "deck-a"
       ],
