@@ -141,3 +141,13 @@
 - evidence: Performance Transport Gate run `37176673868`.
 - cause: test-harness argument typing only.
 - disposition: replaced tuple arguments with named object parameters. Product/worklet logic unchanged.
+
+## F-0012 — Phase 7 physical proof surface exposed only Deck A performance controls
+- date: 2026-10-04
+- exact SHA: `b9a8317b3c90d4d975746b01b62998792f195d6e`
+- module: performance-transport local proof surface
+- environment: Windows 10, Codex headed Chromium, physical Realtek audio path
+- symptom: T5 core transport/loop/jog/dual-deck/stress checks passed, but explicit Deck B follower Hot Cue telemetry could not be verified through the visible runtime surface; local report remained BLOCKED.
+- evidence: local report commit `ef1c996aa6e5de9c0df94ca372ba048acd01b643`.
+- cause: product UI exposed Phase 7 controls only for Deck A even though Deck B controller/test API existed and passed automated browser coverage.
+- disposition: expose equivalent Deck B cue/hotcue/loop/jog controls and status in the physical proof UI. Transport engine unchanged.

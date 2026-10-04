@@ -144,6 +144,15 @@ const perfALoopOff = document.querySelector<HTMLButtonElement>('#perf-a-loop-off
 const perfAJogBack = document.querySelector<HTMLButtonElement>('#perf-a-jog-back');
 const perfAJogForward = document.querySelector<HTMLButtonElement>('#perf-a-jog-forward');
 const perfAStatus = document.querySelector<HTMLPreElement>('#perf-a-status');
+const perfBSetCue = document.querySelector<HTMLButtonElement>('#perf-b-set-cue');
+const perfBCue = document.querySelector<HTMLButtonElement>('#perf-b-cue');
+const perfBHot1Set = document.querySelector<HTMLButtonElement>('#perf-b-hot1-set');
+const perfBHot1 = document.querySelector<HTMLButtonElement>('#perf-b-hot1');
+const perfBLoop = document.querySelector<HTMLButtonElement>('#perf-b-loop');
+const perfBLoopOff = document.querySelector<HTMLButtonElement>('#perf-b-loop-off');
+const perfBJogBack = document.querySelector<HTMLButtonElement>('#perf-b-jog-back');
+const perfBJogForward = document.querySelector<HTMLButtonElement>('#perf-b-jog-forward');
+const perfBStatus = document.querySelector<HTMLPreElement>('#perf-b-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -323,6 +332,35 @@ perfAJogBack?.addEventListener('click', () => {
 });
 perfAJogForward?.addEventListener('click', () => {
   void performanceA.jogBySeconds(0.05).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+
+perfBSetCue?.addEventListener('click', () => {
+  void performanceB.setCueHere().then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBCue?.addEventListener('click', () => {
+  void performanceB.triggerCue(true).then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBHot1Set?.addEventListener('click', () => {
+  void performanceB.setHotCueHere(1).then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBHot1?.addEventListener('click', () => {
+  void performanceB.triggerHotCue(1).then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBLoop?.addEventListener('click', () => {
+  void (async () => {
+    const snap = await musicalSnapshot('B');
+    const startBeat = Math.floor(snap.position.beatPosition);
+    render(perfBStatus, await performanceB.setBeatLoop(pendingGrids.get('B')!, startBeat, 4));
+  })().catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBLoopOff?.addEventListener('click', () => {
+  void performanceB.setLoopEnabled(false).then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBJogBack?.addEventListener('click', () => {
+  void performanceB.jogBySeconds(-0.05).then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
+});
+perfBJogForward?.addEventListener('click', () => {
+  void performanceB.jogBySeconds(0.05).then((s) => render(perfBStatus, s)).catch((e: unknown) => render(perfBStatus, { error: String(e) }));
 });
 
 syncAToBButton?.addEventListener('click', () => {
