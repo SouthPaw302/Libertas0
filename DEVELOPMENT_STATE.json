@@ -1,16 +1,14 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "mixer_dsp",
-  "active_module": "mixer-dsp",
-  "active_branch": "module/mixer-dsp",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical/human-listening validation of Phase 8 channel trim/EQ/filter, equal-power crossfader and sample-peak limiter after automated gates passed.",
-  "last_passing_gate": "mixer-dsp-T4-browser-runtime",
-  "last_evidence": "evidence/mixer-dsp/phase8-automated/RESULT.json",
-  "blockers": [
-    "Physical/audible Mixer/DSP validation has not yet returned through the debug bus."
-  ],
+  "phase": "intelligence",
+  "active_module": "intelligence",
+  "active_branch": "main",
+  "status": "PLANNED",
+  "current_objective": "Phase 8 Mixer/DSP is complete and locked with automated and physical audible evidence. Await explicit user instruction before beginning Phase 9 Track Intelligence.",
+  "last_passing_gate": "mixer-dsp-T5-local-physical-listening",
+  "last_evidence": "evidence/mixer-dsp/phase8-local/RESULT.json",
+  "blockers": [],
   "known_limitations": [
     "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
     "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
@@ -18,6 +16,6 @@
     "Phase 8 EQ provides -24 dB attenuation, not full-kill isolation.",
     "Phase 8 crossfader uses a fixed equal-power curve."
   ],
-  "exact_next_action": "Local debug agent executes MIXER-DSP-T5-001 against exact SHA 3c491c1fc37592e16a284676f569afcbe6423bf1. Do not begin Phase 9 until PASS is recorded.",
+  "exact_next_action": "Await explicit instruction to start Phase 9 Track Intelligence. Preserve all Phase 2-8 modules as locked dependencies.",
   "product_code_authorized": false
 }

@@ -159,10 +159,27 @@
     {
       "id": "audio.mixer-dsp",
       "class": "realtime-dsp",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "native Web Audio channel strips + AudioWorklet crossfader/limiter",
       "contract": "docs/contracts/MIXER_DSP.md",
-      "evidence": "evidence/mixer-dsp/phase8-automated/RESULT.json"
+      "evidence": "evidence/mixer-dsp/phase8-local/RESULT.json",
+      "proven_scope": [
+        "per-channel trim",
+        "3-band EQ",
+        "bipolar DJ filter",
+        "equal-power crossfader",
+        "master gain",
+        "sample-peak limiter",
+        "DSP under SYNC/performance transport",
+        "600 ms main-thread stall survival",
+        "five-minute mixed playback",
+        "human audible confirmation"
+      ],
+      "not_yet_proven": [
+        "true-peak mastering",
+        "full-kill isolator EQ",
+        "configurable crossfader curve/cut-lag"
+      ]
     }
   ]
 }

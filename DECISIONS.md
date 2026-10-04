@@ -135,3 +135,14 @@ Per-channel trim and EQ/filtering use GainNode and BiquadFilterNode inside the b
 Status: ACCEPTED FOR PHASE 8
 
 The two-input mixer AudioWorklet applies an equal-power crossfader before summing, then master gain, then a sample-peak limiter with instantaneous attack and controlled release, followed by the existing full-scale safety clamp. The limiter is not described as true-peak or mastering processing.
+
+## D-0026 — Mixer / DSP promoted and locked
+Status: ACCEPTED
+
+Phase 8 passed T1-T4 on `3c491c1fc37592e16a284676f569afcbe6423bf1` with 30 unit/simulation tests and 29 Chrome runtime/regression tests, then passed physical T5 on the Windows/Chromium/Realtek path.
+
+Physical validation proved channel trim, 3-band EQ, bipolar filters, equal-power crossfader, master control and sample-peak limiting. Controlled overload reached 1.797890 FS before limiting, maximum gain reduction reached 5.538751 dB, post-limiter hard clips remained 0, and output peak was 0.950221.
+
+SYNC and Cue/Hot Cue/Loop/Jog remained functional with DSP active. The 600 ms UI stall added zero A/B/mixer discontinuities and zero transport seeks. The five-minute mixed hold added zero new discontinuities, ended with SYNC locked and stale snapshots at 0, and received human audible confirmation.
+
+Lifetime discontinuity counters at the end were A=2, B=0, mixer=2; the measured five-minute interval itself added 0/0/0 new discontinuities.

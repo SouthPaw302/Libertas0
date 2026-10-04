@@ -102,7 +102,7 @@
     },
     {
       "id": "mixer-dsp",
-      "state": "LOCAL_DEBUG",
+      "state": "LOCKED",
       "depends_on": [
         "performance-transport"
       ],
