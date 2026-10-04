@@ -39,7 +39,11 @@ test('sample-domain loop wraps with overshoot preserved and without worklet disc
   const start = loaded.sourceSampleRate * 0.5;
   const end = start + loaded.sourceSampleRate * 0.05;
 
-  await page.evaluate(([a, b]) => window.__libertasPerformanceATest.setLoopFrames(a, b), [start, end]);
+  await page.evaluate(
+    ({ startFrame, endFrame }) =>
+      window.__libertasPerformanceATest.setLoopFrames(startFrame, endFrame),
+    { startFrame: start, endFrame: end },
+  );
   await page.evaluate(() => window.__libertasDeckATest.play());
   const before = await page.evaluate(() => window.__libertasDeckATest.status());
   await page.waitForTimeout(500);
@@ -120,7 +124,10 @@ test('explicit follower hotcue remains distinguishable from hidden SYNC maintena
 
   const before = await page.evaluate(() => window.__libertasSyncTest.status());
   const frame = loaded.b.sourceSampleRate * 1.5;
-  await page.evaluate(([slot, target]) => window.__libertasPerformanceBTest.setHotCue(slot, target), [1, frame]);
+  await page.evaluate(
+    ({ slot, target }) => window.__libertasPerformanceBTest.setHotCue(slot, target),
+    { slot: 1, target: frame },
+  );
   await page.evaluate(() => window.__libertasPerformanceBTest.triggerHotCue(1));
   await page.waitForTimeout(2500);
   const after = await page.evaluate(() => window.__libertasSyncTest.status());

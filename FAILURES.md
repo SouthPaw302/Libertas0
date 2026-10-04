@@ -131,3 +131,13 @@
 - evidence: SYNC Gate run `37174570842`.
 - cause: a global replacement intended to swap test-local `page.goto('/')` calls also rewrote the helper's own navigation line into a recursive self-call.
 - disposition: helper restored to direct `page.goto('/')` followed by an explicit wait for `window.__libertasSyncTest`. Product/controller logic unchanged.
+
+## F-0011 — Performance transport browser tests used untyped tuple arguments
+- date: 2026-10-04
+- exact SHA: `a73119565ad46f621fef4a8553b5b25ca7f0d80c`
+- module: performance-transport test harness
+- environment: GitHub Actions, TypeScript 6
+- symptom: Phase 7 stopped at typecheck before browser execution because tuple-destructured Playwright arguments were inferred as possibly undefined.
+- evidence: Performance Transport Gate run `37176673868`.
+- cause: test-harness argument typing only.
+- disposition: replaced tuple arguments with named object parameters. Product/worklet logic unchanged.
