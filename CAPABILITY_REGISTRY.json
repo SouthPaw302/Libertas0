@@ -159,9 +159,10 @@
     {
       "id": "audio.mixer-dsp",
       "class": "realtime-dsp",
-      "status": "implementing",
+      "status": "runtime-proven-local-pending",
       "provider": "native Web Audio channel strips + AudioWorklet crossfader/limiter",
-      "contract": "docs/contracts/MIXER_DSP.md"
+      "contract": "docs/contracts/MIXER_DSP.md",
+      "evidence": "evidence/mixer-dsp/phase8-automated/RESULT.json"
     }
   ]
 }

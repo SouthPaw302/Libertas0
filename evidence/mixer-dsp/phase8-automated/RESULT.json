@@ -1,0 +1,62 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "mixer-dsp",
+  "gate": "phase8-automated",
+  "status": "PASS",
+  "tested_sha": "3c491c1fc37592e16a284676f569afcbe6423bf1",
+  "system_contract": {
+    "run_id": 37178585140,
+    "conclusion": "success"
+  },
+  "mixer_dsp_gate": {
+    "run_id": 37178585160,
+    "job_id": 111366312393,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "status": "PASS",
+      "test_files": 7,
+      "tests_passed": 30,
+      "mixer_dsp_tests": 6
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 29,
+      "locked_regressions": "PASS",
+      "phase8_checks": [
+        "independent channel trim before mixer",
+        "low/mid/high EQ attenuation and boost",
+        "bipolar low-pass/high-pass DJ filter",
+        "equal-power crossfader endpoints and center law",
+        "sample-peak limiter overload reduction before final clamp",
+        "zero hard-clipped samples after limiter in overload test",
+        "active DSP survives 600 ms main-thread stall",
+        "all locked audio/deck/mixer/clock/SYNC/performance-transport regressions remain green"
+      ]
+    },
+    "stress_interval": {
+      "main_thread_block_ms": 600,
+      "deck_a_source_delta_frames": 27776,
+      "deck_b_source_delta_frames": 27776,
+      "mixer_output_delta_frames": 27776,
+      "deck_a_new_discontinuities": 0,
+      "deck_b_new_discontinuities": 0,
+      "mixer_new_discontinuities": 0
+    }
+  },
+  "artifact": {
+    "id": 11293924850,
+    "name": "mixer-dsp-3c491c1fc37592e16a284676f569afcbe6423bf1",
+    "digest": "sha256:29b961775b3c04382c5920e4af7ecbbab1c9d0e560bf25a74d1a12bf297cf39c",
+    "expires_at": "2026-10-18T05:00:55Z"
+  },
+  "physical_gate_required": true,
+  "limitations": [
+    "Limiter is sample-peak safety limiting, not true-peak mastering.",
+    "EQ attenuation floor is -24 dB; Phase 8 does not claim full-kill isolator behavior.",
+    "Crossfader curve is fixed equal-power; no user curve/cut-lag control yet."
+  ]
+}

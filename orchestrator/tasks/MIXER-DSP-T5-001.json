@@ -1,0 +1,120 @@
+{
+  "task_id": "MIXER-DSP-T5-001",
+  "requested_sha": "3c491c1fc37592e16a284676f569afcbe6423bf1",
+  "branch": "module/mixer-dsp",
+  "module": "mixer-dsp",
+  "objective": "Validate Phase 8 channel DSP, equal-power crossfader, master limiter and integration with proven SYNC/performance transport on the real Windows/browser/audio path.",
+  "setup": [
+    "Check out exact SHA 3c491c1fc37592e16a284676f569afcbe6423bf1.",
+    "Run python bootstrap.py and require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Start Vite and open headed Edge/Chrome/Codex browser on the normal physical audio output.",
+    "Record OS/browser/output, AudioContext sample rate, base/output latency and render quantum."
+  ],
+  "tests": [
+    {
+      "id": "ordinary-two-track-mix",
+      "instructions": "Load ordinary local program material into Deck A and Deck B. Play both. Confirm both pass through the expanded channel strips and mixer.",
+      "pass": [
+        "Both decks audible and independently controllable.",
+        "No unexpected transport resets or rate changes.",
+        "No A/B/mixer frame discontinuities."
+      ]
+    },
+    {
+      "id": "channel-trim",
+      "instructions": "On each deck independently sweep trim 0 -> -12 dB -> 0 -> +6 dB while the other deck continues.",
+      "pass": [
+        "Level changes are clearly audible on the selected deck only.",
+        "No zipper clicks, stalls or unintended effect on the other deck.",
+        "Transport continues."
+      ]
+    },
+    {
+      "id": "three-band-eq",
+      "instructions": "On each deck independently sweep Low, Mid and High from 0 to strong cut and modest boost, returning each to 0 before moving on.",
+      "pass": [
+        "Low control audibly changes bass region.",
+        "Mid control audibly changes midrange.",
+        "High control audibly changes treble.",
+        "No instability, clicks, stuck parameter or transport disruption."
+      ]
+    },
+    {
+      "id": "bipolar-filter",
+      "instructions": "Sweep each channel Filter from 0 toward -1 and back, then 0 toward +1 and back.",
+      "pass": [
+        "Negative side audibly acts as progressive low-pass.",
+        "Positive side audibly acts as progressive high-pass.",
+        "Return to 0 restores broad-band output.",
+        "No abnormal pops/dropouts during controlled sweeps."
+      ]
+    },
+    {
+      "id": "crossfader",
+      "instructions": "With both decks playing, sweep crossfader A endpoint -> center -> B endpoint -> center.",
+      "pass": [
+        "A endpoint audibly isolates A.",
+        "B endpoint audibly isolates B.",
+        "Center contains both with no unexpected transport effect.",
+        "Movement is acceptably smooth with no abnormal clicks/dropouts."
+      ]
+    },
+    {
+      "id": "limiter",
+      "instructions": "Create a controlled overload using the generated in-phase hot tone pair or equivalent known-safe fixture, set limiter threshold to 0.95, and inspect mixer status while listening at a safe physical level.",
+      "safety": "Keep physical speaker/headphone volume low before creating the generated overload.",
+      "pass": [
+        "summedPeakBeforeClamp exceeds 1 during the fixture.",
+        "limitedSamples increases.",
+        "maxLimiterGainReductionDb is greater than 0.",
+        "hardClippedSamplesAfterLimiter remains 0.",
+        "Output remains bounded and no harsh digital hard-clipping artifact is reported."
+      ]
+    },
+    {
+      "id": "sync-and-performance-with-dsp",
+      "instructions": "Use generated trusted-grid click pair or suitable proven fixture. Enable SYNC and exercise Cue/Hot Cue/Loop/Jog while channel EQ/filter/crossfader settings are non-neutral.",
+      "pass": [
+        "SYNC continues tracking/relocks as expected.",
+        "Performance transport remains responsive.",
+        "No hidden seek regression.",
+        "No new frame discontinuities."
+      ]
+    },
+    {
+      "id": "dsp-main-thread-stress",
+      "instructions": "With both decks playing and non-neutral trim/EQ/filter/crossfader/master settings, capture status, block main thread for 600 ms, capture again and listen.",
+      "pass": [
+        "A, B and mixer all advance.",
+        "0 new A/B/mixer frame discontinuities.",
+        "No audible UI-stall dropout."
+      ]
+    },
+    {
+      "id": "five-minute-mixed-hold",
+      "instructions": "Run two-deck mixed playback for at least five minutes with representative non-neutral EQ/filter/crossfader/master settings. Make several controlled parameter changes during the hold.",
+      "pass": [
+        "No progressive instability or transport stall.",
+        "No new frame discontinuities.",
+        "No abnormal zipper noise, clicks, dropouts or unexpected level jumps.",
+        "Mixer remains responsive at the end."
+      ]
+    }
+  ],
+  "evidence_required": [
+    "Exact tested SHA and PASS/FAIL/BLOCKED.",
+    "Human audible assessment for trim/EQ/filter/crossfader/limiter behavior.",
+    "Mixer status during limiter test including summedPeakBeforeClamp, limitedSamples, maxLimiterGainReductionDb, hardClippedSamplesAfterLimiter and outputPeak.",
+    "600 ms DSP-stress before/after telemetry.",
+    "Five-minute hold duration and final A/B/mixer discontinuity counts.",
+    "SYNC/performance interaction result while DSP is active.",
+    "Console/runtime errors."
+  ],
+  "report_rules": [
+    "On validation/local-debug modify only reports/local-debug/**.",
+    "Do not patch product/system code from the report branch.",
+    "Push report branch so the runner-backed debug bus relays it to issue #1.",
+    "Do not begin Phase 9."
+  ]
+}

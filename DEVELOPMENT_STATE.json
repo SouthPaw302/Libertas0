@@ -4,17 +4,20 @@
   "phase": "mixer_dsp",
   "active_module": "mixer-dsp",
   "active_branch": "module/mixer-dsp",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build realtime per-channel trim/3-band EQ/bipolar filter plus equal-power crossfader, master and sample-peak limiter without changing locked deck/clock/SYNC/performance transport authority.",
-  "last_passing_gate": "performance-transport-T5-composite",
-  "last_evidence": "evidence/performance-transport/phase7-local/RESULT.json",
-  "blockers": [],
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical/human-listening validation of Phase 8 channel trim/EQ/filter, equal-power crossfader and sample-peak limiter after automated gates passed.",
+  "last_passing_gate": "mixer-dsp-T4-browser-runtime",
+  "last_evidence": "evidence/mixer-dsp/phase8-automated/RESULT.json",
+  "blockers": [
+    "Physical/audible Mixer/DSP validation has not yet returned through the debug bus."
+  ],
   "known_limitations": [
     "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
     "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
     "Phase 8 limiter is sample-peak safety limiting, not true-peak mastering.",
-    "Phase 8 EQ provides -24 dB attenuation, not full-kill isolation."
+    "Phase 8 EQ provides -24 dB attenuation, not full-kill isolation.",
+    "Phase 8 crossfader uses a fixed equal-power curve."
   ],
-  "exact_next_action": "Run Mixer/DSP unit/build/browser gates with all locked regressions. Fix failures before exact-SHA local physical listening validation.",
-  "product_code_authorized": true
+  "exact_next_action": "Local debug agent executes MIXER-DSP-T5-001 against exact SHA 3c491c1fc37592e16a284676f569afcbe6423bf1. Do not begin Phase 9 until PASS is recorded.",
+  "product_code_authorized": false
 }
