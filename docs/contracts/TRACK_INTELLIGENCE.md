@@ -1,95 +1,85 @@
 # Track Intelligence Contract v1
 
 ## Scope
-Phase 9 adds background analysis that may propose musical metadata for a decoded track.
+Phase 9 introduces non-realtime track analysis that proposes musical metadata for the proven Musical Clock and SYNC systems.
 
-Reference outputs:
+Reference output:
 - BPM candidate;
-- BPM confidence;
-- beat-anchor source-frame candidate;
-- beat-anchor confidence;
-- overall confidence;
-- explicit Musical Clock grid proposal;
-- RMS;
-- peak;
-- crest factor;
-- zero-crossing rate;
-- approximate spectral centroid;
-- complete provider/provenance metadata.
+- tempo confidence;
+- first-beat / beat-grid anchor candidate in source frames;
+- phase confidence;
+- combined grid confidence;
+- RMS, peak, crest factor, and zero-crossing descriptors;
+- provenance/provider identifier.
 
-Phase 9 does not add:
-- automatic grid mutation;
-- realtime clock authority;
-- hidden BPM correction;
-- downbeat/bar classification;
-- key detection;
-- phrase/structure segmentation;
-- stems;
-- neural inference;
-- cloud analysis.
+Phase 9 does not claim:
+- semantic bar downbeat detection;
+- phrase detection;
+- musical key detection;
+- variable-tempo warp maps;
+- AI/ML model inference;
+- automatic mutation of the active grid.
 
 ## Authority law
-Track Intelligence is advisory.
+Track Intelligence is advisory only.
 
-It may propose a grid. It may never silently alter:
-- deck sourceFrame;
-- playback rate;
-- Musical Clock grid;
-- SYNC state;
-- performance transport;
-- mixer/DSP.
+It runs outside the realtime audio render path in a Web Worker. It may propose a grid. It may never:
+- advance transport;
+- own musical time;
+- change deck rate;
+- engage SYNC;
+- silently replace the current manual grid.
 
-Only an explicit Apply Proposal action may copy the proposal into the Musical Clock grid.
+The grid changes only through an explicit Apply action.
 
-## Execution domain
-Encoded audio is decoded asynchronously with Web Audio `decodeAudioData()`.
-Decoded channels are averaged into mono PCM.
-Analysis PCM is transferred to a dedicated Web Worker.
-The worker contains no AudioContext, AudioWorklet, UI, transport or SYNC authority.
+## Reference analyzer
+The reference provider is `libertas.onset-autocorrelation.v1`.
 
-## Reference algorithm
-Provider:
-`libertas.reference-onset-autocorrelation.v1`
+Pipeline:
+1. decode encoded audio with the existing replaceable PCM decoder;
+2. mix PCM to mono;
+3. transfer mono PCM to a Web Worker;
+4. compute a ~400 Hz RMS energy envelope;
+5. half-wave rectify positive log-energy changes into an onset-strength envelope;
+6. search BPM in the configured DJ range with normalized autocorrelation plus octave-bias correction;
+7. refine the winning lag;
+8. estimate beat phase from the first 16 beat periods;
+9. locate the earliest strong onset aligned to that phase;
+10. return confidence and descriptors.
 
-1. Build a ~200 Hz onset envelope from positive RMS flux plus positive sample-derivative flux.
-2. Search 70–190 BPM with normalized autocorrelation.
-3. Refine the best autocorrelation lag using three-point parabolic interpolation.
-4. Find the periodic onset phase for that tempo.
-5. Select the earliest sufficiently strong onset aligned to that phase as the beat-anchor candidate.
-6. Return confidence values and a proposal. Do not claim downbeat classification.
-
-The default BPM range is deliberately DJ-oriented. Future providers may expose other ranges.
-
-## Grid semantics
-The proposed grid is:
-- BPM = estimated tempo;
-- firstBeatFrame = estimated beat anchor;
-- beatsPerBar = 4;
-- beatUnit = 4;
-- status = proposal.
-
-The 4/4 meter value is a proposal default, not a meter classifier.
+Default tempo search range: 70–180 BPM.
 
 ## Confidence
-Confidence is evidence, not permission.
-Low confidence must remain visible.
-The reference provider fails closed on insufficient transient structure instead of inventing a BPM.
+Tempo and phase confidence are reported separately.
+Overall grid confidence is the geometric mean of the two.
+The reference UI marks a proposal recommended only at grid confidence >= 0.45.
+
+Low-confidence results remain visible but must not be silently applied.
+
+## Grid semantics
+The analyzer proposes:
+- `bpm`;
+- `firstBeatFrame`;
+- `beatsPerBar=4`;
+- `beatUnit=4`.
+
+`firstBeatFrame` is a beat-phase anchor candidate, not a proven semantic bar downbeat.
+Users may edit/replace it with the existing manual grid tools.
 
 ## Gates
+### T1
+- tempo estimation across representative 70–180 BPM fixtures;
+- octave-error resistance;
+- beat-anchor recovery;
+- short-track rejection.
 
-### T1 unit
-- 120 BPM synthetic click recovery;
-- 128 BPM recovery at 44.1 kHz;
-- delayed beat-anchor recovery;
-- descriptors finite and plausible;
-- silence fails closed.
+### T3/T4 browser
+- analysis executes in Web Worker;
+- 128 BPM + offset fixture recovers BPM and anchor with confidence;
+- analysis alone leaves active grid unchanged;
+- explicit Apply updates the grid;
+- two independently analyzed unknown-grid fixtures can feed the existing SYNC engine and lock without manual BPM entry;
+- all locked Phase 2–8 regressions remain green.
 
-### T4 browser runtime
-- Worker path recovers generated BPM/anchor;
-- analysis leaves manual grid unchanged until explicit Apply;
-- explicit Apply copies proposal into Musical Clock;
-- analysis while Deck A is playing adds zero audio-worklet discontinuities;
-- accepted generated proposals can feed the proven SYNC controller;
-- every locked Phase 2–8 browser regression remains green.
-
-No new T5 physical gate is required for Phase 9 reference infrastructure because analysis is advisory and introduces no new audible execution path. Ordinary-track accuracy remains an evidence task and must not be inferred from synthetic fixtures.
+### Real-track validation
+Generated fixtures prove algorithm mechanics, not universal real-music accuracy. Ordinary-track BPM/grid accuracy must be separately measured before removing the existing ordinary-track SYNC limitation.

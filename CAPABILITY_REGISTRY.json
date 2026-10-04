@@ -183,9 +183,9 @@
     },
     {
       "id": "audio.track-intelligence",
-      "class": "background-analysis",
+      "class": "analysis",
       "status": "implementing",
-      "provider": "Web Worker deterministic onset/autocorrelation reference analyzer",
+      "provider": "Web Worker deterministic onset/autocorrelation DSP",
       "contract": "docs/contracts/TRACK_INTELLIGENCE.md"
     }
   ]

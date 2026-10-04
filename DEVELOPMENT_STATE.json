@@ -5,15 +5,16 @@
   "active_module": "intelligence",
   "active_branch": "module/intelligence",
   "status": "IMPLEMENTING",
-  "current_objective": "Build advisory background Track Intelligence for BPM, beat-anchor and basic audio descriptors. Analysis may propose a Musical Clock grid but may never silently mutate realtime transport or SYNC.",
+  "current_objective": "Build advisory Web Worker track analysis that proposes BPM and beat-anchor grids with confidence/provenance, without changing realtime authority or silently mutating Musical Clock state.",
   "last_passing_gate": "mixer-dsp-T5-local-physical-listening",
   "last_evidence": "evidence/mixer-dsp/phase8-local/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
-    "Phase 9 reference provider does not classify downbeats, meter, key, phrases or stems.",
-    "Phase 9 synthetic-fixture accuracy must not be generalized to ordinary music without separate evidence."
+    "Phase 9 firstBeatFrame is a beat-phase anchor candidate, not semantic bar-downbeat detection.",
+    "Phase 9 reference analyzer is deterministic onset/autocorrelation DSP, not a learned model.",
+    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis."
   ],
-  "exact_next_action": "Run Phase 9 unit/build/browser gates including proposal non-mutation, Worker isolation, analysis-to-SYNC integration and all locked regressions.",
+  "exact_next_action": "Run Phase 9 unit/build/browser gates and all locked regressions. Generated-fixture success does not by itself clear ordinary-track SYNC accuracy.",
   "product_code_authorized": true
 }
