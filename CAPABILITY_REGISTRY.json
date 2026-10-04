@@ -260,6 +260,13 @@
       "status": "implemented-runtime-pending",
       "provider": "content-reference analysis/render/reconstruction/agent job protocol",
       "contract": "docs/contracts/DISTRIBUTED.md"
+    },
+    {
+      "id": "distributed.worker-pool",
+      "class": "distributed-work",
+      "status": "implemented-runtime-pending",
+      "provider": "capability-aware least-inflight worker routing with bounded retry",
+      "contract": "docs/contracts/DISTRIBUTED.md"
     }
   ]
 }

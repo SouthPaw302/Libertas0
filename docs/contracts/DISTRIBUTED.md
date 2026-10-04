@@ -137,3 +137,10 @@ Phase 11 core must prove:
 - remote audio-clock or phase authority (explicitly forbidden);
 - production collaborative-agent policy;
 - production remote rendering/reconstruction backends.
+
+## Multi-worker routing
+
+The reference worker pool can register multiple execution endpoints and route analysis/render/reconstruction/agent jobs by declared capability. It tracks in-flight work, completion and failure counts. Explicit failure can retry another capable endpoint. Missing capability fails visibly.
+
+This is work distribution only. It does not schedule or correct realtime audio.
+

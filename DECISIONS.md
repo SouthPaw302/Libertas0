@@ -251,3 +251,8 @@ Status: ACCEPTED FOR PHASE 11
 
 The protocol rejects oversized control envelopes and the RTCDataChannel provider rejects sends that would exceed its configured bufferedAmount ceiling. Large media/artifacts belong in content-addressed storage or a future chunk transport, never in an unbounded control queue.
 
+## D-0045 — Distributed worker selection is capability- and load-driven
+Status: ACCEPTED FOR PHASE 11
+
+The host may register multiple external work endpoints. A job is eligible only for workers advertising its required capability. Among eligible workers, the reference router prefers the lowest in-flight count, then lower observed failures, then stable node ID ordering. Explicit worker failure may retry the next capable endpoint; absence of capability is an immediate visible error rather than a hidden local fallback.
+

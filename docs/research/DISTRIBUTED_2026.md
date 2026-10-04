@@ -102,3 +102,14 @@ The worker result is an artifact + metrics, not a competing realtime clock.
 - prolonged session hold while local decks remain stable.
 
 Phase 11 is not LOCKED until its declared integration/runtime gates pass and the remaining production limitations are recorded honestly.
+
+## Final torture slice
+
+The final automated Phase 11 slice adds:
+- concurrent multi-worker capability routing;
+- load-based distribution;
+- explicit worker-failure retry;
+- missing-capability rejection;
+- repeated RTCDataChannel session establishment/control/teardown while local audio remains continuously active;
+- repeated 600 ms main-thread stalls across those sessions with zero new deck/mixer discontinuities required.
+

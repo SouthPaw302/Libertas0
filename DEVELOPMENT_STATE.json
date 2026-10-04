@@ -5,7 +5,7 @@
   "active_module": "distributed",
   "active_branch": "module/distributed",
   "status": "AUTOMATED_TEST",
-  "current_objective": "Prove Phase 11 resilience: stale-role revocation on disconnect, reconnect authority reset, bounded transport backpressure, and delayed/duplicate/reordered message rejection without disturbing the locked local audio engine.",
+  "current_objective": "Complete Phase 11 worker/session torture: multi-worker capability routing, failure retry, repeated WebRTC session churn, and locked-core continuity. If green, record final evidence and promote Distributed Libertas within its proven scope.",
   "last_passing_gate": "phase10-composite-local-closeout",
   "last_evidence": "evidence/phase10/local/RESULT.json",
   "blockers": [],
@@ -15,6 +15,6 @@
     "WebRTC transport encryption does not by itself define application identity/trust policy.",
     "Remote render/reconstruction/agent work is protocol-capable but no production provider is claimed until its own worker/backend evidence exists."
   ],
-  "exact_next_action": "Run Slice B unit/runtime regressions on module/distributed. Then add multi-worker capability routing and prolonged distributed-session torture before Phase 11 promotion.",
+  "exact_next_action": "Run Slice C unit/runtime gate. If all Phase 11 integration/runtime gates pass, mark distributed capabilities proven, record limitations, lock Phase 11, promote to main, then perform the full Libertas0 audit before any DJtest surgery.",
   "product_code_authorized": true
 }
