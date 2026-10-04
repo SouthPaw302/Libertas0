@@ -181,3 +181,13 @@
 - evidence: Track Intelligence Gate run `37180993569`.
 - cause: a second alternative Phase 9 implementation was layered over the already-green implementation instead of extending the proven contract.
 - disposition: branch content restored forward to the proven `7fcb8627...` tree; only this failure record and later evidence/handoff metadata are retained. No force-reset and no product merge from the broken implementation.
+
+## F-0015 — Musical Clock browser stress regression raced async app initialization
+- date: 2026-10-04
+- exact SHA: `26bbf33473f1f0a3a87d034c7e26882bd6e28eca`
+- module: intelligence / locked musical-clock regression
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: 31/32 browser tests passed; the locked Musical Clock 600 ms stress test invoked `window.__libertasDualDeckTest.loadGenerated` before the top-level module exposed the harness.
+- evidence: Track Intelligence Gate run `37181042563`.
+- cause: legacy Playwright readiness race. Phase 9 Worker analysis, proposal non-mutation, explicit apply, and analysis-to-SYNC tests all passed on the same run.
+- disposition: Musical Clock browser tests now wait for both the dual-deck and musical-clock APIs before executing. Product/intelligence algorithm unchanged.

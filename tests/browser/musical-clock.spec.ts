@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function openMusicalClockHarness(page: Page): Promise<void> {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean(window.__libertasDualDeckTest && window.__libertasMusicalClockTest));
+}
 
 test('manual grids map independent Deck A/B source frames into deterministic musical positions', async ({ page }) => {
-  await page.goto('/');
+  await openMusicalClockHarness(page);
   const loaded = await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(12, 330, 550, 0.2));
 
   await page.evaluate(() => {
@@ -40,7 +45,7 @@ test('manual grids map independent Deck A/B source frames into deterministic mus
 });
 
 test('musical position follows source-frame varispeed and freezes with paused transport', async ({ page }) => {
-  await page.goto('/');
+  await openMusicalClockHarness(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(20, 330, 550, 0.15));
   await page.evaluate(() => {
     window.__libertasMusicalClockTest.setGrid('A', {
@@ -70,7 +75,7 @@ test('musical position follows source-frame varispeed and freezes with paused tr
 });
 
 test('quantization is deterministic and does not move deck transport', async ({ page }) => {
-  await page.goto('/');
+  await openMusicalClockHarness(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(10));
   await page.evaluate(() => {
     window.__libertasMusicalClockTest.setGrid('A', {
@@ -99,7 +104,7 @@ test('quantization is deterministic and does not move deck transport', async ({ 
 });
 
 test('musical mapping stays coherent across the dual-deck 600 ms main-thread stress interval', async ({ page }) => {
-  await page.goto('/');
+  await openMusicalClockHarness(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(10, 330, 550, 0.15));
   await page.evaluate(() => {
     window.__libertasMusicalClockTest.setGrid('A', { bpm: 120, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 });
