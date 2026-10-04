@@ -239,6 +239,27 @@
       "provider": "AudioParam timeline automation registry",
       "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md",
       "evidence": "evidence/phase10/local/RESULT.json"
+    },
+    {
+      "id": "distributed.session-control",
+      "class": "distributed-control",
+      "status": "implemented-runtime-pending",
+      "provider": "libertas.distributed.v1 session protocol + host role authority",
+      "contract": "docs/contracts/DISTRIBUTED.md"
+    },
+    {
+      "id": "distributed.webrtc-datachannel",
+      "class": "network",
+      "status": "implemented-runtime-pending",
+      "provider": "ordered RTCDataChannel",
+      "contract": "docs/contracts/DISTRIBUTED.md"
+    },
+    {
+      "id": "distributed.remote-work",
+      "class": "distributed-work",
+      "status": "implemented-runtime-pending",
+      "provider": "content-reference analysis/render/reconstruction/agent job protocol",
+      "contract": "docs/contracts/DISTRIBUTED.md"
     }
   ]
 }

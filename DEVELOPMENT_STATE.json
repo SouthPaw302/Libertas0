@@ -3,19 +3,18 @@
   "project": "Libertas0",
   "phase": "distributed",
   "active_module": "distributed",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 10 Library/MIDI/Recording/Automation is complete and locked. Begin Phase 11 Distributed Libertas without allowing network/cloud execution to become local realtime musical authority.",
+  "active_branch": "module/distributed",
+  "status": "AUTOMATED_TEST",
+  "current_objective": "Prove the Phase 11 distributed core: versioned session protocol, host role authority, capability negotiation, ordered WebRTC control/state transport, remote work-by-artifact-reference, and strict separation from the locked local realtime engine.",
   "last_passing_gate": "phase10-composite-local-closeout",
   "last_evidence": "evidence/phase10/local/RESULT.json",
   "blockers": [],
   "known_limitations": [
-    "Physical MIDI hardware remained NOT_EVALUATED because Web MIDI permission/hardware were unavailable; deterministic mapping and browser integration are proven.",
-    "Library v1 is browser-local IndexedDB rather than distributed storage.",
-    "Recording codec/container depends on browser MediaRecorder support.",
-    "Automation v1 covers continuous AudioParams, not discrete cue/hotcue/seek sequencing.",
-    "Networking is not permitted to own deck sourceFrame, Musical Clock, SYNC phase control, or render timing."
+    "Phase 11 core does not yet implement production rendezvous/authentication, reconnect/partition recovery, TURN/WAN validation, multi-node worker scheduling, or distributed file replication.",
+    "Networking is forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or loop/cue execution timing.",
+    "WebRTC transport encryption does not by itself define application identity/trust policy.",
+    "Remote render/reconstruction/agent work is protocol-capable but no production provider is claimed until its own worker/backend evidence exists."
   ],
-  "exact_next_action": "Create module/distributed from this promoted Phase 10 authority, define the Phase 11 distributed contract and research evidence, then build bounded non-realtime session/capability/remote-work primitives with automated integration/runtime gates.",
-  "product_code_authorized": false
+  "exact_next_action": "Run the new distributed unit/integration/browser runtime gate on module/distributed. Fix only Phase 11 defects. After Slice A is green, implement rendezvous/reconnect and worker/session torture before Phase 11 promotion.",
+  "product_code_authorized": true
 }

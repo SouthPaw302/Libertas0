@@ -224,3 +224,20 @@ Phase 10 is LOCKED. Browser-local content-addressed library persistence, determi
 
 Physical MIDI hardware availability remains an environmental limitation rather than a product failure. Distributed library/storage, network session authority, remote workers, collaborative agents, remote rendering, and external execution nodes belong to Phase 11.
 
+## D-0040 — Distributed Libertas is a control/execution plane, never a realtime musical clock
+Status: ACCEPTED FOR PHASE 11
+
+Phase 11 may distribute operator intent, advisory state, manifests, analysis, rendering, reconstruction, agents and external work. It may not own or directly replicate deck sourceFrame, AudioWorklet render frame, Musical Clock, SYNC phase/correction, loop timing, cue timing, or mixer render timing. Remote actions must enter the same explicit local control surfaces already proven in Phases 2-10.
+
+## D-0041 — Ordered WebRTC DataChannel is the Phase 11 browser reference transport
+Status: ACCEPTED FOR PHASE 11
+
+The first browser provider uses an explicitly ordered RTCDataChannel named `libertas-control-v1`. Protocol versioning, message validation, sender sequence gates, role authority and capability negotiation live above the transport so a future native/cloud transport can replace WebRTC without changing musical authority semantics.
+
+WebRTC signaling/rendezvous, application authentication, TURN/WAN behavior and reconnect policy are separate proof surfaces and are not implied by a successful local/browser RTCDataChannel gate.
+
+## D-0042 — Remote work moves artifact references, not hidden clocks
+Status: ACCEPTED FOR PHASE 11
+
+Analysis, rendering, reconstruction and agent jobs are delegated using content/artifact references plus scalar parameters. Results return artifact references and metrics. A remote worker can produce information or media, but it cannot become a hidden timing dependency for local deck/SYNC execution.
+

@@ -138,7 +138,7 @@
     },
     {
       "id": "distributed",
-      "state": "PLANNED",
+      "state": "AUTOMATED_TEST",
       "depends_on": [
         "library-midi-recording-automation"
       ],

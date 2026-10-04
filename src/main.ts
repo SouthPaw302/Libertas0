@@ -23,6 +23,13 @@ import { WebMidiController, type MidiRuntimeStatus } from './midi/WebMidiControl
 import { MasterRecordingController, type RecordingStatus } from './recording/MasterRecordingController';
 import { AutomationController } from './automation/AutomationController';
 import type { AutomationLane, ScheduledAutomation } from './automation/AutomationTypes';
+import { DistributedSession } from './distributed/DistributedSession';
+import { RtcDataChannelTransport } from './distributed/RtcDataChannelTransport';
+import {
+  DISTRIBUTED_CHANNEL_LABEL,
+  type DistributedNode,
+  type RemoteWorkResult,
+} from './distributed/DistributedTypes';
 
 interface LibertasKernelTestApi {
   start(): Promise<AudioKernelStatus>;
@@ -155,6 +162,25 @@ interface LibertasDualDeckTestApi {
   close(): Promise<void>;
 }
 
+interface LibertasDistributedTestApi {
+  rtcAvailable(): boolean;
+  runControlStress(): Promise<{
+    ordered: boolean;
+    peerNegotiated: string[];
+    aFrameDelta: number;
+    bFrameDelta: number;
+    mixerFrameDelta: number;
+    aDiscontinuityDelta: number;
+    bDiscontinuityDelta: number;
+    mixerDiscontinuityDelta: number;
+    crossfaderGainA: number;
+    crossfaderGainB: number;
+    hostRejectedMessages: number;
+    remoteRejectedMessages: number;
+  }>;
+  runAnalysisRoundTrip(): Promise<RemoteWorkResult>;
+}
+
 declare global {
   interface Window {
     __libertasKernelTest: LibertasKernelTestApi;
@@ -171,6 +197,7 @@ declare global {
     __libertasMidiTest: LibertasMidiTestApi;
     __libertasRecordingTest: LibertasRecordingTestApi;
     __libertasAutomationTest: LibertasAutomationTestApi;
+    __libertasDistributedTest: LibertasDistributedTestApi;
   }
 }
 
@@ -1055,5 +1082,225 @@ render(mixerStatusElement, {
   state: 'channel strips + equal-power crossfader + sample-peak limiter ready',
 });
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
+
+function waitForCondition(predicate: () => boolean, timeoutMs = 5_000): Promise<void> {
+  const started = performance.now();
+  return new Promise((resolve, reject) => {
+    const poll = () => {
+      if (predicate()) {
+        resolve();
+        return;
+      }
+      if (performance.now() - started >= timeoutMs) {
+        reject(new Error('distributed browser condition timed out'));
+        return;
+      }
+      setTimeout(poll, 10);
+    };
+    poll();
+  });
+}
+
+function waitForIceGatheringComplete(connection: RTCPeerConnection, timeoutMs = 5_000): Promise<void> {
+  if (connection.iceGatheringState === 'complete') return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      connection.removeEventListener('icegatheringstatechange', onState);
+      reject(new Error('ICE gathering timed out'));
+    }, timeoutMs);
+    const onState = () => {
+      if (connection.iceGatheringState !== 'complete') return;
+      clearTimeout(timer);
+      connection.removeEventListener('icegatheringstatechange', onState);
+      resolve();
+    };
+    connection.addEventListener('icegatheringstatechange', onState);
+  });
+}
+
+function waitForDataChannelOpen(channel: RTCDataChannel, timeoutMs = 5_000): Promise<void> {
+  if (channel.readyState === 'open') return Promise.resolve();
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => {
+      channel.removeEventListener('open', onOpen);
+      reject(new Error('RTCDataChannel open timed out'));
+    }, timeoutMs);
+    const onOpen = () => {
+      clearTimeout(timer);
+      channel.removeEventListener('open', onOpen);
+      resolve();
+    };
+    channel.addEventListener('open', onOpen);
+  });
+}
+
+async function createRtcLoopbackPair(): Promise<{
+  a: RtcDataChannelTransport;
+  b: RtcDataChannelTransport;
+  ordered: boolean;
+  close(): void;
+}> {
+  if (typeof RTCPeerConnection === 'undefined') throw new Error('RTCPeerConnection unavailable');
+  const pcA = new RTCPeerConnection();
+  const pcB = new RTCPeerConnection();
+  const remoteChannel = new Promise<RTCDataChannel>((resolve) => {
+    pcB.addEventListener('datachannel', (event) => resolve(event.channel), { once: true });
+  });
+  const channelA = pcA.createDataChannel(DISTRIBUTED_CHANNEL_LABEL, { ordered: true });
+
+  await pcA.setLocalDescription(await pcA.createOffer());
+  await waitForIceGatheringComplete(pcA);
+  await pcB.setRemoteDescription(pcA.localDescription);
+  await pcB.setLocalDescription(await pcB.createAnswer());
+  await waitForIceGatheringComplete(pcB);
+  await pcA.setRemoteDescription(pcB.localDescription);
+
+  const channelB = await remoteChannel;
+  await Promise.all([waitForDataChannelOpen(channelA), waitForDataChannelOpen(channelB)]);
+  return {
+    a: new RtcDataChannelTransport(channelA),
+    b: new RtcDataChannelTransport(channelB),
+    ordered: channelA.ordered && channelB.ordered,
+    close() {
+      if (pcA.connectionState !== 'closed') pcA.close();
+      if (pcB.connectionState !== 'closed') pcB.close();
+    },
+  };
+}
+
+const hostDistributedNode: DistributedNode = {
+  nodeId: 'browser-host',
+  label: 'Browser Host',
+  capabilities: ['control', 'analysis', 'webrtc-datachannel'],
+  requestedRoles: ['mixer'],
+};
+
+const remoteDistributedNode: DistributedNode = {
+  nodeId: 'browser-remote',
+  label: 'Browser Remote',
+  capabilities: ['control', 'analysis', 'webrtc-datachannel'],
+  requestedRoles: ['mixer', 'worker'],
+};
+
+window.__libertasDistributedTest = {
+  rtcAvailable: () => typeof RTCPeerConnection !== 'undefined',
+  async runControlStress() {
+    const pair = await createRtcLoopbackPair();
+    const host = new DistributedSession({
+      sessionId: 'browser-control-proof',
+      hostNodeId: hostDistributedNode.nodeId,
+      localNode: hostDistributedNode,
+      transport: pair.a,
+      onControlIntent(intent) {
+        if (intent.target !== 'mixer.crossfader' || intent.action !== 'set' || typeof intent.value !== 'number') {
+          throw new Error('unexpected distributed browser control intent');
+        }
+        mixer.setCrossfader(intent.value);
+      },
+    });
+    const remote = new DistributedSession({
+      sessionId: 'browser-control-proof',
+      hostNodeId: hostDistributedNode.nodeId,
+      localNode: remoteDistributedNode,
+      transport: pair.b,
+    });
+
+    try {
+      host.start();
+      remote.start();
+      await waitForCondition(() => host.status().peers.length === 1 && remote.status().peers.length === 1);
+      host.grantRoles(remoteDistributedNode.nodeId, ['mixer']);
+      await waitForCondition(() => remote.status().authority.owners.mixer === remoteDistributedNode.nodeId);
+
+      remote.sendControl({
+        intentId: 'distributed-left',
+        role: 'mixer',
+        target: 'mixer.crossfader',
+        action: 'set',
+        value: -1,
+      });
+      await new Promise<void>((resolve) => setTimeout(resolve, 50));
+
+      const [beforeA, beforeB, beforeMixer] = await Promise.all([
+        deckA.requestStatus(),
+        deckB.requestStatus(),
+        mixer.requestStatus(),
+      ]);
+
+      setTimeout(() => {
+        remote.sendControl({
+          intentId: 'distributed-right',
+          role: 'mixer',
+          target: 'mixer.crossfader',
+          action: 'set',
+          value: 1,
+        });
+      }, 50);
+      blockMainThread(600);
+      await waitForCondition(() => {
+        const status = host.status();
+        return status.acceptedMessages >= 3;
+      });
+      const [afterA, afterB, afterMixer] = await Promise.all([
+        deckA.requestStatus(),
+        deckB.requestStatus(),
+        mixer.requestStatus(),
+      ]);
+      const hostStatus = host.status();
+      const remoteStatus = remote.status();
+      return {
+        ordered: pair.ordered,
+        peerNegotiated: hostStatus.peers[0]?.negotiatedCapabilities ?? [],
+        aFrameDelta: afterA.outputCurrentFrame - beforeA.outputCurrentFrame,
+        bFrameDelta: afterB.outputCurrentFrame - beforeB.outputCurrentFrame,
+        mixerFrameDelta: afterMixer.outputCurrentFrame - beforeMixer.outputCurrentFrame,
+        aDiscontinuityDelta: afterA.frameDiscontinuities - beforeA.frameDiscontinuities,
+        bDiscontinuityDelta: afterB.frameDiscontinuities - beforeB.frameDiscontinuities,
+        mixerDiscontinuityDelta: afterMixer.frameDiscontinuities - beforeMixer.frameDiscontinuities,
+        crossfaderGainA: afterMixer.crossfaderGainA,
+        crossfaderGainB: afterMixer.crossfaderGainB,
+        hostRejectedMessages: hostStatus.rejectedMessages,
+        remoteRejectedMessages: remoteStatus.rejectedMessages,
+      };
+    } finally {
+      host.close();
+      remote.close();
+      pair.close();
+    }
+  },
+  async runAnalysisRoundTrip() {
+    const pair = await createRtcLoopbackPair();
+    const host = new DistributedSession({
+      sessionId: 'browser-worker-proof',
+      hostNodeId: hostDistributedNode.nodeId,
+      localNode: hostDistributedNode,
+      transport: pair.a,
+    });
+    const remote = new DistributedSession({
+      sessionId: 'browser-worker-proof',
+      hostNodeId: hostDistributedNode.nodeId,
+      localNode: remoteDistributedNode,
+      transport: pair.b,
+      workHandlers: {
+        analysis: (request) => ({
+          ok: true,
+          outputRefs: [`analysis:${request.inputRefs[0] ?? 'missing'}`],
+          metrics: { provider: 'browser-remote-worker', deterministic: true },
+        }),
+      },
+    });
+
+    try {
+      host.start();
+      remote.start();
+      await waitForCondition(() => host.status().peers.length === 1 && remote.status().peers.length === 1);
+      return await host.requestWork('analysis', ['sha256:browser-fixture'], { mode: 'rhythm' }, 5_000);
+    } finally {
+      host.close();
+      remote.close();
+      pair.close();
+    }
+  },
+};
 
 export {};

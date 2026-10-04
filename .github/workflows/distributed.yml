@@ -1,0 +1,55 @@
+name: Distributed Libertas Gate
+
+on:
+  push:
+    branches: [module/distributed]
+    paths:
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'index.html'
+      - 'src/**'
+      - 'tests/browser/**'
+      - 'docs/contracts/DISTRIBUTED.md'
+      - 'docs/research/DISTRIBUTED_2026.md'
+      - '.github/workflows/distributed.yml'
+      - 'CAPABILITY_REGISTRY.json'
+      - 'MODULE_REGISTRY.json'
+      - 'DEVELOPMENT_STATE.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  phase11:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install toolchain
+        run: npm install
+      - name: Typecheck, unit tests, production build
+        run: npm run check
+      - name: Install Chrome for Testing
+        run: npx playwright install --with-deps chromium
+      - name: Phase 11 runtime and all locked regressions
+        run: npm run test:browser
+      - name: Upload Phase 11 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: phase11-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            package-lock.json
+            dist/
+            playwright-report/
+            test-results/
