@@ -5,7 +5,7 @@
   "active_module": "distributed",
   "active_branch": "module/distributed",
   "status": "AUTOMATED_TEST",
-  "current_objective": "Prove the Phase 11 distributed core: versioned session protocol, host role authority, capability negotiation, ordered WebRTC control/state transport, remote work-by-artifact-reference, and strict separation from the locked local realtime engine.",
+  "current_objective": "Prove Phase 11 resilience: stale-role revocation on disconnect, reconnect authority reset, bounded transport backpressure, and delayed/duplicate/reordered message rejection without disturbing the locked local audio engine.",
   "last_passing_gate": "phase10-composite-local-closeout",
   "last_evidence": "evidence/phase10/local/RESULT.json",
   "blockers": [],
@@ -15,6 +15,6 @@
     "WebRTC transport encryption does not by itself define application identity/trust policy.",
     "Remote render/reconstruction/agent work is protocol-capable but no production provider is claimed until its own worker/backend evidence exists."
   ],
-  "exact_next_action": "Run the new distributed unit/integration/browser runtime gate on module/distributed. Fix only Phase 11 defects. After Slice A is green, implement rendezvous/reconnect and worker/session torture before Phase 11 promotion.",
+  "exact_next_action": "Run Slice B unit/runtime regressions on module/distributed. Then add multi-worker capability routing and prolonged distributed-session torture before Phase 11 promotion.",
   "product_code_authorized": true
 }

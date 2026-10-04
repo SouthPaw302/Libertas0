@@ -71,6 +71,9 @@ export class DistributedSession {
   private readonly peers = new Map<string, SessionPeer>();
   private readonly pendingWork = new Map<string, PendingWork>();
   private unsubscribe: (() => void) | null = null;
+  private unsubscribeState: (() => void) | null = null;
+  private transport: DistributedTransport;
+  private started = false;
   private outgoingSeq = 0;
   private acceptedMessages = 0;
   private rejectedMessages = 0;
@@ -81,23 +84,37 @@ export class DistributedSession {
     if (!options.hostNodeId) throw new Error('hostNodeId must be non-empty');
     validateNode(options.localNode);
     this.authority = new SessionAuthority(options.hostNodeId);
+    this.transport = options.transport;
   }
 
   start(): void {
-    if (this.unsubscribe) return;
-    this.unsubscribe = this.options.transport.onMessage((raw) => this.receive(raw));
-    this.send('hello', { node: this.options.localNode });
+    if (this.started) return;
+    this.started = true;
+    this.attachTransport();
+  }
+
+  replaceTransport(transport: DistributedTransport): void {
+    this.unsubscribe?.();
+    this.unsubscribeState?.();
+    this.unsubscribe = null;
+    this.unsubscribeState = null;
+    this.transport.close();
+    this.transport = transport;
+    if (this.started) this.attachTransport();
   }
 
   close(): void {
+    this.started = false;
     this.unsubscribe?.();
+    this.unsubscribeState?.();
     this.unsubscribe = null;
+    this.unsubscribeState = null;
     for (const pending of this.pendingWork.values()) {
       clearTimeout(pending.timer);
       pending.reject(new Error('distributed session closed'));
     }
     this.pendingWork.clear();
-    this.options.transport.close();
+    this.transport.close();
   }
 
   status(): DistributedSessionStatus {
@@ -105,7 +122,7 @@ export class DistributedSession {
       sessionId: this.options.sessionId,
       localNodeId: this.options.localNode.nodeId,
       hostNodeId: this.options.hostNodeId,
-      transportState: this.options.transport.state,
+      transportState: this.transport.state,
       peers: [...this.peers.values()].map((peer) => ({
         node: { ...peer.node, capabilities: [...peer.node.capabilities], requestedRoles: [...peer.node.requestedRoles] },
         negotiatedCapabilities: [...peer.negotiatedCapabilities],
@@ -193,7 +210,31 @@ export class DistributedSession {
       kind,
       payload,
     };
-    this.options.transport.send(encodeEnvelope(envelope));
+    this.transport.send(encodeEnvelope(envelope));
+  }
+
+  private attachTransport(): void {
+    this.unsubscribe = this.transport.onMessage((raw) => this.receive(raw));
+    this.unsubscribeState = this.transport.onStateChange((state) => {
+      if (state === 'closed') this.handleTransportClosed();
+      if (state === 'open') this.send('hello', { node: this.options.localNode });
+    });
+    if (this.transport.state === 'open') this.send('hello', { node: this.options.localNode });
+  }
+
+  private handleTransportClosed(): void {
+    const peerIds = [...this.peers.keys()];
+    this.peers.clear();
+    if (this.options.localNode.nodeId === this.options.hostNodeId) {
+      for (const peerId of peerIds) this.authority.revokeNode(this.options.hostNodeId, peerId);
+    } else {
+      this.authority.invalidateLocalView();
+    }
+    for (const pending of this.pendingWork.values()) {
+      clearTimeout(pending.timer);
+      pending.reject(new Error('distributed transport closed'));
+    }
+    this.pendingWork.clear();
   }
 
   private receive(raw: string): void {
@@ -248,6 +289,16 @@ export class DistributedSession {
       node,
       negotiatedCapabilities: intersectCapabilities(this.options.localNode.capabilities, node.capabilities),
     });
+    if (this.options.localNode.nodeId === this.options.hostNodeId) {
+      const snapshot = this.authority.snapshot();
+      if (snapshot.generation > 0) {
+        this.send('role-grant', {
+          nodeId: node.nodeId,
+          roles: this.authority.rolesFor(node.nodeId),
+          generation: snapshot.generation,
+        });
+      }
+    }
   }
 
   private handleRoleGrant(envelope: DistributedEnvelope): void {

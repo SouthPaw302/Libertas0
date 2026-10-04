@@ -34,6 +34,19 @@ export class SessionAuthority {
     return this.snapshot();
   }
 
+  rolesFor(nodeId: string): DistributedRole[] {
+    const roles: DistributedRole[] = [];
+    for (const [role, owner] of this.owners) {
+      if (owner === nodeId) roles.push(role);
+    }
+    return roles;
+  }
+
+  invalidateLocalView(): AuthoritySnapshot {
+    this.owners.clear();
+    return this.snapshot();
+  }
+
   snapshot(): AuthoritySnapshot {
     const owners: Partial<Record<DistributedRole, string>> = {};
     for (const [role, nodeId] of this.owners) owners[role] = nodeId;

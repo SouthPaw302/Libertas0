@@ -241,3 +241,13 @@ Status: ACCEPTED FOR PHASE 11
 
 Analysis, rendering, reconstruction and agent jobs are delegated using content/artifact references plus scalar parameters. Results return artifact references and metrics. A remote worker can produce information or media, but it cannot become a hidden timing dependency for local deck/SYNC execution.
 
+## D-0043 — Transport loss revokes role authority before reconnect
+Status: ACCEPTED FOR PHASE 11
+
+A disconnected peer cannot retain a usable control lease. The host removes that peer's role ownership when the point-to-point transport closes, and the remote clears its local authority view. Reconnect establishes a fresh transport/hello exchange; control resumes only after current host authority is synchronized or explicitly re-granted.
+
+## D-0044 — Distributed control transport is bounded by message and send-buffer limits
+Status: ACCEPTED FOR PHASE 11
+
+The protocol rejects oversized control envelopes and the RTCDataChannel provider rejects sends that would exceed its configured bufferedAmount ceiling. Large media/artifacts belong in content-addressed storage or a future chunk transport, never in an unbounded control queue.
+

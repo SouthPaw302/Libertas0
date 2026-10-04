@@ -61,4 +61,9 @@ describe('DistributedProtocol', () => {
       ['analysis', 'control', 'agent'],
     )).toEqual(['control', 'analysis']);
   });
+  it('rejects oversized envelopes before JSON processing can pressure the session', () => {
+    const raw = JSON.stringify({ protocol: 'libertas.distributed.v1', padding: 'x'.repeat(1024) });
+    expect(() => decodeEnvelope(raw, 128)).toThrow(/size limit/);
+  });
+
 });

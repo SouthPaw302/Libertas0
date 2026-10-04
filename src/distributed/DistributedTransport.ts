@@ -4,12 +4,14 @@ export interface DistributedTransport {
   readonly state: DistributedTransportState;
   send(raw: string): void;
   onMessage(handler: (raw: string) => void): () => void;
+  onStateChange(handler: (state: DistributedTransportState) => void): () => void;
   close(): void;
 }
 
 export class MemoryTransport implements DistributedTransport {
   private peer: MemoryTransport | null = null;
   private handlers = new Set<(raw: string) => void>();
+  private stateHandlers = new Set<(state: DistributedTransportState) => void>();
   private closed = false;
 
   static pair(): [MemoryTransport, MemoryTransport] {
@@ -36,9 +38,32 @@ export class MemoryTransport implements DistributedTransport {
     return () => this.handlers.delete(handler);
   }
 
+  onStateChange(handler: (state: DistributedTransportState) => void): () => void {
+    this.stateHandlers.add(handler);
+    return () => this.stateHandlers.delete(handler);
+  }
+
   close(): void {
+    if (this.closed) return;
     this.closed = true;
+    this.emitState();
+    const peer = this.peer;
     this.handlers.clear();
+    this.stateHandlers.clear();
+    if (peer && !peer.closed) peer.remoteClosed();
+  }
+
+  private remoteClosed(): void {
+    if (this.closed) return;
+    this.closed = true;
+    this.emitState();
+    this.handlers.clear();
+    this.stateHandlers.clear();
+  }
+
+  private emitState(): void {
+    const state = this.state;
+    for (const handler of this.stateHandlers) handler(state);
   }
 
   private deliver(raw: string): void {

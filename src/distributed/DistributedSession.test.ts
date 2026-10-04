@@ -123,5 +123,70 @@ describe('DistributedSession', () => {
     expect(() => remote.grantRoles('remote', ['mixer'])).toThrow(/only the session host/);
     host.close();
     remote.close();
+  });  it('revokes stale role authority on transport loss and requires a fresh host grant after reconnect', async () => {
+    const received: string[] = [];
+    const [a1, b1] = MemoryTransport.pair();
+    const host = new DistributedSession({
+      sessionId: 's4',
+      hostNodeId: 'host',
+      localNode: hostNode,
+      transport: a1,
+      onControlIntent: (intent) => received.push(intent.intentId),
+    });
+    const remote = new DistributedSession({
+      sessionId: 's4',
+      hostNodeId: 'host',
+      localNode: remoteNode,
+      transport: b1,
+    });
+    host.start();
+    remote.start();
+    await flush();
+
+    host.grantRoles('remote', ['mixer']);
+    await flush();
+    remote.sendControl({
+      intentId: 'before-drop',
+      role: 'mixer',
+      target: 'mixer.crossfader',
+      action: 'set',
+      value: 0,
+    });
+    await flush();
+    expect(received).toEqual(['before-drop']);
+
+    a1.close();
+    await flush();
+    expect(host.status().authority.owners.mixer).toBeUndefined();
+    expect(remote.status().authority.owners.mixer).toBeUndefined();
+
+    const [a2, b2] = MemoryTransport.pair();
+    host.replaceTransport(a2);
+    remote.replaceTransport(b2);
+    await flush();
+
+    expect(() => remote.sendControl({
+      intentId: 'stale-after-reconnect',
+      role: 'mixer',
+      target: 'mixer.crossfader',
+      action: 'set',
+      value: 1,
+    })).toThrow(/does not own/);
+
+    host.grantRoles('remote', ['mixer']);
+    await flush();
+    remote.sendControl({
+      intentId: 'fresh-after-reconnect',
+      role: 'mixer',
+      target: 'mixer.crossfader',
+      action: 'set',
+      value: 1,
+    });
+    await flush();
+    expect(received).toEqual(['before-drop', 'fresh-after-reconnect']);
+    host.close();
+    remote.close();
   });
+
+
 });
