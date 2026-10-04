@@ -1,0 +1,88 @@
+{
+  "task_id": "INTELLIGENCE-T5-001",
+  "requested_sha": "7fcb8627d5d7a82164bd097d1523941951f8d698",
+  "branch": "module/intelligence",
+  "module": "intelligence",
+  "objective": "Validate Phase 9 Track Intelligence on ordinary constant-tempo music and determine whether analyzer-proposed BPM/beat anchors are good enough to drive the proven SYNC engine without manual BPM entry.",
+  "preferred_tracks": [
+    "Tribal House  (Remastered).wav",
+    "Tribal House  (Remastered) (1).wav"
+  ],
+  "setup": [
+    "Check out exact SHA 7fcb8627d5d7a82164bd097d1523941951f8d698.",
+    "Require python bootstrap.py -> LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Open the app in headed Chromium/Codex browser on physical audio output.",
+    "Use the prior ordinary local constant-tempo dance tracks if still available. If those exact files are unavailable, use one ordinary constant-tempo dance track and a duplicate/copy of that same file."
+  ],
+  "tests": [
+    {
+      "id": "ordinary-analysis",
+      "instructions": "For each ordinary track, select the file and run Track Intelligence without applying the proposal. Record BPM, tempoConfidence, firstBeatFrame and seconds, phaseConfidence, gridConfidence, recommended, duration, RMS/peak/crest/ZCR and provider.",
+      "pass": [
+        "Analysis completes in the worker without interrupting playback/runtime.",
+        "No Musical Clock grid changes before explicit Apply.",
+        "For duplicate/same-material tracks, proposed BPM values are consistent within 0.25 BPM and anchors are musically equivalent modulo the beat period.",
+        "For the preferred Tribal House material, BPM should be plausibly near the known ~128 BPM region; do not force PASS solely from that expectation."
+      ]
+    },
+    {
+      "id": "determinism",
+      "instructions": "Analyze at least one ordinary file twice from the same bytes.",
+      "pass": [
+        "BPM is identical or within numerical tolerance.",
+        "Beat-anchor frame is identical or within one analysis hop.",
+        "Confidence/provenance is stable."
+      ]
+    },
+    {
+      "id": "explicit-grid-apply",
+      "instructions": "Capture the manual Musical Clock grid before analysis, analyze, verify it is unchanged, then explicitly Apply the analyzer proposal.",
+      "pass": [
+        "Analysis itself does not mutate the grid.",
+        "Apply updates BPM and firstBeatFrame to the proposal.",
+        "No transport jump occurs merely from applying metadata."
+      ]
+    },
+    {
+      "id": "ordinary-track-sync",
+      "instructions": "Load the two ordinary same-material/duplicate constant-tempo files into A and B, apply each analyzer proposal explicitly, start both from the beginning, enable SYNC B to leader A, and listen for at least 3 minutes while checking phase/seek/discontinuity telemetry.",
+      "pass": [
+        "SYNC reaches tracking/lock using analyzer-derived grids.",
+        "Human confirms the beats audibly align and remain aligned.",
+        "Follower transportSeekCount does not increase from SYNC maintenance.",
+        "0 new A/B/mixer frame discontinuities during the measured hold.",
+        "No stale snapshot accumulation."
+      ]
+    },
+    {
+      "id": "background-safety",
+      "instructions": "While one deck is playing normally, run analysis of another ordinary track.",
+      "pass": [
+        "Playing deck continues advancing.",
+        "0 new worklet frame discontinuities attributable to analysis.",
+        "No audible dropout/stall from the analysis job."
+      ]
+    }
+  ],
+  "result_policy": [
+    "PASS may establish the reference analyzer for the tested ordinary constant-tempo material only; it is not evidence of universal music-analysis accuracy.",
+    "If confidence is low or the audible grid is wrong, report FAIL or BLOCKED with the raw proposal; do not manually repair the proposal and call it analyzer PASS.",
+    "Do not claim semantic downbeat detection."
+  ],
+  "evidence_required": [
+    "Exact tested SHA and report commit.",
+    "Per-track analysis results and confidence/provenance.",
+    "Manual-grid before/after explicit Apply.",
+    "Repeated-analysis determinism result.",
+    "Ordinary-track SYNC phase/seek/discontinuity/stale-snapshot telemetry.",
+    "Human audible assessment.",
+    "Console/runtime errors."
+  ],
+  "report_rules": [
+    "Modify only reports/local-debug/** on validation/local-debug.",
+    "Do not patch product code from the report branch.",
+    "Push the report branch for issue #1 relay.",
+    "Do not begin Phase 10."
+  ]
+}

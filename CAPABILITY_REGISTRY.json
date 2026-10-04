@@ -184,9 +184,10 @@
     {
       "id": "audio.track-intelligence",
       "class": "analysis",
-      "status": "implementing",
+      "status": "runtime-proven-real-track-pending",
       "provider": "Web Worker deterministic onset/autocorrelation DSP",
-      "contract": "docs/contracts/TRACK_INTELLIGENCE.md"
+      "contract": "docs/contracts/TRACK_INTELLIGENCE.md",
+      "evidence": "evidence/intelligence/phase9-automated/RESULT.json"
     }
   ]
 }

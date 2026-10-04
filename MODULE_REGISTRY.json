@@ -115,7 +115,7 @@
     },
     {
       "id": "intelligence",
-      "state": "IMPLEMENTING",
+      "state": "LOCAL_DEBUG",
       "depends_on": [
         "mixer-dsp"
       ],

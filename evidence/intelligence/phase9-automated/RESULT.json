@@ -1,0 +1,48 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "intelligence",
+  "gate": "phase9-automated",
+  "status": "PASS",
+  "tested_sha": "7fcb8627d5d7a82164bd097d1523941951f8d698",
+  "system_contract": {
+    "run_id": 37180926566,
+    "conclusion": "success"
+  },
+  "intelligence_gate": {
+    "run_id": 37180926568,
+    "job_id": 111373174766,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "status": "PASS",
+      "test_files": 8,
+      "tests_passed": 33,
+      "intelligence_tests": 3
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 32,
+      "locked_regressions": "PASS",
+      "phase9_checks": [
+        "worker analysis recovers BPM and beat anchor from unknown generated audio",
+        "analysis alone does not mutate the active Musical Clock grid",
+        "explicit Apply changes the grid",
+        "two independently analyzed unknown-grid tracks can drive proven SYNC without manual BPM entry"
+      ]
+    }
+  },
+  "artifact": {
+    "id": 11295435024,
+    "name": "track-intelligence-7fcb8627d5d7a82164bd097d1523941951f8d698",
+    "digest": "sha256:3c161a9d3d74d25b34ddfe2bcc19a44b858e200ce273c12dbcab1b454fb0bfa7",
+    "expires_at": "2026-10-18T05:49:26Z"
+  },
+  "limitations": [
+    "Generated fixtures prove analyzer mechanics, not universal ordinary-music accuracy.",
+    "firstBeatFrame is a beat-phase anchor candidate, not semantic bar/downbeat classification.",
+    "Reference provider does not yet detect key, phrases, stems, or variable-tempo warp maps."
+  ]
+}

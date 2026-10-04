@@ -4,17 +4,18 @@
   "phase": "intelligence",
   "active_module": "intelligence",
   "active_branch": "module/intelligence",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build advisory Web Worker track analysis that proposes BPM and beat-anchor grids with confidence/provenance, without changing realtime authority or silently mutating Musical Clock state.",
-  "last_passing_gate": "mixer-dsp-T5-local-physical-listening",
-  "last_evidence": "evidence/mixer-dsp/phase8-local/RESULT.json",
-  "blockers": [],
-  "known_limitations": [
-    "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
-    "Phase 9 firstBeatFrame is a beat-phase anchor candidate, not semantic bar-downbeat detection.",
-    "Phase 9 reference analyzer is deterministic onset/autocorrelation DSP, not a learned model.",
-    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis."
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Validate the proven Phase 9 worker analyzer on ordinary constant-tempo music before claiming real-track BPM/beat-grid utility.",
+  "last_passing_gate": "intelligence-T4-browser-runtime",
+  "last_evidence": "evidence/intelligence/phase9-automated/RESULT.json",
+  "blockers": [
+    "Ordinary-track analyzer accuracy and analyzer-derived ordinary-track SYNC have not yet returned through the local debug bus."
   ],
-  "exact_next_action": "Run Phase 9 unit/build/browser gates and all locked regressions. Generated-fixture success does not by itself clear ordinary-track SYNC accuracy.",
-  "product_code_authorized": true
+  "known_limitations": [
+    "firstBeatFrame is a beat-phase anchor candidate, not semantic bar/downbeat classification.",
+    "Reference analyzer does not detect key, phrases, stems or variable-tempo warp maps.",
+    "Generated-fixture success must not be generalized to arbitrary ordinary music."
+  ],
+  "exact_next_action": "Execute INTELLIGENCE-T5-001 on exact SHA 7fcb8627d5d7a82164bd097d1523941951f8d698. Do not begin Phase 10 until the ordinary-track evidence is reviewed.",
+  "product_code_authorized": false
 }
