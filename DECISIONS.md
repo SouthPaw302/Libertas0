@@ -156,3 +156,27 @@ Phase 9 analysis runs in a Web Worker over decoded PCM. It can propose BPM and a
 Status: ACCEPTED FOR PHASE 9
 
 The first intelligence provider uses inspectable energy-onset extraction, tempo autocorrelation, phase estimation and confidence scoring. Meyda/Essentia.js, WASM, ONNX, WebGPU and WebNN remain replaceable future provider candidates rather than prerequisites.
+
+## D-0029 — Phase 9 v1 ordinary-track failure is preserved
+Status: ACCEPTED
+
+The first reference analyzer on `7fcb8627d5d7a82164bd097d1523941951f8d698` produced a deterministic but low-confidence 144.5839447 BPM proposal on the tested 305-second Tribal House material and correctly returned `recommended=false`. The gate stopped before Apply or ordinary-track SYNC. This failure remains part of the permanent evidence and is not rewritten by the later v2 success.
+
+## D-0030 — Spectral-comb rhythm ensemble supersedes the v1 proposal provider
+Status: ACCEPTED
+
+Phase 9 v2 on `efacc9e40237a01f054fea9fb5a29503f622fa6c` uses spectral-flux onset evidence, harmonic comb candidate selection and local sub-BPM autocorrelation refinement in a Web Worker. The legacy v1 estimate remains visible in diagnostics but no longer owns the proposal. Analysis remains advisory and cannot mutate the Musical Clock before explicit Apply.
+
+## D-0031 — Track Intelligence promoted and locked
+Status: ACCEPTED
+
+On the same byte-identical 305-second 48 kHz ordinary WAV material that blocked v1, v2 produced a deterministic, duplicate-stable 125.8478959 BPM proposal with tempo confidence 0.806715, phase confidence 0.786217, grid confidence 0.796400 and `recommended=true`. Manual grids remained unchanged until explicit Apply.
+
+After explicit application, A-leader/B-follower ordinary-track SYNC held for 180 seconds with tracking and lock maintained, final phase error 0.00093995 beats, zero follower transport seeks, zero follower frame discontinuities and zero stale snapshots. An explicit follower jog incremented performanceJumpCount and re-locked with zero hidden corrective seeks. Human audible verification passed.
+
+The promotion proves the tested constant-tempo ordinary-material path; it does not claim universal BPM/downbeat accuracy, variable-tempo warp support, semantic downbeat detection, key analysis, phrase analysis or stems.
+
+## D-0032 — Ordinary constant-tempo program-material SYNC limitation is partially closed
+Status: ACCEPTED
+
+The Phase 6 limitation that ordinary program-material SYNC had not been evaluated is now closed for the tested constant-tempo analyzer-derived grid path. Variable-tempo/warped material remains outside the proven SYNC scope.

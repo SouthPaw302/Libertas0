@@ -47,8 +47,9 @@
     {
       "id": "compute.webworker",
       "class": "background",
-      "status": "planned",
-      "provider": "Web Worker"
+      "status": "proven",
+      "provider": "Web Worker",
+      "evidence": "evidence/intelligence/phase9-local/RESULT.json"
     },
     {
       "id": "compute.webgpu",
@@ -127,10 +128,11 @@
         "reverse leadership",
         "main-thread stress",
         "five-minute hold",
-        "human audible confirmation"
+        "human audible confirmation",
+        "constant-tempo ordinary program tracks with analyzer-derived BPM + beat-phase grids"
       ],
       "not_yet_proven": [
-        "ordinary program tracks with verified BPM + first-beat grids"
+        "variable-tempo/warped ordinary tracks"
       ]
     },
     {
@@ -184,10 +186,27 @@
     {
       "id": "audio.track-intelligence",
       "class": "analysis",
-      "status": "runtime-proven-local-retest-pending",
+      "status": "proven",
       "provider": "Web Worker rhythm ensemble v2: spectral flux + harmonic comb + sub-BPM refinement",
       "contract": "docs/contracts/TRACK_INTELLIGENCE.md",
-      "evidence": "evidence/intelligence/phase9-v2-automated/RESULT.json"
+      "evidence": "evidence/intelligence/phase9-local/RESULT.json",
+      "proven_scope": [
+        "BPM proposal on tested constant-tempo ordinary material",
+        "beat-phase anchor proposal",
+        "confidence/recommendation gating",
+        "deterministic duplicate analysis",
+        "explicit-only Musical Clock grid application",
+        "background analysis safety",
+        "ordinary-track analyzer-to-SYNC integration"
+      ],
+      "not_yet_proven": [
+        "universal multi-genre BPM accuracy",
+        "semantic downbeat/bar classification",
+        "variable-tempo warp maps",
+        "key detection",
+        "phrase/structure analysis",
+        "stems"
+      ]
     }
   ]
 }

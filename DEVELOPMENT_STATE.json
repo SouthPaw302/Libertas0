@@ -1,21 +1,21 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "intelligence",
-  "active_module": "intelligence",
-  "active_branch": "module/intelligence",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Re-run the exact ordinary Tribal House material that exposed F-0016 against the green v2 analyzer. No manual BPM/grid repair is permitted.",
-  "last_passing_gate": "track-intelligence-v2-T4-browser-runtime",
-  "last_evidence": "evidence/intelligence/phase9-v2-automated/RESULT.json",
-  "blockers": [
-    "Phase 9 ordinary-track accuracy remains unproven until INTELLIGENCE-T5-002 passes on the same material that failed v1."
-  ],
+  "phase": "library_midi_recording_automation",
+  "active_module": "library-midi-recording-automation",
+  "active_branch": "main",
+  "status": "PLANNED",
+  "current_objective": "Phase 9 Track Intelligence is complete and locked with real ordinary-track analysis, explicit grid application, 180-second analyzer-derived SYNC, follower-jog recovery and audible confirmation. Await explicit user instruction before Phase 10.",
+  "last_passing_gate": "track-intelligence-T5-ordinary-track",
+  "last_evidence": "evidence/intelligence/phase9-local/RESULT.json",
+  "blockers": [],
   "known_limitations": [
-    "Semantic downbeat/bar classification is not implemented; firstBeatFrame remains a beat-phase anchor candidate.",
-    "Variable-tempo warp maps, key, phrase and stem analysis are not Phase 9 features.",
-    "Phase 9 must not be promoted from synthetic accuracy alone."
+    "Track Intelligence is proven only on the tested constant-tempo ordinary material plus synthetic fixtures; universal BPM accuracy is not claimed.",
+    "Semantic downbeat/bar classification and variable-tempo warp maps are not implemented.",
+    "Key, phrase, structure and stem analysis are not Phase 9 features.",
+    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
+    "Phase 8 limiter remains sample-peak safety limiting rather than true-peak mastering."
   ],
-  "exact_next_action": "Execute INTELLIGENCE-T5-002 on exact SHA efacc9e40237a01f054fea9fb5a29503f622fa6c using the same Tribal House WAV SHA-256 639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D. Do not manually repair the proposal.",
+  "exact_next_action": "Await explicit instruction to start Phase 10 Library/MIDI/Recording/Automation. Preserve Phases 2-9 as locked dependencies.",
   "product_code_authorized": false
 }

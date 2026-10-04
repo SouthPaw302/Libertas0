@@ -1,0 +1,85 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "intelligence",
+  "gate": "phase9-local-ordinary-track",
+  "status": "PASS",
+  "tested_sha": "efacc9e40237a01f054fea9fb5a29503f622fa6c",
+  "handoff_commit": "24bacaac1ffa1b77361e614ab573204acafdabb3",
+  "report_commit": "2a317d0ad5b711be42d1e803f3efa885100a9476",
+  "task_id": "INTELLIGENCE-T5-002",
+  "material": {
+    "description": "Two byte-identical 305-second 48 kHz Tribal House WAVs",
+    "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D"
+  },
+  "analyzer": {
+    "provider": "libertas.rhythm-ensemble.v2",
+    "execution": "web-worker",
+    "bpm": 125.84789589523987,
+    "tempo_confidence": 0.8067152468712988,
+    "first_beat_frame": 512,
+    "first_beat_seconds": 0.0106666666666667,
+    "phase_confidence": 0.7862169919853077,
+    "grid_confidence": 0.7964001725162028,
+    "recommended": true,
+    "spectral_comb_bpm": 126,
+    "legacy_v1_bpm": 144.58394471887152,
+    "legacy_v1_tempo_confidence": 0.252614734751494,
+    "determinism": "PASS",
+    "duplicate_agreement": "PASS"
+  },
+  "authority": {
+    "manual_grid_unchanged_before_apply": true,
+    "explicit_apply_required": true,
+    "transport_jump_on_apply": false,
+    "seek_on_apply": false,
+    "discontinuity_on_apply": false
+  },
+  "background_safety": {
+    "status": "PASS",
+    "playing_deck_advanced_frames": 364288,
+    "new_discontinuities": 0,
+    "audible_stall": false
+  },
+  "ordinary_track_sync": {
+    "status": "PASS",
+    "duration_seconds": 180,
+    "follower_locked": true,
+    "follower_tracking": true,
+    "final_phase_error_beats": 0.0009399501653888,
+    "follower_transport_seek_count": 0,
+    "follower_frame_discontinuities": 0,
+    "follower_stale_snapshots": 0,
+    "follower_valid_snapshots": 96716,
+    "audible_confirmation": "PASS — Roger sound on."
+  },
+  "follower_jog_relock": {
+    "status": "PASS",
+    "jog_count_delta": 1,
+    "performance_jump_count_delta": 1,
+    "hidden_sync_seek_delta": 0,
+    "new_frame_discontinuities": 0,
+    "relocked": true
+  },
+  "automated_gate": {
+    "unit_simulation_tests": 34,
+    "chrome_runtime_regression_tests": 32,
+    "status": "PASS"
+  },
+  "proven_scope": [
+    "deterministic duplicate-stable BPM proposal on tested constant-tempo ordinary material",
+    "beat-phase anchor proposal on tested material",
+    "confidence and recommendation gating",
+    "manual-grid non-mutation before explicit Apply",
+    "background Worker analysis without audio interruption",
+    "analyzer-derived ordinary-track SYNC for 180 seconds",
+    "follower performance-jump re-lock without hidden corrective seek",
+    "human audible confirmation"
+  ],
+  "limitations": [
+    "This does not prove universal BPM accuracy across genres or rhythmic structures.",
+    "Semantic downbeat/bar classification is not implemented.",
+    "Variable-tempo warp maps are not implemented.",
+    "Key, phrase, stem and structure analysis are not Phase 9 features.",
+    "The tested v2 proposal was 125.8479 BPM; acceptance is grounded in deterministic confidence plus successful real audible SYNC, not a blanket claim that every nominal ~128 BPM track will estimate exactly 128."
+  ]
+}
