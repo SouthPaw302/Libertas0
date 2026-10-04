@@ -156,3 +156,13 @@ Phase 9 analysis runs in a Web Worker over decoded PCM. It can propose BPM and a
 Status: ACCEPTED FOR PHASE 9
 
 The first intelligence provider uses inspectable energy-onset extraction, tempo autocorrelation, phase estimation and confidence scoring. Meyda/Essentia.js, WASM, ONNX, WebGPU and WebNN remain replaceable future provider candidates rather than prerequisites.
+
+## D-0027 — Track Intelligence is advisory and runs outside realtime authority
+Status: ACCEPTED FOR PHASE 9
+
+Track analysis runs in a dedicated Web Worker over transferred mono PCM. It may emit BPM, beat-anchor, confidence, descriptors and a grid proposal, but it may not change deck transport, the Musical Clock, SYNC or DSP unless a user explicitly applies a proposal.
+
+## D-0028 — Phase 9 starts with a deterministic reference analyzer
+Status: ACCEPTED FOR PHASE 9
+
+The first provider uses onset-envelope autocorrelation and beat-phase scoring rather than adding a neural or third-party dependency. Meyda, Essentia.js, ONNX, WebGPU, WebNN or native providers may later compete behind the same output/provenance contract. Provider capability does not imply realtime authority.

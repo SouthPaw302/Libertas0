@@ -16,6 +16,8 @@ import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
 import { PerformanceTransportController } from './transport/PerformanceTransportController';
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 import { TrackIntelligenceController } from './intelligence/TrackIntelligenceController';
+import type { TrackAnalysisResult } from './intelligence/TrackIntelligenceEngine';
+import { TrackIntelligenceController } from './intelligence/TrackIntelligenceController';
 import type { TrackAnalysisResult } from './intelligence/TrackAnalysisCore';
 
 interface LibertasKernelTestApi {
@@ -107,6 +109,19 @@ interface LibertasIntelligenceTestApi {
   grid(deck: 'A' | 'B'): BeatGrid;
 }
 
+interface LibertasIntelligenceTestApi {
+  analyzeGenerated(
+    deck: 'A' | 'B',
+    bpm: number,
+    durationSeconds?: number,
+    firstBeatSeconds?: number,
+  ): Promise<TrackAnalysisResult>;
+  analyzeEncoded(deck: 'A' | 'B', encoded: ArrayBuffer): Promise<TrackAnalysisResult>;
+  latest(deck: 'A' | 'B'): TrackAnalysisResult | null;
+  applyLatest(deck: 'A' | 'B'): BeatGrid;
+  grid(deck: 'A' | 'B'): BeatGrid;
+}
+
 interface LibertasDualDeckTestApi {
   loadGenerated(
     durationSeconds?: number,
@@ -133,6 +148,7 @@ declare global {
     __libertasPerformanceATest: LibertasPerformanceTransportTestApi;
     __libertasPerformanceBTest: LibertasPerformanceTransportTestApi;
     __libertasIntelligenceTest: LibertasIntelligenceTestApi;
+    __libertasIntelligenceTest: LibertasIntelligenceTestApi;
   }
 }
 
@@ -149,6 +165,8 @@ const deckB = new DeckBController(runtime, undefined, { node: channelB.inputNode
 const sync = new SyncController(deckA, deckB);
 const performanceA = new PerformanceTransportController(deckA);
 const performanceB = new PerformanceTransportController(deckB);
+const intelligence = new TrackIntelligenceController(runtime);
+const intelligenceResults = new Map<'A' | 'B', TrackAnalysisResult>();
 const intelligence = new TrackIntelligenceController(runtime);
 const intelligenceResults = new Map<'A' | 'B', { fileName: string; result: TrackAnalysisResult }>();
 
@@ -200,6 +218,12 @@ const perfBLoopOff = document.querySelector<HTMLButtonElement>('#perf-b-loop-off
 const perfBJogBack = document.querySelector<HTMLButtonElement>('#perf-b-jog-back');
 const perfBJogForward = document.querySelector<HTMLButtonElement>('#perf-b-jog-forward');
 const perfBStatus = document.querySelector<HTMLPreElement>('#perf-b-status');
+const intelligenceAnalyzeA = document.querySelector<HTMLButtonElement>('#intelligence-analyze-a');
+const intelligenceAnalyzeB = document.querySelector<HTMLButtonElement>('#intelligence-analyze-b');
+const intelligenceApplyA = document.querySelector<HTMLButtonElement>('#intelligence-apply-a');
+const intelligenceApplyB = document.querySelector<HTMLButtonElement>('#intelligence-apply-b');
+const intelligenceStatusA = document.querySelector<HTMLPreElement>('#intelligence-a-status');
+const intelligenceStatusB = document.querySelector<HTMLPreElement>('#intelligence-b-status');
 const intelligenceAAnalyze = document.querySelector<HTMLButtonElement>('#intelligence-a-analyze');
 const intelligenceAApply = document.querySelector<HTMLButtonElement>('#intelligence-a-apply');
 const intelligenceAStatus = document.querySelector<HTMLPreElement>('#intelligence-a-status');
@@ -322,6 +346,36 @@ function setMusicalGrid(deck: 'A' | 'B', grid: BeatGrid): void {
   if (clock) clock.setGrid(grid);
 }
 
+function applyIntelligenceProposal(deck: 'A' | 'B'): BeatGrid {
+  const result = intelligenceResults.get(deck);
+  if (!result) throw new Error(`Deck ${deck} has no analysis proposal`);
+  const grid: BeatGrid = {
+    bpm: result.gridProposal.bpm,
+    firstBeatFrame: result.gridProposal.firstBeatFrame,
+    beatsPerBar: result.gridProposal.beatsPerBar,
+    beatUnit: result.gridProposal.beatUnit,
+  };
+  setMusicalGrid(deck, grid);
+
+  const prefix = deck.toLowerCase();
+  const bpm = document.querySelector<HTMLInputElement>(`#clock-${prefix}-bpm`);
+  const origin = document.querySelector<HTMLInputElement>(`#clock-${prefix}-origin`);
+  const beatsBar = document.querySelector<HTMLInputElement>(`#clock-${prefix}-beats-bar`);
+  if (bpm) bpm.value = grid.bpm.toFixed(4);
+  if (origin) origin.value = String(Math.round(grid.firstBeatFrame));
+  if (beatsBar) beatsBar.value = String(grid.beatsPerBar);
+  return grid;
+}
+
+async function analyzeDeckFile(deck: 'A' | 'B'): Promise<TrackAnalysisResult> {
+  const prefix = deck.toLowerCase();
+  const file = document.querySelector<HTMLInputElement>(`#deck-${prefix}-file`)?.files?.[0];
+  if (!file) throw new Error(`Choose a Deck ${deck} audio file first`);
+  const result = await intelligence.analyzeFile(file);
+  intelligenceResults.set(deck, result);
+  return result;
+}
+
 function bindClockControls(deck: 'A' | 'B', prefix: 'a' | 'b'): void {
   const bpm = document.querySelector<HTMLInputElement>(`#clock-${prefix}-bpm`)!;
   const origin = document.querySelector<HTMLInputElement>(`#clock-${prefix}-origin`)!;
@@ -348,6 +402,39 @@ function bindClockControls(deck: 'A' | 'B', prefix: 'a' | 'b'): void {
 
 bindClockControls('A', 'a');
 bindClockControls('B', 'b');
+
+intelligenceAnalyzeA?.addEventListener('click', () => {
+  render(intelligenceStatusA, { state: 'analyzing', note: 'proposal only; grid unchanged' });
+  void analyzeDeckFile('A')
+    .then((result) => render(intelligenceStatusA, result))
+    .catch((error: unknown) => render(intelligenceStatusA, { error: String(error) }));
+});
+intelligenceAnalyzeB?.addEventListener('click', () => {
+  render(intelligenceStatusB, { state: 'analyzing', note: 'proposal only; grid unchanged' });
+  void analyzeDeckFile('B')
+    .then((result) => render(intelligenceStatusB, result))
+    .catch((error: unknown) => render(intelligenceStatusB, { error: String(error) }));
+});
+intelligenceApplyA?.addEventListener('click', () => {
+  try {
+    render(intelligenceStatusA, {
+      analysis: intelligenceResults.get('A'),
+      appliedGrid: applyIntelligenceProposal('A'),
+    });
+  } catch (error) {
+    render(intelligenceStatusA, { error: String(error) });
+  }
+});
+intelligenceApplyB?.addEventListener('click', () => {
+  try {
+    render(intelligenceStatusB, {
+      analysis: intelligenceResults.get('B'),
+      appliedGrid: applyIntelligenceProposal('B'),
+    });
+  } catch (error) {
+    render(intelligenceStatusB, { error: String(error) });
+  }
+});
 
 clockRefreshButton?.addEventListener('click', () => {
   void Promise.allSettled([musicalSnapshot('A'), musicalSnapshot('B')]).then(([a, b]) => {
@@ -612,6 +699,7 @@ window.__libertasKernelTest = {
     await deckB.close();
     channelA.close();
     channelB.close();
+    intelligence.close();
     await mixer.close();
     await runtime.close();
   },
@@ -759,6 +847,7 @@ window.__libertasDualDeckTest = {
     await deckB.close();
     channelA.close();
     channelB.close();
+    intelligence.close();
     await mixer.close();
     await runtime.close();
   },
@@ -772,5 +861,7 @@ render(mixerStatusElement, {
   state: 'channel strips + equal-power crossfader + sample-peak limiter ready',
 });
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
+render(intelligenceStatusA, { phase: 'Track Intelligence', state: 'no proposal', deck: 'A' });
+render(intelligenceStatusB, { phase: 'Track Intelligence', state: 'no proposal', deck: 'B' });
 
 export {};

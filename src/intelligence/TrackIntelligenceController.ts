@@ -1,102 +1,117 @@
 import { BrowserAudioRuntime } from '../audio/BrowserAudioRuntime';
-import { DecodeAudioDataProvider } from '../deck/PcmDecoder';
-import type { BeatGrid } from '../music/MusicalClock';
 import type {
   TrackAnalysisOptions,
   TrackAnalysisResult,
-} from './TrackAnalysisCore';
+} from './TrackIntelligenceEngine';
 
-interface WorkerResponse {
-  id: number;
-  ok: boolean;
-  result?: TrackAnalysisResult;
-  error?: string;
-}
-
-export interface TrackGridProposal {
-  grid: BeatGrid;
-  confidence: number;
-  recommended: boolean;
-  provider: string;
+interface PendingAnalysis {
+  resolve: (result: TrackAnalysisResult) => void;
+  reject: (error: Error) => void;
+  timeout: number;
 }
 
 export class TrackIntelligenceController {
-  private requestId = 1;
-  private readonly decoder: DecodeAudioDataProvider;
+  private worker: Worker | null = null;
+  private requestSequence = 1;
+  private readonly pending = new Map<number, PendingAnalysis>();
 
-  constructor(private readonly runtime: BrowserAudioRuntime) {
-    this.decoder = new DecodeAudioDataProvider(runtime);
-  }
-
-  workerAvailable(): boolean {
-    return typeof Worker !== 'undefined';
-  }
+  constructor(private readonly runtime: BrowserAudioRuntime) {}
 
   async analyzeEncodedAudio(
     encoded: ArrayBuffer,
     options: TrackAnalysisOptions = {},
   ): Promise<TrackAnalysisResult> {
-    if (!this.workerAvailable()) {
-      throw new Error('Track Intelligence requires Web Worker support');
-    }
+    await this.runtime.initialize();
+    const decoded = await this.runtime.context.decodeAudioData(encoded.slice(0));
+    const mono = new Float32Array(decoded.length);
 
-    const decoded = await this.decoder.decode(encoded);
-    const mono = new Float32Array(decoded.frameCount);
-    if (decoded.channelCount === 1) {
-      mono.set(decoded.channels[0]!);
-    } else {
-      const left = decoded.channels[0]!;
-      const right = decoded.channels[1]!;
+    for (let channel = 0; channel < decoded.numberOfChannels; channel += 1) {
+      const data = decoded.getChannelData(channel);
+      const scale = 1 / decoded.numberOfChannels;
       for (let i = 0; i < mono.length; i += 1) {
-        mono[i] = ((left[i] ?? 0) + (right[i] ?? 0)) * 0.5;
+        mono[i] += (data[i] ?? 0) * scale;
       }
     }
 
-    const worker = new Worker(new URL('./trackAnalysis.worker.ts', import.meta.url), {
-      type: 'module',
-    });
-    const id = this.requestId++;
+    return this.analyzeMono(mono, decoded.sampleRate, options);
+  }
+
+  analyzeFile(file: File, options: TrackAnalysisOptions = {}): Promise<TrackAnalysisResult> {
+    return file.arrayBuffer().then((encoded) => this.analyzeEncodedAudio(encoded, options));
+  }
+
+  analyzeMono(
+    mono: Float32Array,
+    sampleRate: number,
+    options: TrackAnalysisOptions = {},
+    timeoutMs = 30_000,
+  ): Promise<TrackAnalysisResult> {
+    const worker = this.requireWorker();
+    const requestId = this.requestSequence++;
+    const transferable = mono.buffer as ArrayBuffer;
 
     return new Promise<TrackAnalysisResult>((resolve, reject) => {
       const timeout = window.setTimeout(() => {
-        worker.terminate();
-        reject(new Error('Track Intelligence worker timed out'));
-      }, 15_000);
+        this.pending.delete(requestId);
+        reject(new Error(`Track analysis timed out: ${requestId}`));
+      }, timeoutMs);
 
-      worker.onmessage = (event: MessageEvent<WorkerResponse>) => {
-        if (event.data.id !== id) return;
-        window.clearTimeout(timeout);
-        worker.terminate();
-        if (!event.data.ok || !event.data.result) {
-          reject(new Error(event.data.error ?? 'Track Intelligence worker failed'));
-          return;
-        }
-        resolve(event.data.result);
-      };
-      worker.onerror = (event) => {
-        window.clearTimeout(timeout);
-        worker.terminate();
-        reject(new Error(event.message || 'Track Intelligence worker crashed'));
-      };
-
+      this.pending.set(requestId, { resolve, reject, timeout });
       worker.postMessage(
-        { id, sampleRate: decoded.sampleRate, samples: mono.buffer, options },
-        [mono.buffer],
+        { type: 'analyze', requestId, sampleRate, monoBuffer: transferable, options },
+        [transferable],
       );
     });
   }
 
-  proposal(result: TrackAnalysisResult): TrackGridProposal {
-    return {
-      grid: {
-        bpm: result.bpm,
-        firstBeatFrame: result.firstBeatFrame,
-        beatsPerBar: result.beatsPerBar,
-        beatUnit: result.beatUnit,
-      },
-      confidence: result.gridConfidence,
-      recommended: result.recommended,
-      provider: result.provider,
+  close(): void {
+    for (const [requestId, pending] of this.pending) {
+      window.clearTimeout(pending.timeout);
+      pending.reject(new Error(`Track intelligence closed before response: ${requestId}`));
+    }
+    this.pending.clear();
+    this.worker?.terminate();
+    this.worker = null;
+  }
+
+  private requireWorker(): Worker {
+    if (this.worker) return this.worker;
+
+    const worker = new Worker(
+      new URL('./track-intelligence.worker.ts', import.meta.url),
+      { type: 'module' },
+    );
+
+    worker.onmessage = (event: MessageEvent) => {
+      const message = event.data as {
+        type: 'result' | 'error';
+        requestId: number;
+        result?: TrackAnalysisResult;
+        error?: string;
+      };
+      const pending = this.pending.get(message.requestId);
+      if (!pending) return;
+
+      window.clearTimeout(pending.timeout);
+      this.pending.delete(message.requestId);
+
+      if (message.type === 'error' || !message.result) {
+        pending.reject(new Error(message.error ?? 'Track analysis failed'));
+        return;
+      }
+      pending.resolve(message.result);
     };
+
+    worker.onerror = (event) => {
+      const error = new Error(event.message || 'Track intelligence worker failed');
+      for (const [requestId, pending] of this.pending) {
+        window.clearTimeout(pending.timeout);
+        pending.reject(error);
+        this.pending.delete(requestId);
+      }
+    };
+
+    this.worker = worker;
+    return worker;
   }
 }

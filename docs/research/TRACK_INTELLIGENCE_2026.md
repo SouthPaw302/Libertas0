@@ -1,17 +1,25 @@
 # Track Intelligence Research — October 2026
 
-Web Workers remain the correct browser primitive for analysis that should not occupy the UI thread. Realtime AudioWorklet remains reserved for low-latency rendering and is not used as an analysis worker.
+## Browser decode
+Web Audio `decodeAudioData()` remains broadly available for complete encoded files and returns PCM resampled to the decoding AudioContext sample rate.
 
-The Web Audio decode provider already returns decoded PCM at the runtime AudioContext sample rate. Phase 9 reuses that provider, copies channels into one mono analysis buffer, and transfers ownership of that buffer to a dedicated worker.
+Reference:
+https://developer.mozilla.org/en-US/docs/Web/API/BaseAudioContext/decodeAudioData
 
-Existing browser MIR libraries remain candidates rather than dependencies:
-- Meyda supports offline and realtime JavaScript audio feature extraction.
-- Essentia.js / WebAssembly-style MIR remains a future provider candidate.
-- model-based WebGPU/WebNN/ONNX providers remain optional later candidates.
+## Background analysis
+Phase 9 keeps analysis off the realtime AudioWorklet path. PCM is transferred into a dedicated Web Worker. This prevents tempo/feature analysis from becoming a musical clock or render-thread dependency.
 
-The first reference provider is dependency-light deterministic DSP so its confidence, errors, and failure modes are inspectable before introducing learned models.
+## Feature-provider survey
+Meyda provides established time/spectral features such as RMS, zero-crossing rate, spectral centroid and spectral flux. Essentia.js remains a broader WebAssembly audio-analysis option. Neither is required for the first Libertas reference provider because the immediate goal is a small deterministic BPM/beat-anchor proposal with a narrow auditable trust surface.
 
 References:
-- https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API
-- https://developer.mozilla.org/en-US/docs/Web/API/OfflineAudioContext
-- https://github.com/meyda/meyda
+- https://github.com/meyda/meyda/blob/main/docs/audio-features.md
+- https://mtg.github.io/essentia.js/
+
+## Provider strategy
+The reference analyzer is intentionally dependency-free and replaceable. Future candidates may include:
+- Essentia.js/WASM;
+- ONNX/WebGPU/WebNN models;
+- native providers.
+
+Any future provider must emit the same proposal/provenance contract and must not gain realtime authority merely because its accuracy is better.

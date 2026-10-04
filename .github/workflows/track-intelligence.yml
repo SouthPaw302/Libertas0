@@ -10,7 +10,6 @@ on:
       - 'playwright.config.ts'
       - 'index.html'
       - 'src/**'
-      - 'public/audio/**'
       - 'tests/browser/**'
       - 'docs/contracts/TRACK_INTELLIGENCE.md'
       - 'docs/research/TRACK_INTELLIGENCE_2026.md'
@@ -37,7 +36,7 @@ jobs:
         run: npm run check
       - name: Install Chrome for Testing
         run: npx playwright install --with-deps chromium
-      - name: Track Intelligence runtime and locked regressions
+      - name: Track intelligence runtime and locked regressions
         run: npm run test:browser
       - name: Upload Phase 9 evidence
         if: always()
