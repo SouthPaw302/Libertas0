@@ -171,3 +171,13 @@
 - evidence: Track Intelligence Gate run `37180878790`.
 - cause: strict typing only in deterministic onset-envelope subtraction.
 - disposition: added explicit zero fallback for typed-array reads. Analyzer algorithm unchanged.
+
+## F-0015 — Competing Phase 9 implementation was layered onto the proven branch
+- date: 2026-10-04
+- broken SHA: `ef89282bd2cfb3a7c8b51716beed4569ac0614bb`
+- last proven SHA: `7fcb8627d5d7a82164bd097d1523941951f8d698`
+- module: intelligence
+- symptom: system-contract validation passed but Track Intelligence gate failed at typecheck with duplicate controllers, duplicate interfaces, duplicate globals, and incompatible result schemas.
+- evidence: Track Intelligence Gate run `37180993569`.
+- cause: a second alternative Phase 9 implementation was layered over the already-green implementation instead of extending the proven contract.
+- disposition: branch content restored forward to the proven `7fcb8627...` tree; only this failure record and later evidence/handoff metadata are retained. No force-reset and no product merge from the broken implementation.
