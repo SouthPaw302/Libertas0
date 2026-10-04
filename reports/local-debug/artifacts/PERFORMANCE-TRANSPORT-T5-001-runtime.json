@@ -1,0 +1,12 @@
+{
+  "task_id": "PERFORMANCE-TRANSPORT-T5-001",
+  "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "browser": "Codex in-app browser tab 6",
+  "ordinary": {"cue_frame": 3071104, "cue_trigger_count": 1, "hotcue_frame": 7344064, "hotcue_trigger_count": 1, "jog_count": 6, "frame_discontinuities": 0},
+  "loop": {"start_frame": 168000, "end_frame": 264000, "wrap_count": 156, "final_source_frame": 178496, "frame_discontinuities": 0, "held_seconds_at_least": 300},
+  "dual_deck": {"paused_b_a_continued": true, "resumed_b_sync_locked": true, "a_frame_discontinuities": 0, "b_frame_discontinuities": 0},
+  "sync": {"leader": "A", "follower": "B", "locked": true, "abs_phase_error_beats": 0.0009419395535132935, "follower_transport_seek_count": 0},
+  "ui_stall_ms": 600,
+  "follower_hotcue": "NOT_EVALUATED",
+  "audio_confirmation": "PENDING"
+}

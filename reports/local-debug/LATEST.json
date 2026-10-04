@@ -1,12 +1,12 @@
 {
-  "task_id": "SYNC-T5-001",
-  "tested_sha": "76f3c2e75538a5a89af25316508a9fef8e176ea1",
-  "status": "PASS",
+  "task_id": "PERFORMANCE-TRANSPORT-T5-001",
+  "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "status": "BLOCKED",
   "environment": {
     "schema": "libertas.local-environment.v1",
     "status": "real-local-runtime",
     "os": "Microsoft Windows 10 Home build 19045",
-    "browser": "Codex in-app browser (headed Chromium)",
+    "browser": "Codex in-app browser (headed Chromium), tab 6, http://127.0.0.1:5181/",
     "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
     "python": "3.12.10",
     "node": "v24.18.0",
@@ -16,98 +16,29 @@
     "base_latency_seconds": 0.01,
     "output_latency_seconds": 0.04,
     "render_quantum_frames": 128,
-    "audible_confirmation": "PASS — user confirmed the generated click pair was playing in the tiny Codex browser; no audible click/dropout was reported"
+    "audible_confirmation": "PENDING — browser audio was active, but no new user audible confirmation was recorded during this Phase 7 run"
   },
   "measurements": {
     "exact_sha_bound": true,
-    "handoff_commit": "52a9602717fe5d6bcf03db3dcde83780b10d4ecc",
+    "handoff_commit": "6fbcbf22301df212a742b2b738133391be1c8d0d",
     "bootstrap": "PASS",
     "npm_install": "PASS",
     "typecheck": "PASS",
-    "unit_tests": "PASS (20 tests)",
-    "production_build": "PASS",
-    "generated_convergence": {
-      "click_pair": {"A_bpm": 120, "B_bpm": 128, "duration_seconds": 20},
-      "initial_B_offset_slider": 8,
-      "baseline_B_transport_seek_count": 1,
-      "sync_locked": true,
-      "abs_sync_phase_error_beats": 0.0053085261526479854,
-      "follower_playback_rate": 0.9410104772137432,
-      "follower_tempo_matched_rate": 0.9375,
-      "post_engagement_B_transport_seek_count": 1,
-      "A_frame_discontinuities": 0,
-      "B_frame_discontinuities": 0,
-      "audible_result": "PASS — playing in the tiny browser; no audible defect reported"
-    },
-    "leader_rate_follow": {
-      "leader_A_manual_rate": 1.0499999523162842,
-      "expected_follower_rate": 0.984375,
-      "measured_follower_rate": 0.984374955296623,
-      "abs_sync_phase_error_beats": 0.00014271044435076874,
-      "sync_locked": true,
-      "follower_transport_seek_count": 1,
-      "new_frame_discontinuities": 0
-    },
-    "main_thread_stress_ms": 600,
-    "main_thread_stress": {
-      "direction": "B leader to A follower",
-      "before_output_frame": 26903040,
-      "after_output_frame": 26957312,
-      "output_frame_delta": 54272,
-      "before_follower_source_frame": 2156069.171889717,
-      "after_follower_source_frame": 2213959.3052348443,
-      "follower_source_frame_delta": 57890.13334512711,
-      "new_A_frame_discontinuities": 0,
-      "new_B_frame_discontinuities": 0,
-      "new_mixer_frame_discontinuities": 0,
-      "follower_transport_seek_count_before": 1,
-      "follower_transport_seek_count_after": 1,
-      "sync_locked_after": true,
-      "abs_sync_phase_error_beats_after": 0.000940059660422321
-    },
-    "five_minute_hold": {
-      "duration_seconds": 300,
-      "stable_sample_start_output_frame": 10224000,
-      "stable_sample_end_output_frame": 22510592,
-      "output_frame_delta": 12286592,
-      "final_stable_sync_locked": true,
-      "final_stable_abs_phase_error_beats": 0.00014271044437919045,
-      "final_stable_A_frame_discontinuities": 0,
-      "final_stable_B_frame_discontinuities": 0,
-      "final_stable_follower_transport_seek_count": 1,
-      "natural_end_after_hold": true
-    },
-    "reverse_leadership": {
-      "leader": "B",
-      "follower": "A",
-      "sync_locked": true,
-      "abs_sync_phase_error_beats": 0.0050161289253480845,
-      "follower_playback_rate": 1.0702049255932606,
-      "follower_tempo_matched_rate": 1.0666666666666667,
-      "follower_transport_seek_count": 1,
-      "new_A_frame_discontinuities": 0,
-      "new_B_frame_discontinuities": 0
-    },
-    "ordinary_tracks": "NOT_EVALUATED — no verified BPM and first-beat grids were supplied",
-    "console_runtime_errors": "None observed in the physical in-app browser run",
-    "physical_audio_result": "PASS — generated click playback was audible in the tiny browser; no clicks/dropouts were reported"
+    "unit_tests": "PASS (24 tests)",
+    "chrome_runtime_regression_tests": "PASS (22 tests)",
+    "ordinary_deck_a_cue": {"track": "Tribal House  (Remastered).wav", "source_frames": 14640000, "source_sample_rate_hz": 48000, "duration_seconds": 305, "cue_frame": 3071104, "cue_trigger_count": 1, "performance_jump_count": 1, "frame_discontinuities": 0},
+    "ordinary_deck_a_hotcue": {"hotcue_frame": 7344064, "hotcue_trigger_count": 1, "performance_jump_count": 2, "playing_after_trigger": true, "frame_discontinuities": 0},
+    "ordinary_deck_a_jog": {"actions": "3 x -50 ms, 3 x +50 ms", "jog_count": 6, "playing_after_sequence": true, "frame_discontinuities": 0},
+    "generated_loop": {"files": ["sync-click-a-305.wav", "sync-click-b-305.wav"], "duration_seconds": 305, "grid_a_bpm": 120, "grid_b_bpm": 128, "loop_start_frame": 168000, "loop_end_frame": 264000, "loop_length_beats": 4, "hold_seconds_at_least": 300, "loop_wrap_count": 156, "final_source_frame": 178496, "final_source_inside_loop": true, "playing": true, "frame_discontinuities": 0},
+    "ui_stall_600_ms": {"before_loop_wrap_count": 17, "after_loop_wrap_count": 20, "loop_remained_enabled": true, "source_frame_after": 238016, "frame_discontinuities_after": 0},
+    "dual_deck_independence": {"while_b_paused": {"a_playing": true, "a_loop_enabled": true, "b_playing": false, "a_frame_discontinuities": 0, "b_frame_discontinuities": 0}, "after_b_resumed": {"a_playing": true, "a_loop_enabled": true, "b_playing": true, "sync_locked": true, "a_frame_discontinuities": 0, "b_frame_discontinuities": 0}},
+    "sync_recovery": {"leader": "A", "follower": "B", "enabled": true, "sync_locked": true, "abs_phase_error_beats": 0.0009419395535132935, "follower_playback_rate": 0.9375, "follower_transport_seek_count": 0, "follower_frame_discontinuities": 0, "leader_loop_wrap_count_at_final": 156},
+    "follower_hotcue": {"status": "NOT_EVALUATED", "required": true, "reason": "The visible exact-SHA surface exposes performance controls only for Deck A; attempted B harness calls produced no hot-cue or performance-jump telemetry change in the browser report"},
+    "console_runtime_errors": "None observed in the physical in-app browser run"
   },
-  "artifacts": ["reports/local-debug/artifacts/SYNC-T5-001-runtime.json"],
-  "logs": [
-    "LIBERTAS BOOT: PASS; sha=76f3c2e75538a5a89af25316508a9fef8e176ea1",
-    "npm run check: typecheck PASS; unit PASS (20/20); build PASS",
-    "Codex in-app browser used for physical Windows/audio validation",
-    "Generated 120/128 BPM click pair converged and held lock without corrective seeks",
-    "Reverse leadership and 600 ms main-thread stress passed"
-  ],
-  "reproduction": [
-    "Check out 76f3c2e75538a5a89af25316508a9fef8e176ea1.",
-    "Run python bootstrap.py, npm install, and npm run check.",
-    "Open the SYNC page in the Codex in-app browser on the normal Windows audio output.",
-    "Load generated 120 BPM and 128 BPM click tracks, offset B, play both, enable SYNC B to A, and verify lock/phase/seek telemetry.",
-    "Change A to 1.05x, run a 600 ms main-thread block, hold the lock for 300 seconds, then disable SYNC and verify reverse B-to-A leadership.",
-    "Do not evaluate ordinary tracks without verified BPM and first-beat grids."
-  ],
-  "notes": "All evaluated SYNC T5 checks passed on the exact SHA. Evidence-only report branch; no product files were changed.",
-  "completed_at": "2026-10-04T03:55:25Z"
+  "artifacts": ["reports/local-debug/artifacts/PERFORMANCE-TRANSPORT-T5-001-runtime.json"],
+  "logs": ["Exact product SHA verified before browser run", "Handoff commit recorded", "Codex tiny in-app browser used for Windows/audio validation", "24 unit/simulation tests and 22 Chrome runtime/regression tests passed", "Ordinary Cue, Hot Cue, and jog behavior passed with zero discontinuities", "Four-beat loop held for more than five minutes and survived the 600 ms UI stall", "Dual-deck pause/resume independence and SYNC recovery passed", "Phase 8 not started"],
+  "reproduction": ["Check out b9a8317b3c90d4d975746b01b62998792f195d6e.", "Open the exact product in the Codex in-app browser on the normal Windows audio output.", "Load ordinary local tracks and exercise Deck A Cue, Hot Cue 1, and repeated +/-50 ms jogs.", "Load the generated 120 BPM / 128 BPM click pair, apply the grids, enable the four-beat loop, and hold it for at least 300 seconds.", "Run a 600 ms main-thread stall, pause/resume Deck B while Deck A loops, and enable SYNC B to A.", "Before promotion, expose a verifiable Deck B performance control or equivalent page-context harness and repeat follower Hot Cue with performanceJumpCount increment and transportSeekCount unchanged.", "Do not start Phase 8."],
+  "notes": "Evidence-only report branch. Product files were not changed. Overall status is BLOCKED because the required explicit follower Hot Cue telemetry and fresh user audible confirmation were not verifiably captured in this run.",
+  "completed_at": "2026-10-04T04:31:58Z"
 }

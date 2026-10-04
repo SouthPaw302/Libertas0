@@ -1,15 +1,18 @@
 {
   "schema": "libertas.local-environment.v1",
   "status": "real-local-runtime",
-  "tested_sha": "76f3c2e75538a5a89af25316508a9fef8e176ea1",
-  "captured_at": "2026-10-04T03:55:25Z",
   "os": "Microsoft Windows 10 Home build 19045",
-  "browser": {"family": "Codex in-app browser / Chromium", "mode": "headed"},
-  "runtime": {"python": "3.12.10", "node": "v24.18.0", "npm": "11.16.0", "git": "2.55.0.windows.2"},
-  "audio_devices": [
-    {"name": "Speakers / Headphones (Realtek Audio)", "status": "OK"},
-    {"name": "Microphone (Realtek Audio)", "status": "OK"}
-  ],
-  "audio_runtime": {"sample_rate_hz": 48000, "base_latency_seconds": 0.01, "output_latency_seconds": 0.04, "render_quantum_frames": 128},
-  "audible_confirmation": "PASS — generated click playback was confirmed playing in the tiny Codex browser."
+  "browser": "Codex in-app browser (headed Chromium), tab 6",
+  "url": "http://127.0.0.1:5181/",
+  "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
+  "python": "3.12.10",
+  "node": "v24.18.0",
+  "npm": "11.16.0",
+  "git": "2.55.0.windows.2",
+  "sample_rate_hz": 48000,
+  "base_latency_seconds": 0.01,
+  "output_latency_seconds": 0.04,
+  "render_quantum_frames": 128,
+  "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "handoff_commit": "6fbcbf22301df212a742b2b738133391be1c8d0d"
 }
