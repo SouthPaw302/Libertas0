@@ -1,0 +1,58 @@
+{
+  "schema": "libertas.master-audio-analysis.v1",
+  "task_id": "PHASE10-T5-002",
+  "source": "Google Drive folder Libertas0/Phase 10/PHASE10-T5-002",
+  "drive_folder_id": "10xE_sVV607lbDtbKpEt_jK9ufYPPzhZA",
+  "master_recording": {
+    "drive_file_id": "1bHUvmQwn5llXrGh7grDwdmvaSuugCB42",
+    "filename": "PHASE10-T5-002-master-recording.webm",
+    "sha256": "2c519364dd7b561742710522bdf9de10fdfbbeeab8cac4c12715e9f03dfe4f82",
+    "bytes": 1003132,
+    "decoded_duration_seconds": 62.04,
+    "codec": "Opus/WebM",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "integrated_loudness_lufs": -16.3,
+    "true_peak_dbfs": -3.5,
+    "silence_check": {
+      "threshold_dbfs": -50,
+      "minimum_duration_seconds": 0.1,
+      "detected_events": 0
+    },
+    "decoded_100ms_windows_below_minus_50db": 0
+  },
+  "source_tracks": [
+    {
+      "drive_file_id": "1z4vb5qSLltAbK-rFF9nT9wXIiCAcn4OY",
+      "filename": "Midnight Tribal Pulse (Remastered).wav",
+      "sha256": "742cbe8e1b9740aa29856d5d503e5d8436285deecab2803fcce3274bf199635f"
+    },
+    {
+      "drive_file_id": "1IK5r3fftel16r-_qThJ-JkJB6ejkg7Hc",
+      "filename": "Tribal House  (Remastered).wav",
+      "sha256": "639634136fe1630941f391b7667c7cd5cd0855d95651bf1ed77971618854fe1d"
+    }
+  ],
+  "post_mixer_content_check": {
+    "method": "decoded mono 8 kHz alignment/correlation and two-source least-squares fit over 1.5 s windows sampled every 2 s",
+    "source_alignment_seconds": {
+      "midnight": 2.044125,
+      "tribal_house": 2.033625
+    },
+    "two_source_fit_r2_min": 0.845894,
+    "two_source_fit_r2_median": 0.880308,
+    "two_source_fit_r2_max": 0.892187,
+    "median_linear_gain_midnight": 0.688168,
+    "median_linear_gain_tribal_house": 0.693186,
+    "assessment": "PASS — master contains coherent material from both uploaded source decks, consistent with a real post-mixer capture."
+  },
+  "objective_audio_assessment": {
+    "non_empty": "PASS",
+    "duration_gte_60_seconds": "PASS",
+    "no_detected_long_silence_or_dropout": "PASS",
+    "no_clipping_headroom": "PASS",
+    "source_material_present": "PASS",
+    "saved_master_audio_gate": "PASS"
+  },
+  "drive_analysis_file_id": "1WDV4m6Ev8WKPxYH7BODYhY49mzeek4RK"
+}

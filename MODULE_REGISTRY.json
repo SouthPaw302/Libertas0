@@ -126,7 +126,7 @@
     },
     {
       "id": "library-midi-recording-automation",
-      "state": "LOCAL_DEBUG",
+      "state": "LOCKED",
       "depends_on": [
         "intelligence"
       ],

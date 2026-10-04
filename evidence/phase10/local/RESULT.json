@@ -1,0 +1,54 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "library-midi-recording-automation",
+  "gate": "phase10-composite-local-closeout",
+  "status": "PASS",
+  "promoted_product_sha": "3ff1083f4a5824059643d41097025c62b0511a27",
+  "final_handoff_commit": "42969723d1ba39d3a121d23c83698ca5aa3cc180",
+  "historical_local_report": {
+    "task_id": "PHASE10-T5-001",
+    "report_commit": "b587224d9a1264ddfa71e29276de55696102f9d8",
+    "status": "BLOCKED / SEMI-PASS / OPEN",
+    "preserved": true
+  },
+  "accepted_physical_evidence": [
+    "IndexedDB library persistence, byte deduplication and persisted load into both decks PASS.",
+    "Post-mixer recording artifact captured for >60 seconds.",
+    "4-second A→B automation continued through a 600 ms main-thread stall with zero new A/B/mixer discontinuities.",
+    "SYNC remained locked/tracking with zero follower seeks/discontinuities.",
+    "Synthetic MIDI mapping path PASS; physical MIDI NOT_EVALUATED is environmental and non-blocking."
+  ],
+  "replay_fix": {
+    "product_sha": "3ff1083f4a5824059643d41097025c62b0511a27",
+    "scope": [
+      "index.html in-app audio replay element",
+      "src/main.ts shared object URL for download + playback and prior URL revocation",
+      "tests/browser/phase10.spec.ts replay exposure regression"
+    ],
+    "realtime_core_changed": false
+  },
+  "automated_gate": {
+    "system_contract_run_id": 37188625101,
+    "phase10_run_id": 37188625113,
+    "unit_simulation_tests": 39,
+    "chrome_runtime_regression_tests": 37,
+    "status": "PASS",
+    "artifact_id": 11297534349,
+    "artifact_digest": "sha256:e09aac67776d87bbf9a18e4f8d337dc137eee9fd6ccc397e1e0d2f42e0037bef"
+  },
+  "drive_evidence": {
+    "folder_id": "10xE_sVV607lbDtbKpEt_jK9ufYPPzhZA",
+    "master_recording_file_id": "1bHUvmQwn5llXrGh7grDwdmvaSuugCB42",
+    "midnight_source_file_id": "1z4vb5qSLltAbK-rFF9nT9wXIiCAcn4OY",
+    "tribal_source_file_id": "1IK5r3fftel16r-_qThJ-JkJB6ejkg7Hc",
+    "master_analysis_file_id": "1WDV4m6Ev8WKPxYH7BODYhY49mzeek4RK",
+    "master_analysis": "evidence/phase10/master-analysis/RESULT.json"
+  },
+  "promotion_basis": "Composite evidence: preserved physical T5-001 realtime proof + replay-only code delta + exact-SHA automated regression + independent Drive master-audio analysis. No second physical report is fabricated.",
+  "limitations": [
+    "Physical MIDI hardware remains NOT_EVALUATED.",
+    "Library provider is local IndexedDB only.",
+    "MediaRecorder codec/container remains browser-dependent.",
+    "Automation v1 is limited to continuous AudioParams."
+  ]
+}

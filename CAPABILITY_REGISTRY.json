@@ -211,34 +211,34 @@
     {
       "id": "storage.local-library",
       "class": "storage",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "IndexedDB SHA-256 content-addressed audio library",
       "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md",
-      "evidence": "evidence/phase10/automated/RESULT.json"
+      "evidence": "evidence/phase10/local/RESULT.json"
     },
     {
       "id": "control.midi",
       "class": "control",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "deterministic MIDI mapping engine + optional Web MIDI adapter",
       "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md",
-      "evidence": "evidence/phase10/automated/RESULT.json"
+      "evidence": "evidence/phase10/local/RESULT.json"
     },
     {
       "id": "audio.master-recording",
       "class": "capture",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "MediaStreamAudioDestinationNode + MediaRecorder",
       "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md",
-      "evidence": "evidence/phase10/automated/RESULT.json"
+      "evidence": "evidence/phase10/local/RESULT.json"
     },
     {
       "id": "control.automation",
       "class": "control",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "AudioParam timeline automation registry",
       "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md",
-      "evidence": "evidence/phase10/automated/RESULT.json"
+      "evidence": "evidence/phase10/local/RESULT.json"
     }
   ]
 }

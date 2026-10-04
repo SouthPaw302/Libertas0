@@ -205,3 +205,22 @@ Recording taps the proven mixer output into MediaStreamAudioDestinationNode and 
 Status: ACCEPTED FOR PHASE 10
 
 Continuous automation lanes are scheduled against AudioContext time. A pre-scheduled crossfade must continue during a blocked main thread. Phase 10 intentionally does not automate discrete transport commands.
+
+## D-0038 — Phase 10 closes on composite physical, runtime, and Drive audio evidence
+Status: ACCEPTED
+
+The historical PHASE10-T5-001 local report remains BLOCKED / SEMI-PASS / OPEN and is not rewritten. That run physically proved browser-local library persistence/dedup/load, a >60-second post-mixer MediaRecorder artifact, 4-second AudioParam crossfade through a 600 ms UI stall with zero new A/B/mixer discontinuities, locked/tracking SYNC with zero follower seeks/discontinuities, and the mandatory synthetic MIDI path. Physical MIDI was NOT_EVALUATED for environmental reasons and is non-blocking by contract.
+
+The only product change required after T5-001 was the saved-recording replay surface. Product SHA `3ff1083f4a5824059643d41097025c62b0511a27` added an in-app audio element bound to the same stopped-recording blob plus a regression test; it did not modify the audio kernel, decks, SYNC, performance transport, mixer DSP, MIDI engine, recorder engine, or automation engine. On that SHA the System Contract passed, 39 unit/simulation tests passed, and 37 Chrome runtime/regression tests passed including the new replay surface and locked Phase 2-9 regressions.
+
+The fresh Drive artifact `PHASE10-T5-002-master-recording.webm` was independently analyzed from Drive. It decodes to 62.04 seconds of stereo 48 kHz Opus, contains no >=100 ms silence/dropout events below -50 dBFS, measures about -16.3 LUFS integrated with -3.5 dBFS true peak, and contains coherent material from both uploaded source tracks. Two-source waveform fitting explains approximately 84.6%-89.2% of sampled master variance (median 88.0%), consistent with a real post-mixer capture.
+
+Because the replay patch is UI-only, the prior exact physical realtime proof is carried forward across the unchanged realtime core, while the new replay gap is closed by exact-SHA automated proof plus independent Drive artifact analysis. This follows the existing composite-evidence promotion precedent and does not fabricate a second physical runtime report.
+
+## D-0039 — Library / MIDI / Recording / Automation promoted and locked
+Status: ACCEPTED
+
+Phase 10 is LOCKED. Browser-local content-addressed library persistence, deterministic MIDI mapping, optional Web MIDI adaptation, post-master recording, saved-recording replay exposure, and AudioParam automation are proven within their stated scope while all locked realtime modules remain green.
+
+Physical MIDI hardware availability remains an environmental limitation rather than a product failure. Distributed library/storage, network session authority, remote workers, collaborative agents, remote rendering, and external execution nodes belong to Phase 11.
+
