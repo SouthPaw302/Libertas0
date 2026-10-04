@@ -91,3 +91,13 @@
 - evidence: SYNC Gate run `37174194703`. During the stress case phase error improved from -0.01773 to -0.01067 beat with 0 new discontinuities.
 - cause: reference controller was deliberately conservative near lock; 1.25 s proportional settle constant did not reliably cross the unchanged 0.01-beat lock threshold inside the four-second gate window.
 - disposition: controller settle constant tightened to 0.75 s while retaining the 0.01-beat lock threshold, +/-0.08 correction bound, smoothing, deadband, and no-seek law.
+
+## F-0009 — SYNC Playwright harness raced async module initialization
+- date: 2026-10-03
+- exact SHA: `76e591fcb5c4c821d280961e06d52faf98780b20`
+- module: sync browser gate
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: two SYNC tests failed immediately because `window.__libertasSyncTest` was undefined; two other SYNC runtime tests in the same run passed.
+- evidence: SYNC Gate run `37174293181`.
+- cause: `page.goto()` completed before the top-level async application module had finished mixer initialization and installed the SYNC test API.
+- disposition: browser SYNC tests now wait explicitly for the stable harness API before invoking it. Controller/worklet behavior unchanged.

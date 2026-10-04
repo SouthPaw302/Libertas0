@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function openSyncHarness(page: Page): Promise<void> {
+  await openSyncHarness(page);
+  await page.waitForFunction(() => Boolean(window.__libertasSyncTest));
+}
 
 test('SYNC tempo-matches and phase-locks B to A without corrective seeks', async ({ page }) => {
-  await page.goto('/');
+  await openSyncHarness(page);
   const loaded = await page.evaluate(() => window.__libertasSyncTest.loadClickPair(20, 120, 128));
 
   const bFramesPerBeat = (loaded.b.sourceSampleRate * 60) / 128;
@@ -29,7 +34,7 @@ test('SYNC tempo-matches and phase-locks B to A without corrective seeks', async
 });
 
 test('SYNC follows a leader rate change and remains phase locked', async ({ page }) => {
-  await page.goto('/');
+  await openSyncHarness(page);
   await page.evaluate(() => window.__libertasSyncTest.loadClickPair(20, 120, 128));
   await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
   await page.evaluate(() => window.__libertasSyncTest.enable('A'));
@@ -48,7 +53,7 @@ test('SYNC follows a leader rate change and remains phase locked', async ({ page
 });
 
 test('SYNC remains active through a 600 ms blocked main thread', async ({ page }) => {
-  await page.goto('/');
+  await openSyncHarness(page);
   const loaded = await page.evaluate(() => window.__libertasSyncTest.loadClickPair(20, 120, 128));
   const bFramesPerBeat = (loaded.b.sourceSampleRate * 60) / 128;
   await page.evaluate((frame) => window.__libertasDeckBTest.seekFrame(frame), bFramesPerBeat * 0.2);
@@ -85,7 +90,7 @@ test('SYNC remains active through a 600 ms blocked main thread', async ({ page }
 });
 
 test('SYNC can reverse leadership and still converge', async ({ page }) => {
-  await page.goto('/');
+  await openSyncHarness(page);
   const loaded = await page.evaluate(() => window.__libertasSyncTest.loadClickPair(20, 120, 126));
   const aFramesPerBeat = (loaded.a.sourceSampleRate * 60) / 120;
   await page.evaluate((frame) => window.__libertasDeckATest.seekFrame(frame), aFramesPerBeat * 0.3);
