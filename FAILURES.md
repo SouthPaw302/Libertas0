@@ -211,3 +211,12 @@
 - evidence: Libertas System Contract run `37182223316`.
 - cause: implementation-state transition updated DEVELOPMENT_STATE but not the module registry.
 - disposition: set intelligence registry state back to IMPLEMENTING for the repair cycle. Product analyzer code unchanged.
+
+## F-0018 — Phase 9 v2 synthetic PCM fixture strict-index typing
+- date: 2026-10-04
+- exact SHA: `9b1b0eaa41bdec705928d2bc1008be13350ff59c`
+- module: intelligence test harness
+- symptom: v2 gate stopped at TypeScript because a synthetic click fixture used compound assignment on a Float32Array index under strict indexed access.
+- evidence: Track Intelligence Gate run `37182223345`.
+- cause: test-fixture typing only.
+- disposition: replaced compound assignment with an explicit zero-fallback assignment. Analyzer implementation unchanged.

@@ -13,7 +13,7 @@ function syntheticClicks(sampleRate: number, bpm: number, seconds: number, offse
     const start = Math.round(position);
     for (let i = 0; i < clickFrames && start + i < samples.length; i += 1) {
       const envelope = Math.exp(-8 * i / clickFrames);
-      samples[start + i] += 0.75 * envelope * Math.sin(2 * Math.PI * 1400 * i / sampleRate);
+      samples[start + i] = (samples[start + i] ?? 0) + 0.75 * envelope * Math.sin(2 * Math.PI * 1400 * i / sampleRate);
     }
   }
   return samples;
