@@ -1,12 +1,12 @@
 {
-  "task_id": "PERFORMANCE-TRANSPORT-T5-001",
+  "task_id": "PERFORMANCE-TRANSPORT-T5-002",
   "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
   "status": "BLOCKED",
   "environment": {
     "schema": "libertas.local-environment.v1",
     "status": "real-local-runtime",
     "os": "Microsoft Windows 10 Home build 19045",
-    "browser": "Codex in-app browser (headed Chromium), tab 6, http://127.0.0.1:5181/",
+    "browser": "Codex in-app browser (headed Chromium), tab 8, http://127.0.0.1:5181/",
     "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
     "python": "3.12.10",
     "node": "v24.18.0",
@@ -16,7 +16,7 @@
     "base_latency_seconds": 0.01,
     "output_latency_seconds": 0.04,
     "render_quantum_frames": 128,
-    "audible_confirmation": "PENDING — browser audio was active, but no new user audible confirmation was recorded during this Phase 7 run"
+    "audible_confirmation": "PASS — user confirmed hearing the decks syncing in the tiny Codex browser"
   },
   "measurements": {
     "exact_sha_bound": true,
@@ -33,12 +33,13 @@
     "ui_stall_600_ms": {"before_loop_wrap_count": 17, "after_loop_wrap_count": 20, "loop_remained_enabled": true, "source_frame_after": 238016, "frame_discontinuities_after": 0},
     "dual_deck_independence": {"while_b_paused": {"a_playing": true, "a_loop_enabled": true, "b_playing": false, "a_frame_discontinuities": 0, "b_frame_discontinuities": 0}, "after_b_resumed": {"a_playing": true, "a_loop_enabled": true, "b_playing": true, "sync_locked": true, "a_frame_discontinuities": 0, "b_frame_discontinuities": 0}},
     "sync_recovery": {"leader": "A", "follower": "B", "enabled": true, "sync_locked": true, "abs_phase_error_beats": 0.0009419395535132935, "follower_playback_rate": 0.9375, "follower_transport_seek_count": 0, "follower_frame_discontinuities": 0, "leader_loop_wrap_count_at_final": 156},
-    "follower_hotcue": {"status": "NOT_EVALUATED", "required": true, "reason": "The visible exact-SHA surface exposes performance controls only for Deck A; attempted B harness calls produced no hot-cue or performance-jump telemetry change in the browser report"},
+    "follower_hotcue": {"status": "NOT_EVALUATED", "required": true, "reason": "The visible exact-SHA surface exposes performance controls only for Deck A; the tiny-browser context did not provide a verifiable B performance control or page-context harness"},
+    "fresh_audible_controls": {"cue": "PASS", "hotcue": "PASS", "loop": "PASS", "jog": "PASS", "user_confirmation": "PASS — user heard the decks syncing"},
     "console_runtime_errors": "None observed in the physical in-app browser run"
   },
-  "artifacts": ["reports/local-debug/artifacts/PERFORMANCE-TRANSPORT-T5-001-runtime.json"],
-  "logs": ["Exact product SHA verified before browser run", "Handoff commit recorded", "Codex tiny in-app browser used for Windows/audio validation", "24 unit/simulation tests and 22 Chrome runtime/regression tests passed", "Ordinary Cue, Hot Cue, and jog behavior passed with zero discontinuities", "Four-beat loop held for more than five minutes and survived the 600 ms UI stall", "Dual-deck pause/resume independence and SYNC recovery passed", "Phase 8 not started"],
-  "reproduction": ["Check out b9a8317b3c90d4d975746b01b62998792f195d6e.", "Open the exact product in the Codex in-app browser on the normal Windows audio output.", "Load ordinary local tracks and exercise Deck A Cue, Hot Cue 1, and repeated +/-50 ms jogs.", "Load the generated 120 BPM / 128 BPM click pair, apply the grids, enable the four-beat loop, and hold it for at least 300 seconds.", "Run a 600 ms main-thread stall, pause/resume Deck B while Deck A loops, and enable SYNC B to A.", "Before promotion, expose a verifiable Deck B performance control or equivalent page-context harness and repeat follower Hot Cue with performanceJumpCount increment and transportSeekCount unchanged.", "Do not start Phase 8."],
-  "notes": "Evidence-only report branch. Product files were not changed. Overall status is BLOCKED because the required explicit follower Hot Cue telemetry and fresh user audible confirmation were not verifiably captured in this run.",
-  "completed_at": "2026-10-04T04:31:58Z"
+  "artifacts": ["reports/local-debug/artifacts/PERFORMANCE-TRANSPORT-T5-002-runtime.json", "reports/local-debug/artifacts/PERFORMANCE-TRANSPORT-T5-001-runtime.json"],
+  "logs": ["T5-002 rerun used the exact previously tested product SHA", "Codex tiny in-app browser used for Windows/audio validation", "Fresh Cue, Hot Cue, loop, and jog checks passed with zero discontinuities", "SYNC re-locked with zero discontinuities and zero additional follower transport seeks", "User freshly confirmed hearing the decks syncing", "The prior five-minute / 156-wrap hold is carried forward", "Phase 8 not started"],
+  "reproduction": ["Use b9a8317b3c90d4d975746b01b62998792f195d6e in the Codex in-app browser.", "Load the generated 120 BPM / 128 BPM click pair and enable SYNC B to A.", "Exercise fresh Cue, Hot Cue, four-beat loop, and +/-50 ms jog controls; confirm zero discontinuities and audible clean playback.", "Expose a verifiable Deck B performance control or equivalent page-context harness, trigger the follower Hot Cue, and verify performanceJumpCount +1, hotCueTriggerCount +1, transportSeekCount unchanged, then re-lock SYNC with zero discontinuities.", "Carry forward the prior 156-wrap hold; do not repeat it.", "Do not start Phase 8."],
+  "notes": "Evidence-only report branch. Product files were not changed. Overall status remains BLOCKED only because the required explicit B-follower Hot Cue telemetry could not be captured through the tiny-browser surface.",
+  "completed_at": "2026-10-04T04:45:00Z"
 }

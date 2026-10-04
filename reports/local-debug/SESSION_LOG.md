@@ -10,3 +10,11 @@
 - Final loop telemetry: 156 wraps, source frame 178,496 inside [168,000, 264,000], A playing and looping; B playing and SYNC-locked; follower transport seeks 0.
 - Blocker: explicit follower Deck B Hot Cue did not produce verifiable hot-cue/performance-jump telemetry through the available exact-SHA browser surface. Fresh user audible confirmation was also not recorded for this run.
 - Phase 8 not started.
+
+## 2026-10-04 — PERFORMANCE-TRANSPORT-T5-002
+
+- Fresh Cue, Hot Cue, four-beat loop, and jog checks passed in the tiny browser with zero discontinuities.
+- SYNC re-locked with zero discontinuities and zero additional follower transport seeks.
+- User confirmed hearing the decks syncing; audible confirmation is recorded as PASS.
+- B-follower Hot Cue remains NOT_EVALUATED because the exact browser surface exposes only Deck A controls and no verifiable page-context harness was available.
+- Prior five-minute / 156-wrap hold carried forward; not repeated. Phase 8 not started.

@@ -1,0 +1,10 @@
+{
+  "task_id": "PERFORMANCE-TRANSPORT-T5-002",
+  "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "browser": "Codex in-app browser tab 8",
+  "fresh_controls": {"cue": "PASS", "hotcue": "PASS", "loop": "PASS", "jog": "PASS", "frame_discontinuities": 0},
+  "sync_recovery": {"relocked": true, "abs_phase_error_beats": 0.000941050989936798, "follower_transport_seek_count": 0, "follower_frame_discontinuities": 0},
+  "follower_hotcue": {"status": "NOT_EVALUATED", "performanceJumpCount_delta": null, "hotCueTriggerCount_delta": null},
+  "audible_confirmation": "PASS — user confirmed hearing the decks syncing",
+  "carried_forward": {"hold_seconds": 300, "loop_wrap_count": 156, "frame_discontinuities": 0}
+}
