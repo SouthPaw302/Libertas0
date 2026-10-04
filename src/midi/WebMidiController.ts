@@ -4,21 +4,9 @@ import {
   type MidiBinding,
 } from './MidiMappingEngine';
 
-interface MidiInputLike {
-  id: string;
-  name?: string | null;
-  manufacturer?: string | null;
-  onmidimessage: ((event: { data: Uint8Array }) => void) | null;
-}
-
-interface MidiAccessLike {
-  inputs: Map<string, MidiInputLike>;
-  onstatechange: (() => void) | null;
-}
-
-interface NavigatorWithMidi extends Navigator {
-  requestMIDIAccess?: () => Promise<MidiAccessLike>;
-}
+type NavigatorMidiOptional = Navigator & {
+  requestMIDIAccess?: () => Promise<MIDIAccess>;
+};
 
 export interface MidiRuntimeStatus {
   apiAvailable: boolean;
@@ -29,7 +17,7 @@ export interface MidiRuntimeStatus {
 }
 
 export class WebMidiController {
-  private access: MidiAccessLike | null = null;
+  private access: MIDIAccess | null = null;
 
   constructor(
     private readonly engine: MidiMappingEngine,
@@ -37,11 +25,11 @@ export class WebMidiController {
   ) {}
 
   apiAvailable(): boolean {
-    return typeof (navigator as NavigatorWithMidi).requestMIDIAccess === 'function';
+    return typeof (navigator as NavigatorMidiOptional).requestMIDIAccess === 'function';
   }
 
   async connect(): Promise<MidiRuntimeStatus> {
-    const request = (navigator as NavigatorWithMidi).requestMIDIAccess;
+    const request = (navigator as NavigatorMidiOptional).requestMIDIAccess;
     if (!request) throw new Error('Web MIDI API is unavailable in this browser');
     this.access = await request.call(navigator);
     this.bindInputs();
@@ -76,6 +64,7 @@ export class WebMidiController {
     if (!this.access) return;
     for (const input of this.access.inputs.values()) {
       input.onmidimessage = (event) => {
+        if (!event.data) return;
         const result = this.engine.process(event.data);
         for (const action of result.actions) this.onAction(action);
       };

@@ -229,3 +229,16 @@
 - evidence: Track Intelligence Gate run `37182296477`.
 - cause: candidate selection precision, not a realtime or regression failure.
 - disposition: keep the comb estimator for metrical candidate selection, then refine its winning period against the spectral-onset autocorrelation peak with local lag search + parabolic interpolation. The BPM acceptance test remains strict.
+
+## F-0020 — Phase 10 initial browser API typing defects
+- date: 2026-10-04
+- exact SHA: `a6cc65de1f67a38da13db8fc187783fbf021547c`
+- module: library-midi-recording-automation
+- environment: GitHub Actions, TypeScript 6
+- symptom: Phase 10 stopped at typecheck before unit/build/browser execution.
+- evidence: Phase 10 gate run `37185448155`.
+- causes:
+  - MIDI learn state wrote optional min/max as explicit undefined under exactOptionalPropertyTypes;
+  - a custom Web MIDI Navigator shim conflicted with the DOM's actual MIDIAccess definitions;
+  - MediaRecorder was incorrectly assumed to expose an `error` property.
+- disposition: use conditional optional fields, native DOM Web MIDI types, and generic MediaRecorder error handling. Product architecture unchanged.

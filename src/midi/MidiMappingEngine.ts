@@ -59,7 +59,12 @@ export class MidiMappingEngine {
   }
 
   startLearn(target: string, mode: 'absolute' | 'trigger', min?: number, max?: number): void {
-    this.learnTarget = { target, mode, min, max };
+    this.learnTarget = {
+      target,
+      mode,
+      ...(min === undefined ? {} : { min }),
+      ...(max === undefined ? {} : { max }),
+    };
   }
 
   process(data: ArrayLike<number>): { actions: MidiAction[]; learned?: MidiBinding } {

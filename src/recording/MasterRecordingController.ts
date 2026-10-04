@@ -64,7 +64,7 @@ export class MasterRecordingController {
     const recorder = this.recorder;
     this.state = 'stopping';
     return new Promise((resolve, reject) => {
-      recorder.onerror = () => reject(recorder.error ?? new Error('MediaRecorder failed'));
+      recorder.onerror = () => reject(new Error('MediaRecorder failed'));
       recorder.onstop = () => {
         const blob = new Blob(this.chunks, {
           type: recorder.mimeType || this.chunks[0]?.type || 'audio/webm',
