@@ -1,0 +1,14 @@
+{
+  "task_id": "SYNC-T5-001",
+  "tested_sha": "76f3c2e75538a5a89af25316508a9fef8e176ea1",
+  "handoff_commit": "52a9602717fe5d6bcf03db3dcde83780b10d4ecc",
+  "browser": "Codex in-app browser / Chromium",
+  "runtime": {"sample_rate_hz": 48000, "render_quantum_frames": 128, "base_latency_seconds": 0.01, "output_latency_seconds": 0.04},
+  "generated_convergence": {"A_bpm": 120, "B_bpm": 128, "B_offset_slider": 8, "sync_locked": true, "phase_error_beats": 0.0053085261526479854, "follower_rate": 0.9410104772137432, "B_transport_seek_count_before": 1, "B_transport_seek_count_after": 1, "A_frame_discontinuities": 0, "B_frame_discontinuities": 0},
+  "leader_rate_follow": {"A_manual_rate": 1.0499999523162842, "expected_B_rate": 0.984375, "measured_B_rate": 0.984374955296623, "phase_error_beats": 0.00014271044435076874, "B_transport_seek_count": 1, "frame_discontinuities": {"A": 0, "B": 0}},
+  "stress": {"duration_ms": 600, "direction": "B leader to A follower", "output_delta_frames": 54272, "follower_source_delta_frames": 57890.13334512711, "new_frame_discontinuities": {"A": 0, "B": 0, "mixer": 0}, "follower_seek_count_before": 1, "follower_seek_count_after": 1, "locked_after": true, "phase_error_after": 0.000940059660422321},
+  "five_minute_hold": {"seconds": 300, "stable_start_output_frame": 10224000, "stable_end_output_frame": 22510592, "output_delta_frames": 12286592, "locked_at_final_stable_sample": true, "phase_error_at_final_stable_sample": 0.00014271044437919045, "new_frame_discontinuities": {"A": 0, "B": 0, "mixer": 0}, "follower_transport_seek_count": 1},
+  "reverse_leadership": {"leader": "B", "follower": "A", "locked": true, "phase_error_beats": 0.0050161289253480845, "follower_rate": 1.0702049255932606, "follower_transport_seek_count": 1, "new_frame_discontinuities": {"A": 0, "B": 0}},
+  "ordinary_tracks": "NOT_EVALUATED — no verified BPM and first-beat grids",
+  "physical_result": "PASS — generated click playback was confirmed playing in the tiny browser; no audible clicks/dropouts reported"
+}
