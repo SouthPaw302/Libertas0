@@ -81,3 +81,13 @@
 - evidence: SYNC Gate run `37174159655`.
 - cause: test-harness typing defect; the exported `SyncSessionStatus` contract was not wired into `window.__libertasSyncTest`.
 - disposition: fixed by preserving the concrete SYNC session type through the browser test API. Product/controller logic unchanged.
+
+## F-0008 — SYNC reached low phase error but missed strict lock threshold inside gate window
+- date: 2026-10-03
+- exact SHA: `94f3c9e6e923c066ecfb0093bd609042bcdce855`
+- module: sync
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: 15/17 browser tests passed; main-thread-stall SYNC and leader-rate-following passed, but two convergence cases still reported `syncLocked=false` after four seconds.
+- evidence: SYNC Gate run `37174194703`. During the stress case phase error improved from -0.01773 to -0.01067 beat with 0 new discontinuities.
+- cause: reference controller was deliberately conservative near lock; 1.25 s proportional settle constant did not reliably cross the unchanged 0.01-beat lock threshold inside the four-second gate window.
+- disposition: controller settle constant tightened to 0.75 s while retaining the 0.01-beat lock threshold, +/-0.08 correction bound, smoothing, deadband, and no-seek law.

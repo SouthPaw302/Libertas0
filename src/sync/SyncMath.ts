@@ -8,7 +8,7 @@ export interface SyncControlOptions {
 }
 
 export const DEFAULT_SYNC_OPTIONS: SyncControlOptions = {
-  phaseSettleSeconds: 1.25,
+  phaseSettleSeconds: 0.75,
   maxPhaseCorrectionRate: 0.08,
   phaseDeadbandBeats: 0.001,
   rateSmoothingSeconds: 0.04,

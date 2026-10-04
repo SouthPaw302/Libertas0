@@ -67,7 +67,7 @@ phaseErrorBeats * 60 / (followerBpm * phaseSettleSeconds)
 Correction is bounded and added to the tempo-matched rate.
 
 Default control values:
-- settle: 1.25 s
+- settle: 0.75 s
 - maximum transient correction: +/-0.08 rate
 - deadband: 0.001 beat
 - rate smoothing: 0.04 s
