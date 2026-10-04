@@ -94,3 +94,10 @@ After engagement, SYNC may alter only follower effective playback rate. Steady-s
 Status: ACCEPTED FOR LOCAL VALIDATION
 
 On `76f3c2e75538a5a89af25316508a9fef8e176ea1`, Phase 6 passed 20 unit/simulation tests and 17 Chrome runtime/regression tests. Tempo/phase lock, no hidden corrective seeks, leader-rate following, a 600 ms main-thread stall, and reverse leadership all passed. SYNC remains unpromoted until physical human-listening T5 passes.
+
+## D-0019 — SYNC core promoted and locked
+Status: ACCEPTED
+
+Phase 6 passed deterministic simulation, full Chrome runtime/regression gates, and local physical/human-listening validation on `76f3c2e75538a5a89af25316508a9fef8e176ea1`. Generated 120/128 BPM click tracks converged without corrective seeks, leader-rate follow settled at the expected 0.984375 ratio, a 600 ms main-thread stall added zero A/B/mixer discontinuities, a five-minute lock held with zero deck discontinuities, and reverse leadership passed.
+
+Ordinary program-material SYNC is explicitly NOT_EVALUATED because no trusted BPM and first-beat grids were supplied. Promotion of the SYNC core does not erase that limitation.

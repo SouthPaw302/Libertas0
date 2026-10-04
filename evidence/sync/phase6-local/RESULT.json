@@ -1,0 +1,121 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "sync",
+  "gate": "phase6-local-physical-listening",
+  "status": "PASS",
+  "tested_sha": "76f3c2e75538a5a89af25316508a9fef8e176ea1",
+  "handoff_commit": "52a9602717fe5d6bcf03db3dcde83780b10d4ecc",
+  "report_commit": "174481cfa7ffc8c8eadfa286706dcbd86ae17787",
+  "task_id": "SYNC-T5-001",
+  "environment": {
+    "schema": "libertas.local-environment.v1",
+    "status": "real-local-runtime",
+    "os": "Microsoft Windows 10 Home build 19045",
+    "browser": "Codex in-app browser (headed Chromium)",
+    "physical_audio_endpoints": [
+      "Speakers / Headphones (Realtek Audio)",
+      "Microphone (Realtek Audio)"
+    ],
+    "python": "3.12.10",
+    "node": "v24.18.0",
+    "npm": "11.16.0",
+    "git": "2.55.0.windows.2",
+    "sample_rate_hz": 48000,
+    "base_latency_seconds": 0.01,
+    "output_latency_seconds": 0.04,
+    "render_quantum_frames": 128,
+    "audible_confirmation": "PASS — user confirmed the generated click pair was playing in the tiny Codex browser; no audible click/dropout was reported"
+  },
+  "measurements": {
+    "exact_sha_bound": true,
+    "handoff_commit": "52a9602717fe5d6bcf03db3dcde83780b10d4ecc",
+    "bootstrap": "PASS",
+    "npm_install": "PASS",
+    "typecheck": "PASS",
+    "unit_tests": "PASS (20 tests)",
+    "production_build": "PASS",
+    "generated_convergence": {
+      "click_pair": {
+        "A_bpm": 120,
+        "B_bpm": 128,
+        "duration_seconds": 20
+      },
+      "initial_B_offset_slider": 8,
+      "baseline_B_transport_seek_count": 1,
+      "sync_locked": true,
+      "abs_sync_phase_error_beats": 0.0053085261526479854,
+      "follower_playback_rate": 0.9410104772137432,
+      "follower_tempo_matched_rate": 0.9375,
+      "post_engagement_B_transport_seek_count": 1,
+      "A_frame_discontinuities": 0,
+      "B_frame_discontinuities": 0,
+      "audible_result": "PASS — playing in the tiny browser; no audible defect reported"
+    },
+    "leader_rate_follow": {
+      "leader_A_manual_rate": 1.0499999523162842,
+      "expected_follower_rate": 0.984375,
+      "measured_follower_rate": 0.984374955296623,
+      "abs_sync_phase_error_beats": 0.00014271044435076874,
+      "sync_locked": true,
+      "follower_transport_seek_count": 1,
+      "new_frame_discontinuities": 0
+    },
+    "main_thread_stress_ms": 600,
+    "main_thread_stress": {
+      "direction": "B leader to A follower",
+      "before_output_frame": 26903040,
+      "after_output_frame": 26957312,
+      "output_frame_delta": 54272,
+      "before_follower_source_frame": 2156069.171889717,
+      "after_follower_source_frame": 2213959.3052348443,
+      "follower_source_frame_delta": 57890.13334512711,
+      "new_A_frame_discontinuities": 0,
+      "new_B_frame_discontinuities": 0,
+      "new_mixer_frame_discontinuities": 0,
+      "follower_transport_seek_count_before": 1,
+      "follower_transport_seek_count_after": 1,
+      "sync_locked_after": true,
+      "abs_sync_phase_error_beats_after": 0.000940059660422321
+    },
+    "five_minute_hold": {
+      "duration_seconds": 300,
+      "stable_sample_start_output_frame": 10224000,
+      "stable_sample_end_output_frame": 22510592,
+      "output_frame_delta": 12286592,
+      "final_stable_sync_locked": true,
+      "final_stable_abs_phase_error_beats": 0.00014271044437919045,
+      "final_stable_A_frame_discontinuities": 0,
+      "final_stable_B_frame_discontinuities": 0,
+      "final_stable_follower_transport_seek_count": 1,
+      "natural_end_after_hold": true
+    },
+    "reverse_leadership": {
+      "leader": "B",
+      "follower": "A",
+      "sync_locked": true,
+      "abs_sync_phase_error_beats": 0.0050161289253480845,
+      "follower_playback_rate": 1.0702049255932606,
+      "follower_tempo_matched_rate": 1.0666666666666667,
+      "follower_transport_seek_count": 1,
+      "new_A_frame_discontinuities": 0,
+      "new_B_frame_discontinuities": 0
+    },
+    "ordinary_tracks": "NOT_EVALUATED — no verified BPM and first-beat grids were supplied",
+    "console_runtime_errors": "None observed in the physical in-app browser run",
+    "physical_audio_result": "PASS — generated click playback was audible in the tiny browser; no clicks/dropouts were reported"
+  },
+  "artifacts": [
+    "reports/local-debug/artifacts/SYNC-T5-001-runtime.json"
+  ],
+  "notes": "All evaluated SYNC T5 checks passed on the exact SHA. Evidence-only report branch; no product files were changed.",
+  "scope": {
+    "generated_click_tracks": "PROVEN",
+    "leader_rate_follow": "PROVEN",
+    "main_thread_stress": "PROVEN",
+    "five_minute_hold": "PROVEN",
+    "reverse_leadership": "PROVEN",
+    "audible_generated_click_pair": "PROVEN",
+    "ordinary_tracks_with_verified_grids": "NOT_EVALUATED"
+  },
+  "limitation": "Ordinary program-material SYNC remains unverified because no trusted BPM + first-beat grids were supplied for those tracks. This limitation must remain visible until separately proven."
+}

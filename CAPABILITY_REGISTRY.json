@@ -115,10 +115,23 @@
     {
       "id": "audio.sync",
       "class": "realtime-control",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "AudioWorklet SharedArrayBuffer phase-lock controller",
       "contract": "docs/contracts/SYNC.md",
-      "evidence": "evidence/sync/phase6-automated/RESULT.json"
+      "evidence": "evidence/sync/phase6-local/RESULT.json",
+      "proven_scope": [
+        "generated click tracks with trusted manual grids",
+        "tempo match",
+        "phase lock",
+        "leader rate follow",
+        "reverse leadership",
+        "main-thread stress",
+        "five-minute hold",
+        "human audible confirmation"
+      ],
+      "not_yet_proven": [
+        "ordinary program tracks with verified BPM + first-beat grids"
+      ]
     }
   ]
 }

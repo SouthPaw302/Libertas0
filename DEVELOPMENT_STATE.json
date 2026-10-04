@@ -1,16 +1,17 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "sync",
-  "active_module": "sync",
-  "active_branch": "module/sync",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical/human-listening validation of the automatically proven realtime SYNC controller.",
-  "last_passing_gate": "sync-T4-browser-runtime",
-  "last_evidence": "evidence/sync/phase6-automated/RESULT.json",
-  "blockers": [
-    "Physical T5 SYNC validation and human audible confirmation have not yet returned through the debug bus."
+  "phase": "performance_transport",
+  "active_module": "performance-transport",
+  "active_branch": "main",
+  "status": "PLANNED",
+  "current_objective": "Phase 6 SYNC core is complete and locked with automated and local audible evidence. Ordinary-track SYNC remains explicitly unverified until trusted BPM and first-beat grids are available. Await explicit user instruction before Phase 7 Performance Transport.",
+  "last_passing_gate": "sync-T5-local-physical-listening",
+  "last_evidence": "evidence/sync/phase6-local/RESULT.json",
+  "blockers": [],
+  "known_limitations": [
+    "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated."
   ],
-  "exact_next_action": "Local debug agent executes SYNC-T5-001 against exact SHA 76f3c2e75538a5a89af25316508a9fef8e176ea1 and reports through validation/local-debug + issue #1. Do not begin Phase 7.",
+  "exact_next_action": "Await explicit instruction to start Phase 7. When authorized, create module/performance-transport from this promoted main state and preserve SYNC plus all lower modules as locked dependencies.",
   "product_code_authorized": false
 }
