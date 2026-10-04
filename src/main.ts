@@ -15,6 +15,8 @@ import { SyncController, type DeckId, type SyncSessionStatus } from './sync/Sync
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
 import { PerformanceTransportController } from './transport/PerformanceTransportController';
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
+import { TrackIntelligenceController } from './intelligence/TrackIntelligenceController';
+import type { TrackAnalysisResult } from './intelligence/TrackAnalysisCore';
 
 interface LibertasKernelTestApi {
   start(): Promise<AudioKernelStatus>;
@@ -87,6 +89,24 @@ interface LibertasPerformanceTransportTestApi {
   jogBySeconds(deltaSeconds: number): Promise<DeckStatus>;
 }
 
+interface LibertasIntelligenceTestApi {
+  workerAvailable(): boolean;
+  analyzeClick(options?: {
+    durationSeconds?: number;
+    bpm?: number;
+    sampleRate?: number;
+    firstBeatOffsetSeconds?: number;
+  }): Promise<TrackAnalysisResult>;
+  loadClick(deck: 'A' | 'B', options?: {
+    durationSeconds?: number;
+    bpm?: number;
+    sampleRate?: number;
+    firstBeatOffsetSeconds?: number;
+  }): Promise<DeckStatus>;
+  apply(deck: 'A' | 'B', result: TrackAnalysisResult): BeatGrid;
+  grid(deck: 'A' | 'B'): BeatGrid;
+}
+
 interface LibertasDualDeckTestApi {
   loadGenerated(
     durationSeconds?: number,
@@ -112,6 +132,7 @@ declare global {
     __libertasSyncTest: LibertasSyncTestApi;
     __libertasPerformanceATest: LibertasPerformanceTransportTestApi;
     __libertasPerformanceBTest: LibertasPerformanceTransportTestApi;
+    __libertasIntelligenceTest: LibertasIntelligenceTestApi;
   }
 }
 
@@ -128,6 +149,8 @@ const deckB = new DeckBController(runtime, undefined, { node: channelB.inputNode
 const sync = new SyncController(deckA, deckB);
 const performanceA = new PerformanceTransportController(deckA);
 const performanceB = new PerformanceTransportController(deckB);
+const intelligence = new TrackIntelligenceController(runtime);
+const intelligenceResults = new Map<'A' | 'B', { fileName: string; result: TrackAnalysisResult }>();
 
 const musicalClocks = new Map<'A' | 'B', MusicalClock>();
 const pendingGrids = new Map<'A' | 'B', BeatGrid>([
@@ -177,6 +200,12 @@ const perfBLoopOff = document.querySelector<HTMLButtonElement>('#perf-b-loop-off
 const perfBJogBack = document.querySelector<HTMLButtonElement>('#perf-b-jog-back');
 const perfBJogForward = document.querySelector<HTMLButtonElement>('#perf-b-jog-forward');
 const perfBStatus = document.querySelector<HTMLPreElement>('#perf-b-status');
+const intelligenceAAnalyze = document.querySelector<HTMLButtonElement>('#intelligence-a-analyze');
+const intelligenceAApply = document.querySelector<HTMLButtonElement>('#intelligence-a-apply');
+const intelligenceAStatus = document.querySelector<HTMLPreElement>('#intelligence-a-status');
+const intelligenceBAnalyze = document.querySelector<HTMLButtonElement>('#intelligence-b-analyze');
+const intelligenceBApply = document.querySelector<HTMLButtonElement>('#intelligence-b-apply');
+const intelligenceBStatus = document.querySelector<HTMLPreElement>('#intelligence-b-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -260,6 +289,12 @@ function bindDeck(prefix: 'a' | 'b', deck: DeckController): void {
 bindDeck('a', deckA);
 bindDeck('b', deckB);
 
+function clearIntelligenceProposal(deck: 'A' | 'B'): void {
+  intelligenceResults.delete(deck);
+}
+document.querySelector<HTMLInputElement>('#deck-a-file')?.addEventListener('change', () => clearIntelligenceProposal('A'));
+document.querySelector<HTMLInputElement>('#deck-b-file')?.addEventListener('change', () => clearIntelligenceProposal('B'));
+
 function getDeck(deck: 'A' | 'B'): DeckController {
   return deck === 'A' ? deckA : deckB;
 }
@@ -319,6 +354,73 @@ clockRefreshButton?.addEventListener('click', () => {
     render(document.querySelector('#clock-a-status'), a.status === 'fulfilled' ? a.value : { error: String(a.reason) });
     render(document.querySelector('#clock-b-status'), b.status === 'fulfilled' ? b.value : { error: String(b.reason) });
   });
+});
+
+async function analyzeSelectedTrack(deck: 'A' | 'B'): Promise<void> {
+  const prefix = deck.toLowerCase();
+  const fileInput = document.querySelector<HTMLInputElement>(`#deck-${prefix}-file`);
+  const statusElement = deck === 'A' ? intelligenceAStatus : intelligenceBStatus;
+  const file = fileInput?.files?.[0];
+  if (!file) {
+    render(statusElement, { error: `Choose a Deck ${deck} audio file first.` });
+    return;
+  }
+
+  render(statusElement, { state: 'ANALYZING', execution: 'web-worker', file: file.name });
+  const result = await intelligence.analyzeEncodedAudio(await file.arrayBuffer());
+  intelligenceResults.set(deck, { fileName: file.name, result });
+  render(statusElement, {
+    state: 'PROPOSAL_READY',
+    file: file.name,
+    result,
+    note: result.recommended
+      ? 'Grid proposal is recommended but not applied.'
+      : 'Low-confidence proposal; keep manual grid unless verified.',
+  });
+}
+
+async function applyIntelligenceProposal(deck: 'A' | 'B'): Promise<void> {
+  const prefix = deck.toLowerCase() as 'a' | 'b';
+  const stored = intelligenceResults.get(deck);
+  const statusElement = deck === 'A' ? intelligenceAStatus : intelligenceBStatus;
+  const selected = document.querySelector<HTMLInputElement>(`#deck-${prefix}-file`)?.files?.[0];
+  if (!stored) throw new Error(`Deck ${deck} has no analysis proposal`);
+  if (!selected || selected.name !== stored.fileName) throw new Error('Selected file changed after analysis');
+  if (!stored.result.recommended) throw new Error('Analysis confidence is below the automatic proposal threshold');
+
+  const deckStatus = await getDeck(deck).requestStatus().catch(() => null);
+  if (
+    deckStatus?.loaded &&
+    (deckStatus.sourceSampleRate !== stored.result.sampleRate ||
+      deckStatus.sourceFrames !== stored.result.frameCount)
+  ) {
+    throw new Error('Loaded deck does not match the analyzed PCM');
+  }
+
+  const proposal = intelligence.proposal(stored.result);
+  setMusicalGrid(deck, proposal.grid);
+
+  const bpmInput = document.querySelector<HTMLInputElement>(`#clock-${prefix}-bpm`);
+  const originInput = document.querySelector<HTMLInputElement>(`#clock-${prefix}-origin`);
+  const beatsBarInput = document.querySelector<HTMLInputElement>(`#clock-${prefix}-beats-bar`);
+  if (bpmInput) bpmInput.value = proposal.grid.bpm.toFixed(4);
+  if (originInput) originInput.value = String(Math.round(proposal.grid.firstBeatFrame));
+  if (beatsBarInput) beatsBarInput.value = String(proposal.grid.beatsPerBar);
+
+  render(statusElement, { state: 'GRID_APPLIED_EXPLICITLY', proposal });
+}
+
+intelligenceAAnalyze?.addEventListener('click', () => {
+  void analyzeSelectedTrack('A').catch((error: unknown) => render(intelligenceAStatus, { error: String(error) }));
+});
+intelligenceBAnalyze?.addEventListener('click', () => {
+  void analyzeSelectedTrack('B').catch((error: unknown) => render(intelligenceBStatus, { error: String(error) }));
+});
+intelligenceAApply?.addEventListener('click', () => {
+  void applyIntelligenceProposal('A').catch((error: unknown) => render(intelligenceAStatus, { error: String(error) }));
+});
+intelligenceBApply?.addEventListener('click', () => {
+  void applyIntelligenceProposal('B').catch((error: unknown) => render(intelligenceBStatus, { error: String(error) }));
 });
 
 async function enableSyncFromUi(leader: DeckId): Promise<void> {
@@ -598,6 +700,34 @@ function makePerformanceTestApi(
 
 window.__libertasPerformanceATest = makePerformanceTestApi(performanceA, 'A');
 window.__libertasPerformanceBTest = makePerformanceTestApi(performanceB, 'B');
+
+window.__libertasIntelligenceTest = {
+  workerAvailable: () => intelligence.workerAvailable(),
+  analyzeClick(options = {}) {
+    return intelligence.analyzeEncodedAudio(createClickTrackWav({
+      durationSeconds: options.durationSeconds ?? 20,
+      bpm: options.bpm ?? 120,
+      sampleRate: options.sampleRate ?? 48_000,
+      firstBeatOffsetSeconds: options.firstBeatOffsetSeconds ?? 0,
+      amplitude: 0.45,
+    }));
+  },
+  loadClick(deck, options = {}) {
+    return getDeck(deck).loadEncodedAudio(createClickTrackWav({
+      durationSeconds: options.durationSeconds ?? 20,
+      bpm: options.bpm ?? 120,
+      sampleRate: options.sampleRate ?? 48_000,
+      firstBeatOffsetSeconds: options.firstBeatOffsetSeconds ?? 0,
+      amplitude: 0.45,
+    }));
+  },
+  apply(deck, result) {
+    const proposal = intelligence.proposal(result);
+    setMusicalGrid(deck, proposal.grid);
+    return proposal.grid;
+  },
+  grid: (deck) => ({ ...pendingGrids.get(deck)! }),
+};
 
 window.__libertasDualDeckTest = {
   async loadGenerated(durationSeconds = 10, frequencyA = 330, frequencyB = 550, amplitude = 0.35) {

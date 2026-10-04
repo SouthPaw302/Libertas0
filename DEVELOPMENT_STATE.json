@@ -3,19 +3,18 @@
   "project": "Libertas0",
   "phase": "intelligence",
   "active_module": "intelligence",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 8 Mixer/DSP is complete and locked with automated and physical audible evidence. Await explicit user instruction before beginning Phase 9 Track Intelligence.",
+  "active_branch": "module/intelligence",
+  "status": "IMPLEMENTING",
+  "current_objective": "Build advisory Web Worker track analysis that proposes BPM and beat-anchor grids with confidence/provenance, without changing realtime authority or silently mutating Musical Clock state.",
   "last_passing_gate": "mixer-dsp-T5-local-physical-listening",
   "last_evidence": "evidence/mixer-dsp/phase8-local/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
-    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
-    "Phase 8 limiter is sample-peak safety limiting, not true-peak mastering.",
-    "Phase 8 EQ provides -24 dB attenuation, not full-kill isolation.",
-    "Phase 8 crossfader uses a fixed equal-power curve."
+    "Phase 9 firstBeatFrame is a beat-phase anchor candidate, not semantic bar-downbeat detection.",
+    "Phase 9 reference analyzer is deterministic onset/autocorrelation DSP, not a learned model.",
+    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis."
   ],
-  "exact_next_action": "Await explicit instruction to start Phase 9 Track Intelligence. Preserve all Phase 2-8 modules as locked dependencies.",
-  "product_code_authorized": false
+  "exact_next_action": "Run Phase 9 unit/build/browser gates and all locked regressions. Generated-fixture success does not by itself clear ordinary-track SYNC accuracy.",
+  "product_code_authorized": true
 }

@@ -115,7 +115,7 @@
     },
     {
       "id": "intelligence",
-      "state": "PLANNED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "mixer-dsp"
       ],

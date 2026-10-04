@@ -146,3 +146,13 @@ Physical validation proved channel trim, 3-band EQ, bipolar filters, equal-power
 SYNC and Cue/Hot Cue/Loop/Jog remained functional with DSP active. The 600 ms UI stall added zero A/B/mixer discontinuities and zero transport seeks. The five-minute mixed hold added zero new discontinuities, ended with SYNC locked and stale snapshots at 0, and received human audible confirmation.
 
 Lifetime discontinuity counters at the end were A=2, B=0, mixer=2; the measured five-minute interval itself added 0/0/0 new discontinuities.
+
+## D-0027 — Track Intelligence is advisory and off the realtime path
+Status: ACCEPTED FOR PHASE 9
+
+Phase 9 analysis runs in a Web Worker over decoded PCM. It can propose BPM and a beat-phase anchor but cannot own transport, alter deck rate, engage SYNC, or silently change Musical Clock state.
+
+## D-0028 — Deterministic onset/autocorrelation is the Phase 9 reference provider
+Status: ACCEPTED FOR PHASE 9
+
+The first intelligence provider uses inspectable energy-onset extraction, tempo autocorrelation, phase estimation and confidence scoring. Meyda/Essentia.js, WASM, ONNX, WebGPU and WebNN remain replaceable future provider candidates rather than prerequisites.

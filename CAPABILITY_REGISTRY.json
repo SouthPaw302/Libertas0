@@ -180,6 +180,13 @@
         "full-kill isolator EQ",
         "configurable crossfader curve/cut-lag"
       ]
+    },
+    {
+      "id": "audio.track-intelligence",
+      "class": "analysis",
+      "status": "implementing",
+      "provider": "Web Worker deterministic onset/autocorrelation DSP",
+      "contract": "docs/contracts/TRACK_INTELLIGENCE.md"
     }
   ]
 }

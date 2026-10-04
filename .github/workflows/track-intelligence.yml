@@ -1,0 +1,53 @@
+name: Track Intelligence Gate
+
+on:
+  push:
+    branches: [module/intelligence]
+    paths:
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'index.html'
+      - 'src/**'
+      - 'public/audio/**'
+      - 'tests/browser/**'
+      - 'docs/contracts/TRACK_INTELLIGENCE.md'
+      - 'docs/research/TRACK_INTELLIGENCE_2026.md'
+      - '.github/workflows/track-intelligence.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  intelligence:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install toolchain
+        run: npm install
+      - name: Typecheck, unit tests, production build
+        run: npm run check
+      - name: Install Chrome for Testing
+        run: npx playwright install --with-deps chromium
+      - name: Track Intelligence runtime and locked regressions
+        run: npm run test:browser
+      - name: Upload Phase 9 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: track-intelligence-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            package-lock.json
+            dist/
+            playwright-report/
+            test-results/

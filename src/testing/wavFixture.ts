@@ -70,6 +70,7 @@ export interface ClickTrackWavOptions {
   bpm?: number;
   amplitude?: number;
   clickDurationMs?: number;
+  firstBeatOffsetSeconds?: number;
   channels?: 1 | 2;
 }
 
@@ -79,6 +80,7 @@ export function createClickTrackWav(options: ClickTrackWavOptions = {}): ArrayBu
   const bpm = options.bpm ?? 120;
   const amplitude = options.amplitude ?? 0.6;
   const clickDurationMs = options.clickDurationMs ?? 12;
+  const firstBeatOffsetSeconds = options.firstBeatOffsetSeconds ?? 0;
   const channels = options.channels ?? 2;
 
   if (!Number.isFinite(bpm) || bpm <= 0) throw new RangeError('bpm must be positive');
@@ -86,6 +88,7 @@ export function createClickTrackWav(options: ClickTrackWavOptions = {}): ArrayBu
   const frames = Math.floor(durationSeconds * sampleRate);
   const clickFrames = Math.max(1, Math.floor((clickDurationMs / 1000) * sampleRate));
   const framesPerBeat = (sampleRate * 60) / bpm;
+  const firstBeatFrame = Math.max(0, firstBeatOffsetSeconds * sampleRate);
   const bytesPerSample = 2;
   const blockAlign = channels * bytesPerSample;
   const dataBytes = frames * blockAlign;
@@ -112,7 +115,11 @@ export function createClickTrackWav(options: ClickTrackWavOptions = {}): ArrayBu
 
   let offset = 44;
   for (let frame = 0; frame < frames; frame += 1) {
-    const beatFrame = frame % framesPerBeat;
+    const relativeFrame = frame - firstBeatFrame;
+    const beatFrame =
+      relativeFrame >= 0
+        ? ((relativeFrame % framesPerBeat) + framesPerBeat) % framesPerBeat
+        : Number.POSITIVE_INFINITY;
     let sample = 0;
     if (beatFrame < clickFrames) {
       const envelope = Math.exp(-8 * (beatFrame / clickFrames));
