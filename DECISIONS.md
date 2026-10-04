@@ -180,3 +180,28 @@ The promotion proves the tested constant-tempo ordinary-material path; it does n
 Status: ACCEPTED
 
 The Phase 6 limitation that ordinary program-material SYNC had not been evaluated is now closed for the tested constant-tempo analyzer-derived grid path. Variable-tempo/warped material remains outside the proven SYNC scope.
+
+## D-0033 — Phase 10 workflow services remain outside realtime authority
+Status: ACCEPTED FOR PHASE 10
+
+Library persistence, MIDI mapping, recording and automation are operator/workflow services around the locked realtime core. MIDI events emit explicit control actions. Recording is a parallel post-mixer tap. Automation schedules AudioParams against AudioContext time. None of these services may advance deck sourceFrame, Musical Clock or SYNC clocks.
+
+## D-0034 — Browser-local library is content addressed
+Status: ACCEPTED FOR PHASE 10
+
+The reference local library stores encoded audio and metadata in IndexedDB keyed by SHA-256 of file bytes. Duplicate imports converge on the same identity. Future desktop/distributed providers may replace persistence without changing track identity semantics.
+
+## D-0035 — Web MIDI is optional; deterministic mapping is mandatory
+Status: ACCEPTED FOR PHASE 10
+
+Web MIDI is a permissioned browser adapter with limited browser availability. The mapping/learn engine is independent and testable with exact MIDI bytes. Missing hardware or denied permission cannot disable other Libertas modules.
+
+## D-0036 — Master recording is a post-limiter side tap
+Status: ACCEPTED FOR PHASE 10
+
+Recording taps the proven mixer output into MediaStreamAudioDestinationNode and MediaRecorder. The recorder is not inserted in series with physical output and cannot become a render dependency.
+
+## D-0037 — Automation is AudioParam scheduling, not UI polling
+Status: ACCEPTED FOR PHASE 10
+
+Continuous automation lanes are scheduled against AudioContext time. A pre-scheduled crossfade must continue during a blocked main thread. Phase 10 intentionally does not automate discrete transport commands.

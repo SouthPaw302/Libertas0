@@ -1,4 +1,5 @@
 import { BrowserAudioRuntime } from '../audio/BrowserAudioRuntime';
+import type { AutomationPoint } from '../automation/AutomationTypes';
 import { djFilterFrequencies, type EqBand } from './MixerDspMath';
 
 export interface ChannelStripStatus {
@@ -105,6 +106,39 @@ export class ChannelStripController {
     this.applyFilterFrequencies(position, timeConstantSeconds);
   }
 
+  scheduleTrimDb(points: AutomationPoint[], startContextTime: number): void {
+    this.scheduleParam(this.inputNode.gain, points, startContextTime, -12, 12, (db) => 10 ** (db / 20));
+    this.trimDb = points[points.length - 1]?.value ?? this.trimDb;
+  }
+
+  scheduleFilter(points: AutomationPoint[], startContextTime: number): void {
+    if (points.length === 0) throw new RangeError('filter automation requires points');
+    this.lowpass.frequency.cancelScheduledValues(startContextTime);
+    this.highpass.frequency.cancelScheduledValues(startContextTime);
+    points.forEach((point, index) => {
+      this.assertRange('filter', point.value, -1, 1);
+      const frequencies = djFilterFrequencies(point.value, this.runtime.context.sampleRate);
+      const time = startContextTime + point.offsetSeconds;
+      if (index === 0) {
+        this.lowpass.frequency.setValueAtTime(frequencies.lowpassHz, time);
+        this.highpass.frequency.setValueAtTime(frequencies.highpassHz, time);
+      } else {
+        this.lowpass.frequency.linearRampToValueAtTime(frequencies.lowpassHz, time);
+        this.highpass.frequency.linearRampToValueAtTime(frequencies.highpassHz, time);
+      }
+    });
+    this.filter = points[points.length - 1]?.value ?? this.filter;
+  }
+
+  cancelTrimAutomation(fromContextTime: number): void {
+    this.inputNode.gain.cancelScheduledValues(fromContextTime);
+  }
+
+  cancelFilterAutomation(fromContextTime: number): void {
+    this.lowpass.frequency.cancelScheduledValues(fromContextTime);
+    this.highpass.frequency.cancelScheduledValues(fromContextTime);
+  }
+
   status(): ChannelStripStatus {
     const frequencies = djFilterFrequencies(this.filter, this.runtime.context.sampleRate);
     return {
@@ -141,6 +175,25 @@ export class ChannelStripController {
     const frequencies = djFilterFrequencies(position, this.runtime.context.sampleRate);
     this.smooth(this.lowpass.frequency, frequencies.lowpassHz, timeConstantSeconds);
     this.smooth(this.highpass.frequency, frequencies.highpassHz, timeConstantSeconds);
+  }
+
+  private scheduleParam(
+    parameter: AudioParam,
+    points: AutomationPoint[],
+    startContextTime: number,
+    min: number,
+    max: number,
+    map: (value: number) => number,
+  ): void {
+    if (points.length === 0) throw new RangeError('automation requires points');
+    parameter.cancelScheduledValues(startContextTime);
+    points.forEach((point, index) => {
+      this.assertRange('automation value', point.value, min, max);
+      const value = map(point.value);
+      const time = startContextTime + point.offsetSeconds;
+      if (index === 0) parameter.setValueAtTime(value, time);
+      else parameter.linearRampToValueAtTime(value, time);
+    });
   }
 
   private smooth(parameter: AudioParam, value: number, timeConstantSeconds: number): void {

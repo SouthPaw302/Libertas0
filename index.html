@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Libertas0 — Track Intelligence</title>
+  <title>Libertas0 — Library / MIDI / Recording / Automation</title>
   <style>
     body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 1200px; }
     .decks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
@@ -17,7 +17,7 @@
 </head>
 <body>
   <main>
-    <h1>Libertas0 — Track Intelligence</h1>
+    <h1>Libertas0 — Library / MIDI / Recording / Automation</h1>
 
     <div class="decks">
       <fieldset>
@@ -58,6 +58,54 @@
         <pre id="deck-b-status">Deck B ready</pre>
       </fieldset>
     </div>
+
+    <fieldset>
+      <legend>Library / MIDI / Recording / Automation</legend>
+      <div class="decks">
+        <div>
+          <strong>Local Track Library</strong>
+          <div class="row">
+            <input id="library-files" type="file" accept="audio/*" multiple />
+            <button id="library-import" type="button">Import</button>
+            <button id="library-refresh" type="button">Refresh</button>
+          </div>
+          <div class="row">
+            <select id="library-select"></select>
+            <button id="library-load-a" type="button">Load → A</button>
+            <button id="library-load-b" type="button">Load → B</button>
+            <button id="library-remove" type="button">Remove</button>
+          </div>
+          <pre id="library-status">Library initializing</pre>
+        </div>
+        <div>
+          <strong>MIDI</strong>
+          <div class="row">
+            <button id="midi-connect" type="button">Connect Web MIDI</button>
+            <button id="midi-learn-crossfader" type="button">Learn Crossfader</button>
+            <button id="midi-learn-master" type="button">Learn Master</button>
+          </div>
+          <pre id="midi-status">MIDI initializing</pre>
+        </div>
+      </div>
+      <div class="decks">
+        <div>
+          <strong>Master Recording</strong>
+          <div class="row">
+            <button id="recording-start" type="button">Start Recording</button>
+            <button id="recording-stop" type="button">Stop Recording</button>
+            <a id="recording-download" hidden>Download last recording</a>
+          </div>
+          <pre id="recording-status">Recording idle</pre>
+        </div>
+        <div>
+          <strong>Automation</strong>
+          <div class="row">
+            <button id="automation-demo" type="button">Schedule 4s Crossfade A→B</button>
+          </div>
+          <pre id="automation-status">Automation idle</pre>
+        </div>
+      </div>
+    </fieldset>
 
     <fieldset>
       <legend>Track Intelligence — grid proposals</legend>

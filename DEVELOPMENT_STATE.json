@@ -3,19 +3,18 @@
   "project": "Libertas0",
   "phase": "library_midi_recording_automation",
   "active_module": "library-midi-recording-automation",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 9 Track Intelligence is complete and locked with real ordinary-track analysis, explicit grid application, 180-second analyzer-derived SYNC, follower-jog recovery and audible confirmation. Await explicit user instruction before Phase 10.",
+  "active_branch": "module/library-midi-recording-automation",
+  "status": "IMPLEMENTING",
+  "current_objective": "Build browser-local library persistence, deterministic MIDI mapping/learn, post-mixer recording and AudioParam-timeline automation without changing realtime transport or SYNC authority.",
   "last_passing_gate": "track-intelligence-T5-ordinary-track",
   "last_evidence": "evidence/intelligence/phase9-local/RESULT.json",
   "blockers": [],
   "known_limitations": [
-    "Track Intelligence is proven only on the tested constant-tempo ordinary material plus synthetic fixtures; universal BPM accuracy is not claimed.",
-    "Semantic downbeat/bar classification and variable-tempo warp maps are not implemented.",
-    "Key, phrase, structure and stem analysis are not Phase 9 features.",
-    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
-    "Phase 8 limiter remains sample-peak safety limiting rather than true-peak mastering."
+    "Web MIDI is permissioned and not universally available; hardware-controller proof is environment-dependent.",
+    "Library v1 stores encoded audio in browser IndexedDB and is not yet the distributed library provider.",
+    "Recording format depends on MediaRecorder codecs supported by the current browser.",
+    "Automation v1 covers continuous AudioParams; cue/hotcue/seek command automation is not included."
   ],
-  "exact_next_action": "Await explicit instruction to start Phase 10 Library/MIDI/Recording/Automation. Preserve Phases 2-9 as locked dependencies.",
-  "product_code_authorized": false
+  "exact_next_action": "Run Phase 10 unit/build/browser gates including IndexedDB persistence, MIDI routing, master recording, AudioParam automation under UI stall and all locked Phase 2-9 regressions.",
+  "product_code_authorized": true
 }

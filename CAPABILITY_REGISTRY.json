@@ -207,6 +207,34 @@
         "phrase/structure analysis",
         "stems"
       ]
+    },
+    {
+      "id": "storage.local-library",
+      "class": "storage",
+      "status": "implementing",
+      "provider": "IndexedDB SHA-256 content-addressed audio library",
+      "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md"
+    },
+    {
+      "id": "control.midi",
+      "class": "control",
+      "status": "implementing",
+      "provider": "deterministic MIDI mapping engine + optional Web MIDI adapter",
+      "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md"
+    },
+    {
+      "id": "audio.master-recording",
+      "class": "capture",
+      "status": "implementing",
+      "provider": "MediaStreamAudioDestinationNode + MediaRecorder",
+      "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md"
+    },
+    {
+      "id": "control.automation",
+      "class": "control",
+      "status": "implementing",
+      "provider": "AudioParam timeline automation registry",
+      "contract": "docs/contracts/LIBRARY_MIDI_RECORDING_AUTOMATION.md"
     }
   ]
 }

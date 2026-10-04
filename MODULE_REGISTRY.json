@@ -126,7 +126,7 @@
     },
     {
       "id": "library-midi-recording-automation",
-      "state": "PLANNED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "intelligence"
       ],

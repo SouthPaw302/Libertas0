@@ -1,4 +1,5 @@
 import { BrowserAudioRuntime } from '../audio/BrowserAudioRuntime';
+import type { AutomationPoint } from '../automation/AutomationTypes';
 
 export interface MixerProcessorStatus {
   type: 'response';
@@ -121,6 +122,27 @@ export class MixerController {
     parameter.setValueAtTime(threshold, this.runtime.context.currentTime);
   }
 
+  connectOutput(target: AudioNode): void {
+    if (!this.analyser) throw new Error('Mixer analyser is not initialized');
+    this.analyser.connect(target);
+  }
+
+  disconnectOutput(target: AudioNode): void {
+    this.analyser?.disconnect(target);
+  }
+
+  scheduleMasterVolume(points: AutomationPoint[], startContextTime: number): void {
+    this.scheduleParameter('masterVolume', points, startContextTime, 0, 1);
+  }
+
+  scheduleCrossfader(points: AutomationPoint[], startContextTime: number): void {
+    this.scheduleParameter('crossfader', points, startContextTime, -1, 1);
+  }
+
+  cancelAutomation(name: 'masterVolume' | 'crossfader', fromContextTime: number): void {
+    this.requireParameter(name).cancelScheduledValues(fromContextTime);
+  }
+
   requestStatus(timeoutMs = 2_000): Promise<MixerStatus> {
     const node = this.inputNode;
     const requestId = this.requestSequence++;
@@ -167,6 +189,26 @@ export class MixerController {
           ? context.outputLatency
           : null,
     };
+  }
+
+  private scheduleParameter(
+    name: 'masterVolume' | 'crossfader',
+    points: AutomationPoint[],
+    startContextTime: number,
+    min: number,
+    max: number,
+  ): void {
+    if (points.length === 0) throw new RangeError('automation requires points');
+    const parameter = this.requireParameter(name);
+    parameter.cancelScheduledValues(startContextTime);
+    points.forEach((point, index) => {
+      if (!Number.isFinite(point.value) || point.value < min || point.value > max) {
+        throw new RangeError(`${name} automation value out of range`);
+      }
+      const time = startContextTime + point.offsetSeconds;
+      if (index === 0) parameter.setValueAtTime(point.value, time);
+      else parameter.linearRampToValueAtTime(point.value, time);
+    });
   }
 
   private requireParameter(name: 'masterVolume' | 'crossfader' | 'limiterThreshold'): AudioParam {

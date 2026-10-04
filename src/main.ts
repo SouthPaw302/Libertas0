@@ -17,6 +17,12 @@ import { PerformanceTransportController } from './transport/PerformanceTransport
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 import { TrackIntelligenceController } from './intelligence/TrackIntelligenceController';
 import type { TrackAnalysisResult } from './intelligence/TrackAnalysisCore';
+import { TrackLibrary, type LibraryTrack } from './library/TrackLibrary';
+import { MidiMappingEngine, type MidiAction, type MidiBinding } from './midi/MidiMappingEngine';
+import { WebMidiController, type MidiRuntimeStatus } from './midi/WebMidiController';
+import { MasterRecordingController, type RecordingStatus } from './recording/MasterRecordingController';
+import { AutomationController } from './automation/AutomationController';
+import type { AutomationLane, ScheduledAutomation } from './automation/AutomationTypes';
 
 interface LibertasKernelTestApi {
   start(): Promise<AudioKernelStatus>;
@@ -107,6 +113,34 @@ interface LibertasIntelligenceTestApi {
   grid(deck: 'A' | 'B'): BeatGrid;
 }
 
+interface LibertasLibraryTestApi {
+  clear(): Promise<void>;
+  importGenerated(name?: string, durationSeconds?: number, frequencyHz?: number): Promise<LibraryTrack>;
+  list(): Promise<LibraryTrack[]>;
+  load(id: string, deck: 'A' | 'B'): Promise<DeckStatus>;
+}
+
+interface LibertasMidiTestApi {
+  apiAvailable(): boolean;
+  addBinding(binding: MidiBinding): void;
+  learn(target: string, mode: 'absolute' | 'trigger', min?: number, max?: number): void;
+  dispatch(data: number[]): unknown;
+  status(): MidiRuntimeStatus;
+}
+
+interface LibertasRecordingTestApi {
+  supported(): boolean;
+  start(): RecordingStatus;
+  stop(): Promise<{ status: RecordingStatus; size: number; type: string }>;
+  status(): RecordingStatus;
+}
+
+interface LibertasAutomationTestApi {
+  targets(): string[];
+  schedule(lane: AutomationLane, leadSeconds?: number): ScheduledAutomation;
+  cancel(target: string): void;
+}
+
 interface LibertasDualDeckTestApi {
   loadGenerated(
     durationSeconds?: number,
@@ -133,6 +167,10 @@ declare global {
     __libertasPerformanceATest: LibertasPerformanceTransportTestApi;
     __libertasPerformanceBTest: LibertasPerformanceTransportTestApi;
     __libertasIntelligenceTest: LibertasIntelligenceTestApi;
+    __libertasLibraryTest: LibertasLibraryTestApi;
+    __libertasMidiTest: LibertasMidiTestApi;
+    __libertasRecordingTest: LibertasRecordingTestApi;
+    __libertasAutomationTest: LibertasAutomationTestApi;
   }
 }
 
@@ -150,6 +188,81 @@ const sync = new SyncController(deckA, deckB);
 const performanceA = new PerformanceTransportController(deckA);
 const performanceB = new PerformanceTransportController(deckB);
 const intelligence = new TrackIntelligenceController(runtime);
+const library = new TrackLibrary();
+const midiEngine = new MidiMappingEngine();
+const recording = new MasterRecordingController(runtime, mixer);
+const automation = new AutomationController(runtime.context);
+
+function applyMidiAction(action: MidiAction): void {
+  switch (action.target) {
+    case 'mixer.crossfader':
+      mixer.setCrossfader(action.value);
+      return;
+    case 'mixer.master':
+      mixer.setMasterVolume(action.value);
+      return;
+    case 'channelA.trim':
+      channelA.setTrimDb(action.value);
+      return;
+    case 'channelB.trim':
+      channelB.setTrimDb(action.value);
+      return;
+    case 'channelA.filter':
+      channelA.setFilter(action.value);
+      return;
+    case 'channelB.filter':
+      channelB.setFilter(action.value);
+      return;
+    case 'deckA.volume':
+      deckA.setVolume(action.value);
+      return;
+    case 'deckB.volume':
+      deckB.setVolume(action.value);
+      return;
+    case 'deckA.hotcue1':
+      if (action.trigger) void performanceA.triggerHotCue(1);
+      return;
+    case 'deckB.hotcue1':
+      if (action.trigger) void performanceB.triggerHotCue(1);
+      return;
+    default:
+      throw new Error(`Unmapped MIDI target: ${action.target}`);
+  }
+}
+
+const webMidi = new WebMidiController(midiEngine, applyMidiAction);
+
+automation.register('mixer.master', {
+  min: 0, max: 1,
+  schedule: (points, start) => mixer.scheduleMasterVolume(points, start),
+  cancel: (from) => mixer.cancelAutomation('masterVolume', from),
+});
+automation.register('mixer.crossfader', {
+  min: -1, max: 1,
+  schedule: (points, start) => mixer.scheduleCrossfader(points, start),
+  cancel: (from) => mixer.cancelAutomation('crossfader', from),
+});
+automation.register('channelA.trim', {
+  min: -12, max: 12,
+  schedule: (points, start) => channelA.scheduleTrimDb(points, start),
+  cancel: (from) => channelA.cancelTrimAutomation(from),
+});
+automation.register('channelB.trim', {
+  min: -12, max: 12,
+  schedule: (points, start) => channelB.scheduleTrimDb(points, start),
+  cancel: (from) => channelB.cancelTrimAutomation(from),
+});
+automation.register('channelA.filter', {
+  min: -1, max: 1,
+  schedule: (points, start) => channelA.scheduleFilter(points, start),
+  cancel: (from) => channelA.cancelFilterAutomation(from),
+});
+automation.register('channelB.filter', {
+  min: -1, max: 1,
+  schedule: (points, start) => channelB.scheduleFilter(points, start),
+  cancel: (from) => channelB.cancelFilterAutomation(from),
+});
+
 const intelligenceResults = new Map<'A' | 'B', { fileName: string; result: TrackAnalysisResult }>();
 
 const musicalClocks = new Map<'A' | 'B', MusicalClock>();
@@ -206,6 +319,24 @@ const intelligenceAStatus = document.querySelector<HTMLPreElement>('#intelligenc
 const intelligenceBAnalyze = document.querySelector<HTMLButtonElement>('#intelligence-b-analyze');
 const intelligenceBApply = document.querySelector<HTMLButtonElement>('#intelligence-b-apply');
 const intelligenceBStatus = document.querySelector<HTMLPreElement>('#intelligence-b-status');
+const libraryFiles = document.querySelector<HTMLInputElement>('#library-files');
+const libraryImport = document.querySelector<HTMLButtonElement>('#library-import');
+const libraryRefresh = document.querySelector<HTMLButtonElement>('#library-refresh');
+const librarySelect = document.querySelector<HTMLSelectElement>('#library-select');
+const libraryLoadA = document.querySelector<HTMLButtonElement>('#library-load-a');
+const libraryLoadB = document.querySelector<HTMLButtonElement>('#library-load-b');
+const libraryRemove = document.querySelector<HTMLButtonElement>('#library-remove');
+const libraryStatus = document.querySelector<HTMLPreElement>('#library-status');
+const midiConnect = document.querySelector<HTMLButtonElement>('#midi-connect');
+const midiLearnCrossfader = document.querySelector<HTMLButtonElement>('#midi-learn-crossfader');
+const midiLearnMaster = document.querySelector<HTMLButtonElement>('#midi-learn-master');
+const midiStatus = document.querySelector<HTMLPreElement>('#midi-status');
+const recordingStart = document.querySelector<HTMLButtonElement>('#recording-start');
+const recordingStop = document.querySelector<HTMLButtonElement>('#recording-stop');
+const recordingStatus = document.querySelector<HTMLPreElement>('#recording-status');
+const recordingDownload = document.querySelector<HTMLAnchorElement>('#recording-download');
+const automationDemo = document.querySelector<HTMLButtonElement>('#automation-demo');
+const automationStatus = document.querySelector<HTMLPreElement>('#automation-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -572,6 +703,109 @@ mixerStatusButton?.addEventListener('click', () => {
     .catch((error: unknown) => render(mixerStatusElement, { error: String(error) }));
 });
 
+async function refreshLibraryUi(): Promise<void> {
+  const tracks = await library.list();
+  if (librarySelect) {
+    const current = librarySelect.value;
+    librarySelect.replaceChildren(...tracks.map((track) => {
+      const option = document.createElement('option');
+      option.value = track.id;
+      option.textContent = `${track.name} (${Math.round(track.size / 1024)} KiB)`;
+      return option;
+    }));
+    if (tracks.some((track) => track.id === current)) librarySelect.value = current;
+  }
+  render(libraryStatus, { count: tracks.length, tracks });
+}
+
+async function loadLibraryTrack(deck: 'A' | 'B'): Promise<DeckStatus> {
+  const id = librarySelect?.value;
+  if (!id) throw new Error('Choose a library track');
+  const encoded = await library.getAudio(id);
+  return getDeck(deck).loadEncodedAudio(encoded);
+}
+
+libraryImport?.addEventListener('click', () => {
+  void (async () => {
+    const files = [...(libraryFiles?.files ?? [])];
+    if (files.length === 0) throw new Error('Choose one or more audio files');
+    for (const file of files) await library.importFile(file);
+    await refreshLibraryUi();
+  })().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryRefresh?.addEventListener('click', () => {
+  void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryLoadA?.addEventListener('click', () => {
+  void loadLibraryTrack('A').then((status) => render(document.querySelector('#deck-a-status'), status))
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryLoadB?.addEventListener('click', () => {
+  void loadLibraryTrack('B').then((status) => render(document.querySelector('#deck-b-status'), status))
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryRemove?.addEventListener('click', () => {
+  void (async () => {
+    const id = librarySelect?.value;
+    if (!id) throw new Error('Choose a library track');
+    await library.remove(id);
+    await refreshLibraryUi();
+  })().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+
+midiConnect?.addEventListener('click', () => {
+  void webMidi.connect().then((status) => render(midiStatus, status))
+    .catch((error: unknown) => render(midiStatus, { error: String(error), status: webMidi.status() }));
+});
+midiLearnCrossfader?.addEventListener('click', () => {
+  midiEngine.startLearn('mixer.crossfader', 'absolute', -1, 1);
+  render(midiStatus, { ...webMidi.status(), learning: 'mixer.crossfader' });
+});
+midiLearnMaster?.addEventListener('click', () => {
+  midiEngine.startLearn('mixer.master', 'absolute', 0, 1);
+  render(midiStatus, { ...webMidi.status(), learning: 'mixer.master' });
+});
+
+recordingStart?.addEventListener('click', () => {
+  try {
+    render(recordingStatus, recording.start());
+  } catch (error) {
+    render(recordingStatus, { error: String(error) });
+  }
+});
+recordingStop?.addEventListener('click', () => {
+  void recording.stop()
+    .then(({ status, blob }) => {
+      render(recordingStatus, status);
+      if (recordingDownload) {
+        recordingDownload.href = URL.createObjectURL(blob);
+        recordingDownload.download = `libertas0-mix-${Date.now()}.webm`;
+        recordingDownload.hidden = false;
+      }
+    })
+    .catch((error: unknown) => render(recordingStatus, { error: String(error) }));
+});
+
+automationDemo?.addEventListener('click', () => {
+  try {
+    render(automationStatus, automation.schedule({
+      target: 'mixer.crossfader',
+      points: [
+        { offsetSeconds: 0, value: -1 },
+        { offsetSeconds: 2, value: 0 },
+        { offsetSeconds: 4, value: 1 },
+      ],
+    }, 0.1));
+  } catch (error) {
+    render(automationStatus, { error: String(error) });
+  }
+});
+
+void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+render(midiStatus, webMidi.status());
+render(recordingStatus, recording.status());
+render(automationStatus, { targets: automation.targetsList(), state: 'idle' });
+
 function blockMainThread(milliseconds: number): void {
   const end = performance.now() + milliseconds;
   while (performance.now() < end) {
@@ -727,6 +961,46 @@ window.__libertasIntelligenceTest = {
     return proposal.grid;
   },
   grid: (deck) => ({ ...pendingGrids.get(deck)! }),
+};
+
+window.__libertasLibraryTest = {
+  clear: () => library.clear(),
+  async importGenerated(name = 'library-test.wav', durationSeconds = 4, frequencyHz = 440) {
+    const encoded = createSineWav({ durationSeconds, sampleRate: 48_000, frequencyHz, amplitude: 0.2 });
+    return library.importBlob(name, new Blob([encoded], { type: 'audio/wav' }), 1);
+  },
+  list: () => library.list(),
+  async load(id, deck) {
+    return getDeck(deck).loadEncodedAudio(await library.getAudio(id));
+  },
+};
+
+window.__libertasMidiTest = {
+  apiAvailable: () => webMidi.apiAvailable(),
+  addBinding: (binding) => midiEngine.addBinding(binding),
+  learn: (target, mode, min, max) => midiEngine.startLearn(target, mode, min, max),
+  dispatch: (data) => webMidi.dispatchSynthetic(data),
+  status: () => webMidi.status(),
+};
+
+window.__libertasRecordingTest = {
+  supported: () => recording.supported(),
+  start: () => recording.start(),
+  async stop() {
+    const result = await recording.stop();
+    return {
+      status: result.status,
+      size: result.blob.size,
+      type: result.blob.type,
+    };
+  },
+  status: () => recording.status(),
+};
+
+window.__libertasAutomationTest = {
+  targets: () => automation.targetsList(),
+  schedule: (lane, leadSeconds) => automation.schedule(lane, leadSeconds),
+  cancel: (target) => automation.cancel(target),
 };
 
 window.__libertasDualDeckTest = {
