@@ -58,7 +58,7 @@ export function computeOnsetEnvelope(
 
   const onset = new Float64Array(count);
   for (let i = 1; i < count; i += 1) {
-    onset[i] = Math.max(0, compressed[i] - compressed[i - 1]);
+    onset[i] = Math.max(0, (compressed[i] ?? 0) - (compressed[i - 1] ?? 0));
   }
 
   return {

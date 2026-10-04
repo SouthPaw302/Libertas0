@@ -161,3 +161,13 @@
 - evidence: Mixer DSP Gate run `37178505135`.
 - cause: legacy Playwright test relied on `page.goto` completion instead of waiting for the stable dual-deck harness API.
 - disposition: all deck-b-mixer regression tests now wait for `window.__libertasDualDeckTest`. Mixer/DSP product code unchanged.
+
+## F-0014 — Track Intelligence onset envelope strict-index typing
+- date: 2026-10-04
+- exact SHA: `70b34a7ea627b021a6bc91efedd797a3733c507c`
+- module: intelligence
+- environment: GitHub Actions, TypeScript 6 strict indexed access
+- symptom: Phase 9 stopped at typecheck before unit/browser execution because Float64Array indexed values were treated as possibly undefined.
+- evidence: Track Intelligence Gate run `37180878790`.
+- cause: strict typing only in deterministic onset-envelope subtraction.
+- disposition: added explicit zero fallback for typed-array reads. Analyzer algorithm unchanged.
