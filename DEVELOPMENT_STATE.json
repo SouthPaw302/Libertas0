@@ -4,11 +4,13 @@
   "phase": "sync",
   "active_module": "sync",
   "active_branch": "module/sync",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build deterministic two-deck tempo/phase synchronization inside the realtime deck processors using shared memory, bounded rate correction, no hidden corrective seeks, and full locked-module regression gates.",
-  "last_passing_gate": "musical-clock-T3-runtime-integration",
-  "last_evidence": "evidence/musical-clock/phase5-automated/RESULT.json",
-  "blockers": [],
-  "exact_next_action": "Run SYNC unit/simulation/build and Chrome convergence/stress/regression gates. Fix any failures before issuing exact-SHA physical/human-listening validation through the local debug bus.",
-  "product_code_authorized": true
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical/human-listening validation of the automatically proven realtime SYNC controller.",
+  "last_passing_gate": "sync-T4-browser-runtime",
+  "last_evidence": "evidence/sync/phase6-automated/RESULT.json",
+  "blockers": [
+    "Physical T5 SYNC validation and human audible confirmation have not yet returned through the debug bus."
+  ],
+  "exact_next_action": "Local debug agent executes SYNC-T5-001 against exact SHA 76f3c2e75538a5a89af25316508a9fef8e176ea1 and reports through validation/local-debug + issue #1. Do not begin Phase 7.",
+  "product_code_authorized": false
 }

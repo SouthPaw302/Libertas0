@@ -1,0 +1,82 @@
+{
+  "task_id": "SYNC-T5-001",
+  "requested_sha": "76f3c2e75538a5a89af25316508a9fef8e176ea1",
+  "branch": "module/sync",
+  "module": "sync",
+  "objective": "Validate audible two-deck phase lock on the real Windows/browser/audio path and prove the no-hidden-seek invariant before Phase 6 promotion.",
+  "setup": [
+    "Check out the exact requested SHA.",
+    "Run python bootstrap.py; require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Start Vite and open headed Edge/Chrome on the normal physical audio output.",
+    "Record Windows/browser/output-device identity, AudioContext sample rate, base/output latency, and render quantum."
+  ],
+  "tests": [
+    {
+      "id": "generated-convergence",
+      "instructions": "Load generated click pair A=120 BPM, B=128 BPM. Offset B by about 0.30-0.35 beat, play both, enable SYNC B to A, and listen through convergence.",
+      "pass": [
+        "Audible flam converges to a stable single pulse.",
+        "syncLocked=true and abs(syncPhaseErrorBeats)<=0.01 at stable lock.",
+        "transportSeekCount does not increase after engagement.",
+        "No click/dropout from hidden repositioning."
+      ]
+    },
+    {
+      "id": "leader-rate-follow",
+      "instructions": "While locked with A leader, change A manual rate to 1.05x and allow the follower to settle.",
+      "pass": [
+        "Follower rate settles near 0.984375 (1.05*120/128).",
+        "Follower returns to abs phase error<=0.01.",
+        "No hidden seek, audible jump, or dropout."
+      ]
+    },
+    {
+      "id": "main-thread-stress",
+      "instructions": "While locked, capture A/B/mixer/SYNC status, run the provided 600 ms main-thread block, capture again, and listen.",
+      "pass": [
+        "Tracking survives/relocks.",
+        "No new A/B/mixer frameDiscontinuities.",
+        "Follower source frame continues advancing.",
+        "No audible dropout or obvious phase break."
+      ]
+    },
+    {
+      "id": "reverse-leadership",
+      "instructions": "Disable SYNC, create an audible phase offset on A, then enable A to follow B and listen through convergence.",
+      "pass": [
+        "Reverse leadership locks with abs follower phase error<=0.01.",
+        "No hidden corrective seeks."
+      ]
+    },
+    {
+      "id": "five-minute-hold",
+      "instructions": "Keep the generated click pair locked for at least five minutes while using the browser normally.",
+      "pass": [
+        "No progressive flam/double-hit/drift after lock.",
+        "Final syncLocked=true and abs phase error<=0.01.",
+        "No new frame discontinuities.",
+        "transportSeekCount remains unchanged after engagement."
+      ]
+    },
+    {
+      "id": "ordinary-tracks",
+      "instructions": "Only if two ordinary tracks can be given accurate manual BPM and first-beat grids, test audible lock in both directions. Otherwise report NOT_EVALUATED; do not guess grids."
+    }
+  ],
+  "evidence_required": [
+    "Exact tested SHA; PASS/FAIL/BLOCKED.",
+    "Human audible confirmation for generated convergence and five-minute hold.",
+    "SYNC telemetry after convergence, rate change, stress, reverse leadership, and five-minute hold.",
+    "Before/after transportSeekCount proving no hidden maintenance seeks.",
+    "Before/after A/B/mixer frameDiscontinuities.",
+    "Console/runtime errors.",
+    "Ordinary-track result or explicit NOT_EVALUATED."
+  ],
+  "report_rules": [
+    "On validation/local-debug modify only reports/local-debug/**.",
+    "Do not patch product/system code from the report branch.",
+    "Push the report branch so the runner-backed debug bus relays it to issue #1.",
+    "Do not begin Phase 7."
+  ]
+}

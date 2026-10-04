@@ -115,9 +115,10 @@
     {
       "id": "audio.sync",
       "class": "realtime-control",
-      "status": "implementing",
-      "provider": "AudioWorklet shared-memory phase-lock controller",
-      "contract": "docs/contracts/SYNC.md"
+      "status": "runtime-proven-local-pending",
+      "provider": "AudioWorklet SharedArrayBuffer phase-lock controller",
+      "contract": "docs/contracts/SYNC.md",
+      "evidence": "evidence/sync/phase6-automated/RESULT.json"
     }
   ]
 }

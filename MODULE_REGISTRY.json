@@ -74,7 +74,7 @@
     },
     {
       "id": "sync",
-      "state": "IMPLEMENTING",
+      "state": "LOCAL_DEBUG",
       "depends_on": [
         "musical-clock"
       ],

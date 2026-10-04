@@ -1,0 +1,67 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "sync",
+  "gate": "phase6-automated",
+  "status": "PASS",
+  "tested_sha": "76f3c2e75538a5a89af25316508a9fef8e176ea1",
+  "branch_head_when_recorded": "2c8b75a04f65191870c0ff37786479444ae41543",
+  "note_on_branch_head": "Commits after tested_sha only update failure-memory documentation; product/runtime code under test is unchanged.",
+  "system_contract": {
+    "run_id": 37174527912,
+    "conclusion": "success"
+  },
+  "sync_gate": {
+    "run_id": 37174527923,
+    "job_id": 111354278384,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "status": "PASS",
+      "test_files": 5,
+      "tests_passed": 20
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 17,
+      "locked_regressions": "PASS",
+      "sync_checks": {
+        "tempo_and_phase_lock": "PASS",
+        "no_hidden_corrective_seeks": "PASS",
+        "leader_rate_following": "PASS",
+        "main_thread_stall": "PASS",
+        "reverse_leadership": "PASS"
+      }
+    },
+    "stress": {
+      "before_phase_error_beats": -0.003687784090618429,
+      "after_phase_error_beats": -0.0015490651891232332,
+      "follower_source_frame_delta": 25275.97004011998,
+      "new_follower_discontinuities": 0,
+      "leader_snapshot_age_frames": 0
+    },
+    "controller": {
+      "phase_settle_seconds": 0.75,
+      "max_phase_correction_rate": 0.08,
+      "phase_deadband_beats": 0.001,
+      "rate_smoothing_seconds": 0.04,
+      "lock_threshold_beats": 0.01,
+      "stale_snapshot_seconds": 0.1,
+      "hidden_corrective_seeks": false
+    }
+  },
+  "artifact": {
+    "id": 11292827102,
+    "name": "sync-76f3c2e75538a5a89af25316508a9fef8e176ea1",
+    "digest": "sha256:6a0eef15166070a9e2b20502f1a13e77d6846d96ba4c6d3e15b9738382481a17",
+    "expires_at": "2026-10-18T03:37:04Z"
+  },
+  "physical_gate_required": true,
+  "limitations": [
+    "Headless Chrome cannot prove audible phase-lock quality on the physical output device.",
+    "Manual grids are required; automatic BPM/downbeat detection is not part of Phase 6.",
+    "SYNC is varispeed and does not claim key lock/time-stretch."
+  ]
+}
