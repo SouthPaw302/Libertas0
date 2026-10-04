@@ -1,0 +1,80 @@
+{
+  "task_id": "INTELLIGENCE-T5-002",
+  "tested_sha": "efacc9e40237a01f054fea9fb5a29503f622fa6c",
+  "handoff_commit": "24bacaac1ffa1b77361e614ab573204acafdabb3",
+  "status": "PASS",
+  "phase": "9",
+  "mode": "LOCAL_DEBUG",
+  "browser": "Codex in-app browser (headed Chromium), tabs 11/12, http://127.0.0.1:5184/",
+  "automated": {
+    "bootstrap": "PASS (handoff 24bacaac1ffa1b77361e614ab573204acafdabb3; requested product SHA efacc9e40237a01f054fea9fb5a29503f622fa6c)",
+    "npm_install": "PASS",
+    "typecheck": "PASS",
+    "unit_tests": "PASS (34 tests)",
+    "chrome_runtime_regression_tests": "PASS (32 tests)",
+    "product_source_matches_handoff": true
+  },
+  "source_files": [
+    {"name": "Tribal House  (Remastered).wav", "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D", "bytes": 58560172, "duration_seconds": 305, "sample_rate_hz": 48000, "frame_count": 14640000, "channels": 2},
+    {"name": "Tribal House  (Remastered) (1).wav", "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D", "bytes": 58560172, "duration_seconds": 305, "sample_rate_hz": 48000, "frame_count": 14640000, "channels": 2}
+  ],
+  "analysis_runs": {
+    "provider": "libertas.rhythm-ensemble.v2",
+    "execution": "web-worker",
+    "proposal_a_first": {
+      "bpm": 125.84789589523987,
+      "tempo_confidence": 0.8067152468712988,
+      "first_beat_frame": 512,
+      "first_beat_seconds": 0.0106666666666667,
+      "phase_confidence": 0.7862169919853077,
+      "grid_confidence": 0.7964001725162028,
+      "recommended": true,
+      "beats_per_bar": 4,
+      "beat_unit": 4,
+      "descriptors": {"rms": 0.14237432212917464, "peak": 0.642974853515625, "crest_factor": 4.516087198169492, "zero_crossing_rate": 0.0578602498538422},
+      "diagnostics": {
+        "envelope_rate_hz": 400,
+        "hop_frames": 120,
+        "tempo_lag": 44.696814038769816,
+        "onset_count": 28590,
+        "legacy_tempo_bpm": 144.58394471887152,
+        "legacy_tempo_confidence": 0.252614734751494,
+        "spectral_comb_bpm": 126,
+        "spectral_comb_correlation": 0.8693698328371311,
+        "spectral_comb_candidate_margin": 0.30969731025463887,
+        "tempo_candidates": [{"bpm": 126, "score": 1}, {"bpm": 84, "score": 0.6903026897453611}, {"bpm": 101, "score": 0.6206944154728596}, {"bpm": 72, "score": 0.43020896212888093}, {"bpm": 173, "score": 0.2157674942195728}],
+        "spectral_hop_frames": 512
+      }
+    },
+    "proposal_a_repeat": {"bpm": 125.84789589523987, "first_beat_frame": 512, "bpm_delta": 0, "anchor_delta_frames": 0, "confidence_and_provenance_stable": true},
+    "proposal_b_duplicate": {"bpm": 125.84789589523987, "first_beat_frame": 512, "bpm_delta": 0, "anchor_delta_frames": 0, "anchor_equivalent": true}
+  },
+  "grid_gate": {
+    "manual_before_analysis": {"bpm": 120, "first_beat_frame": 0, "beats_per_bar": 4},
+    "manual_after_analysis": {"bpm": 120, "first_beat_frame": 0, "beats_per_bar": 4},
+    "analysis_did_not_mutate_grid": true,
+    "plausibility": "PASS — deterministic v2 proposal is 125.8479 BPM, plausible for the known approximately 128 BPM Tribal House material",
+    "explicit_apply": {"status": "PASS", "a": {"bpm": 125.84789589523987, "first_beat_frame": 512, "beats_per_bar": 4}, "b": {"bpm": 125.84789589523987, "first_beat_frame": 512, "beats_per_bar": 4}, "recommended": true, "transport_seek_count_after_apply": {"a": 0, "b": 0}, "frame_discontinuities_after_apply": {"a": 0, "b": 0}}
+  },
+  "background_analysis_safety": {"playing_deck": "A", "analyzed_deck": "B", "a_advanced_frames": 364288, "new_discontinuities": 0, "audible_stall": "none observed"},
+  "ordinary_sync_hold": {
+    "leader": "A",
+    "follower": "B",
+    "duration_seconds": 180,
+    "checkpoints_seconds": [45, 90, 135, 180],
+    "final": {"a_source_frame": 12329216, "b_source_frame": 12306309.720669942, "both_playing": true, "b_locked": true, "b_tracking": true, "b_phase_beats": 0.0009399501653888, "b_transport_seek_count": 0, "b_frame_discontinuities": 0, "b_stale_snapshots": 0, "b_valid_snapshots": 96716},
+    "result": "PASS — locked and tracking at every checkpoint, zero follower seeks, zero follower discontinuities, zero stale snapshots"
+  },
+  "follower_jog_relock": {
+    "action": "Deck B +50 ms jog",
+    "before": {"source_frame": 401321.4297316943, "transport_seek_count": 0, "locked": true, "tracking": true, "frame_discontinuities": 0, "stale_snapshots": 0},
+    "after": {"source_frame": 617302.5963603313, "transport_seek_count": 0, "locked": true, "tracking": true, "phase_beats": -0.0009415150210330125, "frame_discontinuities": 0, "stale_snapshots": 0},
+    "explicit_telemetry": {"jog_count": 1, "performance_jump_count": 1, "transport_seek_count": 0, "frame_discontinuities": 0},
+    "hidden_sync_seek_delta": 0,
+    "result": "PASS — explicit follower jog counted as a performance jump and re-locked without a hidden SYNC seek"
+  },
+  "mixer_runtime": "PASS — automated runtime/DSP paths reported zero discontinuities; final physical mixer status reported zero clipping, zero hard clipping, and a running context",
+  "audible_confirmation": "PASS — user confirmed: Roger sound on.",
+  "console_runtime_errors": "None observed",
+  "phase_10_started": false
+}

@@ -42,3 +42,15 @@
 - Determinism: same file twice produced BPM delta 0, anchor delta 0 frames, stable confidence/provenance; duplicate agreement was exact.
 - Manual A/B grids stayed 120 BPM / firstBeatFrame 0 / 4 beats per bar after analysis. Apply, manual repair, analyzer-derived ordinary-track SYNC, and audible verification were not run because the required confidence/plausibility gate blocked.
 - Report status: BLOCKED. Phase 9 remains `LOCAL_DEBUG`; Phase 10 not started.
+
+## 2026-10-04 — INTELLIGENCE-T5-002
+
+- Requested product SHA: `efacc9e40237a01f054fea9fb5a29503f622fa6c`; handoff commit: `24bacaac1ffa1b77361e614ab573204acafdabb3`.
+- Product source files matched between the requested SHA and handoff. Bootstrap, typecheck, 34 unit tests, and 32 Chrome runtime/regression tests passed.
+- The two 305-second Tribal House WAVs were byte-identical with SHA-256 `639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D`.
+- `libertas.rhythm-ensemble.v2` / Web Worker produced deterministic duplicate-stable analysis: 125.8478959 BPM, firstBeatFrame 512, tempo confidence 0.806715, phase confidence 0.786217, grid confidence 0.796400, `recommended=true`; spectral comb candidate 126 BPM with correlation 0.869370.
+- Manual A/B grids stayed 120 BPM / firstBeatFrame 0 / 4 beats per bar after analysis. The recommended grid was explicitly applied without a transport jump, seek, or discontinuity.
+- Background safety passed: while B analyzed, playing A advanced 364,288 frames with no new discontinuity or audible stall observed.
+- Ordinary A-leader/B-follower SYNC held for 180 seconds. All 45/90/135/180-second checkpoints remained locked/tracking with zero follower seeks, zero follower discontinuities, and zero stale snapshots; final valid snapshots: 96,716.
+- Explicit B-follower +50 ms jog produced `jogCount=1`, `performanceJumpCount=1`, hidden SYNC seek delta 0, and re-lock with zero discontinuities.
+- User confirmed audible verification: “Roger sound on.” Report status: PASS. Prior v1 blocker remains preserved in history. Phase 10 not started.
