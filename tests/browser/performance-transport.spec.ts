@@ -139,3 +139,40 @@ test('explicit follower hotcue remains distinguishable from hidden SYNC maintena
 
   await page.evaluate(() => window.__libertasDualDeckTest.close());
 });
+
+
+test('visible Deck B Hot Cue controls expose follower telemetry and preserve no-hidden-seek SYNC recovery', async ({ page }) => {
+  await openHarness(page);
+  await page.evaluate(() => window.__libertasSyncTest.loadClickPair(20, 120, 128));
+  await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
+  await page.evaluate(() => window.__libertasSyncTest.enable('A'));
+  await page.waitForTimeout(2500);
+
+  const before = await page.evaluate(() => window.__libertasSyncTest.status());
+  const beforeJump = before.followerDeck?.performanceJumpCount ?? 0;
+  const beforeHot = before.followerDeck?.hotCueTriggerCount ?? 0;
+  const beforeSeek = before.followerDeck?.transportSeekCount ?? 0;
+  const beforeDisc = before.followerDeck?.frameDiscontinuities ?? 0;
+
+  await page.locator('#perf-b-hot1-set').click();
+  await page.waitForTimeout(100);
+  await page.locator('#perf-b-hot1').click();
+  await page.waitForTimeout(100);
+
+  const visibleStatus = JSON.parse(await page.locator('#perf-b-status').innerText());
+  expect(visibleStatus.deckId).toBe('B');
+  expect(visibleStatus.hotCueTriggerCount).toBe(beforeHot + 1);
+  expect(visibleStatus.performanceJumpCount).toBe(beforeJump + 1);
+
+  await page.waitForTimeout(2500);
+  const after = await page.evaluate(() => window.__libertasSyncTest.status());
+
+  expect((after.followerDeck?.performanceJumpCount ?? 0) - beforeJump).toBe(1);
+  expect((after.followerDeck?.hotCueTriggerCount ?? 0) - beforeHot).toBe(1);
+  expect((after.followerDeck?.transportSeekCount ?? 0) - beforeSeek).toBe(0);
+  expect((after.followerDeck?.frameDiscontinuities ?? 0) - beforeDisc).toBe(0);
+  expect(after.followerDeck?.syncTracking).toBe(true);
+  expect(Math.abs(after.followerDeck?.syncPhaseErrorBeats ?? 1)).toBeLessThan(0.05);
+
+  await page.evaluate(() => window.__libertasDualDeckTest.close());
+});
