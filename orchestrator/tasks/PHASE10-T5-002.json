@@ -1,0 +1,78 @@
+{
+  "task_id": "PHASE10-T5-002",
+  "requested_sha": "3ff1083f4a5824059643d41097025c62b0511a27",
+  "branch": "module/library-midi-recording-automation",
+  "module": "library-midi-recording-automation",
+  "prior_report_commit": "b587224d9a1264ddfa71e29276de55696102f9d8",
+  "objective": "Close only the remaining Phase 10 physical gates after the saved-recording replay UI fix. Do not re-open already accepted library, analyzer, synthetic MIDI or core telemetry evidence unless a regression appears.",
+  "setup": [
+    "Fetch refs and check out exact SHA 3ff1083f4a5824059643d41097025c62b0511a27.",
+    "Run python bootstrap.py and require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Start Vite in headed Codex/Chromium on the normal physical audio output.",
+    "Confirm the Master Recording panel now exposes an in-app audio player after Stop Recording."
+  ],
+  "carry_forward": [
+    "PHASE10-T5-001 library persistence/dedup/load PASS.",
+    "PHASE10-T5-001 distinct-song recording artifact existed and was non-empty audio/webm.",
+    "PHASE10-T5-001 automation telemetry PASS through 600 ms UI stall with 0 new A/B/mixer discontinuities.",
+    "PHASE10-T5-001 SYNC telemetry PASS with 0 follower seeks/discontinuities.",
+    "Synthetic MIDI automated path PASS; physical MIDI remains optional/environmental."
+  ],
+  "tests": [
+    {
+      "id": "saved-recording-replay",
+      "instructions": "Create a fresh >=60-second two-deck master recording on this exact SHA while using representative mixer/DSP and at least one performance action. Stop recording. Use the new in-app audio player to replay the saved blob.",
+      "pass": [
+        "Recording reaches ready state.",
+        "Fresh blob is non-empty and has an audio MIME type.",
+        "In-app audio player becomes visible and points at the same saved blob as the download link.",
+        "Human confirms the replayed saved recording contains the post-master program and has no abnormal recorder-caused dropouts."
+      ]
+    },
+    {
+      "id": "automation-audible-closeout",
+      "instructions": "With both decks audible and SYNC active, schedule the 4-second A-to-B crossfade and block the main thread for 600 ms during it.",
+      "pass": [
+        "Crossfade continues through the UI stall and reaches B.",
+        "A/B/mixer continue advancing with 0 new frame discontinuities.",
+        "Follower transportSeekCount does not increase from SYNC maintenance.",
+        "Human explicitly confirms the crossfade is audible and continuous with no UI-stall dropout."
+      ]
+    },
+    {
+      "id": "locked-core-closeout",
+      "instructions": "During the same physical session exercise one Cue, Hot Cue, Loop or Jog action while Phase 10 recording/automation services are active.",
+      "pass": [
+        "SYNC remains locked/tracking or re-locks normally after the explicit performance jump.",
+        "No hidden corrective seek.",
+        "0 new A/B/mixer discontinuities attributable to Phase 10 services."
+      ]
+    },
+    {
+      "id": "physical-midi-optional",
+      "instructions": "If a physical MIDI controller and Web MIDI permission are available, repeat connect/learn/control. Otherwise carry NOT_EVALUATED forward as an environmental limitation.",
+      "pass": [
+        "If evaluated, physical control works on the mapped mixer target.",
+        "If unavailable, NOT_EVALUATED is accepted and does not block Phase 10."
+      ]
+    }
+  ],
+  "evidence_required": [
+    "Exact tested SHA and PASS/FAIL/BLOCKED.",
+    "Fresh recording duration, bytes and MIME type.",
+    "In-app replay control visibility/blob URL evidence.",
+    "Human confirmation of saved-recording playback quality.",
+    "Human confirmation of continuous automation through the 600 ms stall.",
+    "A/B/mixer continuity counters and follower seek delta.",
+    "Performance-action/re-lock telemetry.",
+    "Physical MIDI PASS or NOT_EVALUATED.",
+    "Console/runtime errors."
+  ],
+  "report_rules": [
+    "On validation/local-debug modify only reports/local-debug/**.",
+    "Do not patch product/system code from the report branch.",
+    "Push the report branch so the debug bus relays it to issue #1.",
+    "Do not begin Phase 11."
+  ]
+}

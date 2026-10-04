@@ -5,18 +5,18 @@
   "active_module": "library-midi-recording-automation",
   "active_branch": "module/library-midi-recording-automation",
   "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical validation of browser-local library persistence, master recording, AudioParam automation and MIDI mapping after all Phase 10 automated gates passed.",
-  "last_passing_gate": "phase10-T4-browser-runtime",
+  "current_objective": "Close the remaining Phase 10 human/physical gates after adding in-app replay for the saved master recording.",
+  "last_passing_gate": "phase10-T4-browser-runtime-replay-fix",
   "last_evidence": "evidence/phase10/automated/RESULT.json",
   "blockers": [
-    "Physical Phase 10 workflow validation has not yet returned through the debug bus."
+    "Fresh exact-SHA physical confirmation is still required for saved-recording replay and audible automation-through-stall behavior."
   ],
   "known_limitations": [
-    "Physical MIDI hardware may be NOT_EVALUATED if no controller is attached; deterministic mapping and browser integration are already runtime-proven.",
+    "Physical MIDI hardware may be NOT_EVALUATED if no controller is attached; deterministic mapping and browser integration are runtime-proven.",
     "Library v1 is browser-local IndexedDB rather than distributed storage.",
     "Recording codec/container depends on browser MediaRecorder support.",
     "Automation v1 covers continuous AudioParams, not discrete transport-command sequencing."
   ],
-  "exact_next_action": "Execute PHASE10-T5-001 on exact SHA 4b65a29c819b69fb46df79bc2cf13e124d030982. Do not begin Phase 11 until Phase 10 receives an acceptable local PASS.",
+  "exact_next_action": "Execute PHASE10-T5-002 on exact SHA 3ff1083f4a5824059643d41097025c62b0511a27. Carry forward the accepted PHASE10-T5-001 evidence and retest only the remaining replay/audible gates plus locked-core telemetry. Do not begin Phase 11.",
   "product_code_authorized": false
 }

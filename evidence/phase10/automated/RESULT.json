@@ -3,14 +3,14 @@
   "module": "library-midi-recording-automation",
   "gate": "phase10-automated",
   "status": "PASS",
-  "tested_sha": "4b65a29c819b69fb46df79bc2cf13e124d030982",
+  "tested_sha": "3ff1083f4a5824059643d41097025c62b0511a27",
   "system_contract": {
-    "run_id": 37185645004,
+    "run_id": 37188625101,
     "conclusion": "success"
   },
   "phase10_gate": {
-    "run_id": 37185644948,
-    "job_id": 111386861956,
+    "run_id": 37188625113,
+    "job_id": 111395894520,
     "conclusion": "success"
   },
   "automated_results": {
@@ -22,20 +22,34 @@
     },
     "production_build": "PASS",
     "browser_runtime": {
-      "tests_passed": 36,
+      "tests_passed": 37,
       "status": "PASS",
       "library_indexeddb_dedupe_and_reload": "PASS",
       "midi_learn_synthetic_cc_to_real_crossfader": "PASS",
       "master_media_recorder_capture": "PASS",
+      "saved_recording_in_app_replay_surface": "PASS",
       "scheduled_crossfader_600ms_ui_stall": "PASS",
       "locked_phase_2_through_9_regressions": "PASS"
     }
   },
   "artifact": {
-    "id": 11296408428,
-    "name": "phase10-4b65a29c819b69fb46df79bc2cf13e124d030982",
-    "digest": "sha256:679a14d36f8669d89c6a18e24773cce438c19fb57e6a618c365eb95eca9c3af6",
-    "expires_at": "2026-10-18T07:24:59Z"
+    "id": 11297534349,
+    "name": "phase10-3ff1083f4a5824059643d41097025c62b0511a27",
+    "digest": "sha256:e09aac67776d87bbf9a18e4f8d337dc137eee9fd6ccc397e1e0d2f42e0037bef",
+    "expires_at": "2026-10-18T08:22:15Z"
+  },
+  "prior_local_report": {
+    "task_id": "PHASE10-T5-001",
+    "report_commit": "b587224d9a1264ddfa71e29276de55696102f9d8",
+    "status": "BLOCKED / SEMI-PASS / OPEN",
+    "accepted_carry_forward": [
+      "library persistence/dedup/load PASS",
+      "70.341333-second master-recording artifact captured",
+      "automation telemetry PASS with 0 new A/B/mixer discontinuities",
+      "SYNC telemetry PASS with 0 follower seeks/discontinuities",
+      "synthetic MIDI automated PASS",
+      "physical MIDI NOT_EVALUATED is environmental and non-blocking"
+    ]
   },
   "physical_gate_required": true,
   "limitations": [
