@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function openDualDeckHarness(page: Page): Promise<void> {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean(window.__libertasDualDeckTest));
+}
 
 test('Deck A and Deck B run independently through the two-input mixer', async ({ page }) => {
-  await page.goto('/');
+  await openDualDeckHarness(page);
   const loaded = await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(10, 330, 550, 0.25));
 
   expect(loaded.a.deckId).toBe('A');
@@ -39,7 +44,7 @@ test('Deck A and Deck B run independently through the two-input mixer', async ({
 });
 
 test('Deck A and Deck B volumes are independent and master gain acts after summing', async ({ page }) => {
-  await page.goto('/');
+  await openDualDeckHarness(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(10, 330, 550, 0.2));
   await page.evaluate(() => {
     window.__libertasDeckATest.setVolume(1);
@@ -83,7 +88,7 @@ test('Deck A and Deck B volumes are independent and master gain acts after summi
 });
 
 test('two decks and mixer keep advancing through main-thread stress with no new discontinuities', async ({ page }) => {
-  await page.goto('/');
+  await openDualDeckHarness(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(10, 330, 550, 0.2));
   await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
   await page.waitForTimeout(150);
@@ -116,7 +121,7 @@ test('two decks and mixer keep advancing through main-thread stress with no new 
 });
 
 test('mixer reports overload and clamps unsafe summed output', async ({ page }) => {
-  await page.goto('/');
+  await openDualDeckHarness(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(5, 440, 440, 0.75));
   await page.evaluate(() => {
     window.__libertasDeckATest.setVolume(1);

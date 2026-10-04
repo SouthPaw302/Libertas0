@@ -151,3 +151,13 @@
 - evidence: local report commit `ef1c996aa6e5de9c0df94ca372ba048acd01b643`.
 - cause: product UI exposed Phase 7 controls only for Deck A even though Deck B controller/test API existed and passed automated browser coverage.
 - disposition: expose equivalent Deck B cue/hotcue/loop/jog controls and status in the physical proof UI. Transport engine unchanged.
+
+## F-0013 — Phase 4 dual-deck regression raced async Phase 8 app initialization
+- date: 2026-10-04
+- exact SHA: `daaf228c8864c2eb323626a36c73ac4c98dc6ceb`
+- module: mixer-dsp / locked deck-b-mixer regression
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: 28/29 browser tests passed. The first legacy dual-deck test invoked `window.__libertasDualDeckTest.loadGenerated` before the top-level module had finished initializing the expanded mixer graph.
+- evidence: Mixer DSP Gate run `37178505135`.
+- cause: legacy Playwright test relied on `page.goto` completion instead of waiting for the stable dual-deck harness API.
+- disposition: all deck-b-mixer regression tests now wait for `window.__libertasDualDeckTest`. Mixer/DSP product code unchanged.
