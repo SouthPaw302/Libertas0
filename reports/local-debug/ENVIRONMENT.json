@@ -2,8 +2,8 @@
   "schema": "libertas.local-environment.v1",
   "status": "real-local-runtime",
   "os": "Microsoft Windows 10 Home build 19045",
-  "browser": "Codex in-app browser (headed Chromium), tab 6",
-  "url": "http://127.0.0.1:5181/",
+  "browser": "Codex in-app browser (headed Chromium), tab 9",
+  "url": "http://127.0.0.1:5182/",
   "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
   "python": "3.12.10",
   "node": "v24.18.0",
@@ -13,6 +13,6 @@
   "base_latency_seconds": 0.01,
   "output_latency_seconds": 0.04,
   "render_quantum_frames": 128,
-  "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
-  "handoff_commit": "6fbcbf22301df212a742b2b738133391be1c8d0d"
+  "tested_sha": "3c491c1fc37592e16a284676f569afcbe6423bf1",
+  "handoff_commit": "7c60686b80c3892549aa5d6eefe0b7c222bcbdbf"
 }

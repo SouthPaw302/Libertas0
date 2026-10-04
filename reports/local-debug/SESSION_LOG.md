@@ -18,3 +18,15 @@
 - User confirmed hearing the decks syncing; audible confirmation is recorded as PASS.
 - B-follower Hot Cue remains NOT_EVALUATED because the exact browser surface exposes only Deck A controls and no verifiable page-context harness was available.
 - Prior five-minute / 156-wrap hold carried forward; not repeated. Phase 8 not started.
+
+## 2026-10-04 — MIXER-DSP-T5-001
+
+- Exact SHA: `3c491c1fc37592e16a284676f569afcbe6423bf1`
+- Handoff commit: `7c60686b80c3892549aa5d6eefe0b7c222bcbdbf`
+- Runtime: Windows 10, Codex tiny in-app browser tab 9, port 5182, Realtek output, 48 kHz.
+- Automated gate: 30 unit/simulation PASS; 29 Chrome runtime/regression PASS; active-DSP stress 27,776 frames per path with zero discontinuities.
+- Physical DSP: trim, EQ, bipolar filters, crossfader, master, and limiter telemetry passed. Limiter pre-limit peak was 1.797890, limited samples 447,388, maximum gain reduction 5.538751 dB, hard clips after limiter 0, output peak 0.950221.
+- Physical SYNC/transport under DSP: Cue, B-follower Hot Cue, loop, and jog passed. B Hot Cue produced `performanceJumpCount +1` and `hotCueTriggerCount +1`; SYNC re-locked with zero additional follower seeks and zero follower discontinuities.
+- 600 ms active-DSP stall: A/B/mixer advanced 89,856 / 89,856 / 80,640 frames; discontinuity deltas 0 / 0 / 0; transport-seek deltas 0 / 0.
+- Final five-minute mixed hold used 610-second fixtures and passed all six checkpoints. Both decks remained playing; SYNC stayed locked; stale snapshots stayed 0; no new discontinuities; post-limiter hard clips 0.
+- User confirmed hearing the current Mixer/DSP run cleanly in the tiny browser. Report promoted to PASS. Phase 9 not started.

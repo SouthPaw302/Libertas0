@@ -1,0 +1,70 @@
+{
+  "task_id": "MIXER-DSP-T5-001",
+  "tested_sha": "3c491c1fc37592e16a284676f569afcbe6423bf1",
+  "handoff_commit": "7c60686b80c3892549aa5d6eefe0b7c222bcbdbf",
+  "browser": "Codex in-app browser tab 9",
+  "url": "http://127.0.0.1:5182/",
+  "automated": {
+    "unit_simulation_tests": "PASS (30)",
+    "chrome_runtime_regression_tests": "PASS (29)",
+    "active_dsp_stress": {
+      "frames_a": 27776,
+      "frames_b": 27776,
+      "frames_mixer": 27776,
+      "discontinuities": [0, 0, 0]
+    },
+    "sync_and_performance_regressions": "PASS"
+  },
+  "physical": {
+    "ordinary_two_deck_playback": "PASS — both decks loaded and played independently in the tiny browser",
+    "trim_sweep": "PASS — A/B swept 0 → -12 dB → 0 → +6 dB without a transport change",
+    "eq_and_filter_sweeps": "PASS — Low/Mid/High and bipolar filter sweeps applied on both channels",
+    "crossfader": "PASS — A endpoint → center → B endpoint → center",
+    "limiter": {
+      "fixture": "same sustained 440 Hz stereo tone on A and B, +6 dB channel trim, threshold 0.95",
+      "summed_peak_before_clamp": 1.797890067100525,
+      "limited_samples": 447388,
+      "max_limiter_gain_reduction_db": 5.538751036425838,
+      "hard_clipped_samples_after_limiter": 0,
+      "output_peak": 0.950220764039032,
+      "status": "PASS"
+    },
+    "sync_and_transport_under_dsp": {
+      "dsp_a": {"trim_db": -3, "low_db": -6, "mid_db": 3, "high_db": -3, "filter": -0.45},
+      "dsp_b": {"trim_db": 3, "low_db": 3, "mid_db": -3, "high_db": 6, "filter": 0.45},
+      "master": 0.8,
+      "crossfader": 0,
+      "cue": "PASS",
+      "hot_cue": "PASS — B follower performanceJumpCount +1 and hotCueTriggerCount +1",
+      "loop": "PASS",
+      "jog": "PASS",
+      "sync_recovery": "PASS — re-locked; follower transportSeekCount remained 0; follower discontinuities remained 0"
+    },
+    "active_dsp_stress_600_ms": {
+      "result": "PASS",
+      "before_frames": {"a": 30203520, "b": 30195840, "mixer": 30230400},
+      "after_frames": {"a": 30293376, "b": 30285696, "mixer": 30311040},
+      "frame_delta": {"a": 89856, "b": 89856, "mixer": 80640},
+      "discontinuity_delta": {"a": 0, "b": 0, "mixer": 0},
+      "transport_seek_delta": {"a": 0, "b": 0},
+      "sync_locked_after": true,
+      "stale_snapshots_after": 0
+    },
+    "five_minute_mixed_hold": {
+      "result": "PASS",
+      "fixture_duration_seconds": 610,
+      "checkpoints_seconds": [50, 100, 150, 200, 250, 300],
+      "final_source_frames": {"a": 17305856, "b": 16201761.217382267},
+      "final_processed_frames": {"a": 70120832, "b": 70113152, "mixer": 70138112},
+      "final_discontinuities": {"a": 2, "b": 0, "mixer": 2},
+      "baseline_discontinuities": {"a": 2, "b": 0, "mixer": 2},
+      "new_discontinuities": {"a": 0, "b": 0, "mixer": 0},
+      "sync_locked_final": true,
+      "stale_snapshots_final": 0,
+      "playing_final": {"a": true, "b": true},
+      "hard_clipped_samples_after_limiter_final": 0
+    },
+    "audible_confirmation": "PASS — user confirmed hearing the current Mixer/DSP run cleanly in the tiny Codex browser"
+  },
+  "phase_9_started": false
+}
