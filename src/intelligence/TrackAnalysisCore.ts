@@ -86,6 +86,50 @@ function candidateMarginConfidence(candidates: Array<{ bpm: number; confidence: 
   return clamp01(1 - (candidates[1]?.confidence ?? 0));
 }
 
+function refineTempoAroundCandidate(
+  onset: Float64Array,
+  onsetRateHz: number,
+  candidateBpm: number,
+  minBpm: number,
+  maxBpm: number,
+): { bpm: number; lag: number; correlation: number } {
+  const candidateLag = (onsetRateHz * 60) / candidateBpm;
+  const minLag = Math.max(2, Math.floor((onsetRateHz * 60) / maxBpm));
+  const maxLag = Math.min(
+    onset.length - 2,
+    Math.ceil((onsetRateHz * 60) / minBpm),
+  );
+
+  let bestLag = Math.min(maxLag, Math.max(minLag, Math.round(candidateLag)));
+  let bestCorrelation = Number.NEGATIVE_INFINITY;
+
+  for (let lag = Math.max(minLag, bestLag - 3); lag <= Math.min(maxLag, bestLag + 3); lag += 1) {
+    const correlation = normalizedCorrelation(onset, lag);
+    if (correlation > bestCorrelation) {
+      bestCorrelation = correlation;
+      bestLag = lag;
+    }
+  }
+
+  let refinedLag = bestLag;
+  if (bestLag > minLag && bestLag < maxLag) {
+    const y1 = normalizedCorrelation(onset, bestLag - 1);
+    const y2 = normalizedCorrelation(onset, bestLag);
+    const y3 = normalizedCorrelation(onset, bestLag + 1);
+    const denominator = y1 - 2 * y2 + y3;
+    if (Math.abs(denominator) > 1e-12) {
+      const offset = 0.5 * (y1 - y3) / denominator;
+      if (Math.abs(offset) <= 1) refinedLag += offset;
+    }
+  }
+
+  return {
+    bpm: (60 * onsetRateHz) / refinedLag,
+    lag: refinedLag,
+    correlation: bestCorrelation,
+  };
+}
+
 function normalizedCorrelation(values: Float64Array, lag: number): number {
   let dot = 0;
   let aa = 0;
@@ -295,9 +339,16 @@ export function analyzeMonoPcm(
       relativeScore: candidate.confidence,
     }));
 
-  const spectralPeriodHops = (spectral.fs / spectral.hopSize) * 60 / comb.bpm;
-  const spectralLag = Math.max(1, Math.round(spectralPeriodHops));
-  const spectralCorrelation = normalizedCorrelation(spectral.odf, spectralLag);
+  const spectralRateHz = spectral.fs / spectral.hopSize;
+  const refinedTempo = refineTempoAroundCandidate(
+    spectral.odf,
+    spectralRateHz,
+    comb.bpm,
+    minBpm,
+    maxBpm,
+  );
+  const spectralPeriodHops = refinedTempo.lag;
+  const spectralCorrelation = refinedTempo.correlation;
   const marginConfidence = candidateMarginConfidence(
     candidates.map((candidate) => ({
       bpm: candidate.bpm,
@@ -325,7 +376,7 @@ export function analyzeMonoPcm(
     sampleRate,
     frameCount: samples.length,
     durationSeconds: samples.length / sampleRate,
-    bpm: comb.bpm,
+    bpm: refinedTempo.bpm,
     tempoConfidence,
     firstBeatFrame: Math.min(samples.length - 1, Math.max(0, phase.firstBeatFrame)),
     phaseConfidence: phase.confidence,

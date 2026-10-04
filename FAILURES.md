@@ -220,3 +220,12 @@
 - evidence: Track Intelligence Gate run `37182223345`.
 - cause: test-fixture typing only.
 - disposition: replaced compound assignment with an explicit zero-fallback assignment. Analyzer implementation unchanged.
+
+## F-0019 — v2 comb candidate was only integer-BPM precise
+- date: 2026-10-04
+- exact SHA: `0097fcba3983ea307d4122ab19e61c51ad411049`
+- module: intelligence
+- symptom: 31/32 Chrome tests passed; the unknown 128 BPM fixture returned 129 BPM because the spectral comb provider evaluates integer BPM hypotheses.
+- evidence: Track Intelligence Gate run `37182296477`.
+- cause: candidate selection precision, not a realtime or regression failure.
+- disposition: keep the comb estimator for metrical candidate selection, then refine its winning period against the spectral-onset autocorrelation peak with local lag search + parabolic interpolation. The BPM acceptance test remains strict.
