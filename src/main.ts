@@ -1245,6 +1245,9 @@ window.__libertasDistributedTest = {
         const status = host.status();
         return status.acceptedMessages >= 3;
       });
+      // The distributed command has arrived; allow the existing mixer AudioParam
+      // smoothing to settle before sampling its rendered endpoint.
+      await new Promise<void>((resolve) => setTimeout(resolve, 80));
       const [afterA, afterB, afterMixer] = await Promise.all([
         deckA.requestStatus(),
         deckB.requestStatus(),
