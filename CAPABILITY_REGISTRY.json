@@ -155,6 +155,13 @@
       "not_yet_proven": [
         "continuous platter/scratch synthesis"
       ]
+    },
+    {
+      "id": "audio.mixer-dsp",
+      "class": "realtime-dsp",
+      "status": "implementing",
+      "provider": "native Web Audio channel strips + AudioWorklet crossfader/limiter",
+      "contract": "docs/contracts/MIXER_DSP.md"
     }
   ]
 }

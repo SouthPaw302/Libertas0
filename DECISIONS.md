@@ -125,3 +125,13 @@ No realtime deck, transport, or SYNC engine file changed between the physical en
 Status: ACCEPTED
 
 Phase 7 is LOCKED. Cue, eight hot cues, sample-domain loops, beat-derived loops, bounded jog displacement, two-deck independence, UI-stall survival, five-minute loop stability, and SYNC recovery after explicit performance jumps are proven. Continuous platter/scratch synthesis remains explicitly outside Phase 7.
+
+## D-0024 — Channel EQ/filter use native Web Audio render nodes
+Status: ACCEPTED FOR PHASE 8
+
+Per-channel trim and EQ/filtering use GainNode and BiquadFilterNode inside the browser audio rendering graph. UI code only schedules AudioParam values; it does not process audio or own timing. This avoids reimplementing standard biquads inside JavaScript while preserving the realtime authority boundary.
+
+## D-0025 — Mixer owns equal-power crossfade and sample-peak limiting
+Status: ACCEPTED FOR PHASE 8
+
+The two-input mixer AudioWorklet applies an equal-power crossfader before summing, then master gain, then a sample-peak limiter with instantaneous attack and controlled release, followed by the existing full-scale safety clamp. The limiter is not described as true-peak or mastering processing.

@@ -8,6 +8,8 @@ import { DeckAController, type DeckAStatus } from './deck/DeckAController';
 import { DeckBController, type DeckBStatus } from './deck/DeckBController';
 import type { DeckController, DeckStatus } from './deck/DeckController';
 import { MixerController, type MixerStatus } from './mixer/MixerController';
+import { ChannelStripController, type ChannelStripStatus } from './mixer/ChannelStripController';
+import type { EqBand } from './mixer/MixerDspMath';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
 import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
@@ -40,6 +42,13 @@ interface LibertasDeckTestApi {
 interface LibertasMixerTestApi {
   status(): Promise<MixerStatus>;
   setMasterVolume(volume: number): void;
+  setCrossfader(position: number): void;
+  setLimiterThreshold(threshold: number): void;
+  setChannelTrim(deck: 'A' | 'B', db: number): void;
+  setChannelEq(deck: 'A' | 'B', band: EqBand, db: number): void;
+  setChannelFilter(deck: 'A' | 'B', position: number): void;
+  channelStatus(deck: 'A' | 'B'): ChannelStripStatus;
+  channelRms(deck: 'A' | 'B'): number;
   rms(): number;
 }
 
@@ -111,8 +120,11 @@ const kernel = new BrowserAudioKernel(runtime);
 const mixer = new MixerController(runtime);
 await mixer.initialize();
 
-const deckA = new DeckAController(runtime, undefined, { node: mixer.inputNode, input: 0 });
-const deckB = new DeckBController(runtime, undefined, { node: mixer.inputNode, input: 1 });
+const channelA = new ChannelStripController(runtime, 'A', { node: mixer.inputNode, input: 0 });
+const channelB = new ChannelStripController(runtime, 'B', { node: mixer.inputNode, input: 1 });
+
+const deckA = new DeckAController(runtime, undefined, { node: channelA.inputNode, input: 0 });
+const deckB = new DeckBController(runtime, undefined, { node: channelB.inputNode, input: 0 });
 const sync = new SyncController(deckA, deckB);
 const performanceA = new PerformanceTransportController(deckA);
 const performanceB = new PerformanceTransportController(deckB);
@@ -129,6 +141,18 @@ const stopButton = document.querySelector<HTMLButtonElement>('#stop');
 const mixerStatusElement = document.querySelector<HTMLPreElement>('#mixer-status');
 const mixerMaster = document.querySelector<HTMLInputElement>('#mixer-master');
 const mixerStatusButton = document.querySelector<HTMLButtonElement>('#mixer-status-button');
+const mixerCrossfader = document.querySelector<HTMLInputElement>('#mixer-crossfader');
+const mixerLimiter = document.querySelector<HTMLInputElement>('#mixer-limiter');
+const mixerATrim = document.querySelector<HTMLInputElement>('#mixer-a-trim');
+const mixerALow = document.querySelector<HTMLInputElement>('#mixer-a-low');
+const mixerAMid = document.querySelector<HTMLInputElement>('#mixer-a-mid');
+const mixerAHigh = document.querySelector<HTMLInputElement>('#mixer-a-high');
+const mixerAFilter = document.querySelector<HTMLInputElement>('#mixer-a-filter');
+const mixerBTrim = document.querySelector<HTMLInputElement>('#mixer-b-trim');
+const mixerBLow = document.querySelector<HTMLInputElement>('#mixer-b-low');
+const mixerBMid = document.querySelector<HTMLInputElement>('#mixer-b-mid');
+const mixerBHigh = document.querySelector<HTMLInputElement>('#mixer-b-high');
+const mixerBFilter = document.querySelector<HTMLInputElement>('#mixer-b-filter');
 const clockRefreshButton = document.querySelector<HTMLButtonElement>('#clock-refresh');
 const syncAToBButton = document.querySelector<HTMLButtonElement>('#sync-a-to-b');
 const syncBToAButton = document.querySelector<HTMLButtonElement>('#sync-b-to-a');
@@ -389,8 +413,61 @@ mixerMaster?.addEventListener('input', () => {
     render(mixerStatusElement, { error: String(error) });
   }
 });
+mixerCrossfader?.addEventListener('input', () => {
+  try {
+    mixer.setCrossfader(Number(mixerCrossfader.value));
+  } catch (error) {
+    render(mixerStatusElement, { error: String(error) });
+  }
+});
+mixerLimiter?.addEventListener('input', () => {
+  try {
+    mixer.setLimiterThreshold(Number(mixerLimiter.value));
+  } catch (error) {
+    render(mixerStatusElement, { error: String(error) });
+  }
+});
+
+function bindChannelDsp(
+  strip: ChannelStripController,
+  controls: {
+    trim: HTMLInputElement | null;
+    low: HTMLInputElement | null;
+    mid: HTMLInputElement | null;
+    high: HTMLInputElement | null;
+    filter: HTMLInputElement | null;
+  },
+): void {
+  controls.trim?.addEventListener('input', () => strip.setTrimDb(Number(controls.trim!.value)));
+  controls.low?.addEventListener('input', () => strip.setEqDb('low', Number(controls.low!.value)));
+  controls.mid?.addEventListener('input', () => strip.setEqDb('mid', Number(controls.mid!.value)));
+  controls.high?.addEventListener('input', () => strip.setEqDb('high', Number(controls.high!.value)));
+  controls.filter?.addEventListener('input', () => strip.setFilter(Number(controls.filter!.value)));
+}
+
+bindChannelDsp(channelA, {
+  trim: mixerATrim,
+  low: mixerALow,
+  mid: mixerAMid,
+  high: mixerAHigh,
+  filter: mixerAFilter,
+});
+bindChannelDsp(channelB, {
+  trim: mixerBTrim,
+  low: mixerBLow,
+  mid: mixerBMid,
+  high: mixerBHigh,
+  filter: mixerBFilter,
+});
+
 mixerStatusButton?.addEventListener('click', () => {
-  void mixer.requestStatus().then((status) => render(mixerStatusElement, status)).catch((error: unknown) => render(mixerStatusElement, { error: String(error) }));
+  void mixer.requestStatus()
+    .then((status) => render(mixerStatusElement, {
+      mixer: status,
+      channelA: channelA.status(),
+      channelB: channelB.status(),
+    }))
+    .catch((error: unknown) => render(mixerStatusElement, { error: String(error) }));
 });
 
 function blockMainThread(milliseconds: number): void {
@@ -431,6 +508,8 @@ window.__libertasKernelTest = {
     await kernel.close();
     await deckA.close();
     await deckB.close();
+    channelA.close();
+    channelB.close();
     await mixer.close();
     await runtime.close();
   },
@@ -441,9 +520,20 @@ window.__libertasKernelTest = {
 window.__libertasDeckATest = makeDeckTestApi(deckA, 330);
 window.__libertasDeckBTest = makeDeckTestApi(deckB, 550);
 
+function channelStrip(deck: 'A' | 'B'): ChannelStripController {
+  return deck === 'A' ? channelA : channelB;
+}
+
 window.__libertasMixerTest = {
   status: () => mixer.requestStatus(),
   setMasterVolume: (volume) => mixer.setMasterVolume(volume),
+  setCrossfader: (position) => mixer.setCrossfader(position),
+  setLimiterThreshold: (threshold) => mixer.setLimiterThreshold(threshold),
+  setChannelTrim: (deck, db) => channelStrip(deck).setTrimDb(db),
+  setChannelEq: (deck, band, db) => channelStrip(deck).setEqDb(band, db),
+  setChannelFilter: (deck, position) => channelStrip(deck).setFilter(position),
+  channelStatus: (deck) => channelStrip(deck).status(),
+  channelRms: (deck) => channelStrip(deck).measureRms(),
   rms: () => mixer.measureRms(),
 };
 
@@ -537,6 +627,8 @@ window.__libertasDualDeckTest = {
   async close() {
     await deckA.close();
     await deckB.close();
+    channelA.close();
+    channelB.close();
     await mixer.close();
     await runtime.close();
   },
@@ -545,7 +637,10 @@ window.__libertasDualDeckTest = {
 renderKernel({ capabilities: detectAudioKernelCapabilities() });
 render(document.querySelector('#deck-a-status'), { phase: 'Deck A', state: 'locked behavior / ready for load' });
 render(document.querySelector('#deck-b-status'), { phase: 'Deck B', state: 'ready for load' });
-render(mixerStatusElement, { phase: 'Mixer', state: 'two-input realtime mixer ready' });
+render(mixerStatusElement, {
+  phase: 'Mixer / DSP',
+  state: 'channel strips + equal-power crossfader + sample-peak limiter ready',
+});
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
 
 export {};

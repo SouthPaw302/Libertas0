@@ -3,17 +3,18 @@
   "project": "Libertas0",
   "phase": "mixer_dsp",
   "active_module": "mixer-dsp",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 7 Performance Transport is complete and locked with composite automated + physical audible evidence. Await explicit user instruction before beginning Phase 8 Mixer/DSP.",
+  "active_branch": "module/mixer-dsp",
+  "status": "IMPLEMENTING",
+  "current_objective": "Build realtime per-channel trim/3-band EQ/bipolar filter plus equal-power crossfader, master and sample-peak limiter without changing locked deck/clock/SYNC/performance transport authority.",
   "last_passing_gate": "performance-transport-T5-composite",
   "last_evidence": "evidence/performance-transport/phase7-local/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
     "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
-    "Deck B follower counter telemetry was not directly readable in the tiny physical browser; the visible B UI path and telemetry were proven in automated Chrome on the unchanged realtime engine."
+    "Phase 8 limiter is sample-peak safety limiting, not true-peak mastering.",
+    "Phase 8 EQ provides -24 dB attenuation, not full-kill isolation."
   ],
-  "exact_next_action": "Await explicit instruction to start Phase 8 Mixer/DSP. Preserve audio kernel, Deck A/B, Musical Clock, SYNC, and Performance Transport as locked dependencies.",
-  "product_code_authorized": false
+  "exact_next_action": "Run Mixer/DSP unit/build/browser gates with all locked regressions. Fix failures before exact-SHA local physical listening validation.",
+  "product_code_authorized": true
 }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Libertas0 — Performance Transport</title>
+  <title>Libertas0 — Mixer / DSP</title>
   <style>
     body { font-family: system-ui, sans-serif; margin: 2rem; max-width: 1200px; }
     .decks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
@@ -17,7 +17,7 @@
 </head>
 <body>
   <main>
-    <h1>Libertas0 — Performance Transport</h1>
+    <h1>Libertas0 — Mixer / DSP</h1>
 
     <div class="decks">
       <fieldset>
@@ -134,12 +134,37 @@
     </fieldset>
 
     <fieldset>
-      <legend>Mixer</legend>
+      <legend>Mixer / DSP</legend>
+      <div class="decks">
+        <div>
+          <strong>Channel A</strong>
+          <div class="row">
+            <label>Trim dB <input id="mixer-a-trim" type="range" min="-12" max="12" step="0.5" value="0" /></label>
+            <label>Low dB <input id="mixer-a-low" type="range" min="-24" max="6" step="0.5" value="0" /></label>
+            <label>Mid dB <input id="mixer-a-mid" type="range" min="-24" max="6" step="0.5" value="0" /></label>
+            <label>High dB <input id="mixer-a-high" type="range" min="-24" max="6" step="0.5" value="0" /></label>
+            <label>Filter <input id="mixer-a-filter" type="range" min="-1" max="1" step="0.01" value="0" /></label>
+          </div>
+        </div>
+        <div>
+          <strong>Channel B</strong>
+          <div class="row">
+            <label>Trim dB <input id="mixer-b-trim" type="range" min="-12" max="12" step="0.5" value="0" /></label>
+            <label>Low dB <input id="mixer-b-low" type="range" min="-24" max="6" step="0.5" value="0" /></label>
+            <label>Mid dB <input id="mixer-b-mid" type="range" min="-24" max="6" step="0.5" value="0" /></label>
+            <label>High dB <input id="mixer-b-high" type="range" min="-24" max="6" step="0.5" value="0" /></label>
+            <label>Filter <input id="mixer-b-filter" type="range" min="-1" max="1" step="0.01" value="0" /></label>
+          </div>
+        </div>
+      </div>
       <div class="row">
+        <label>Crossfader A ←→ B <input id="mixer-crossfader" type="range" min="-1" max="1" step="0.01" value="0" /></label>
         <label>Master <input id="mixer-master" type="range" min="0" max="1" step="0.01" value="1" /></label>
+        <label>Limiter threshold <input id="mixer-limiter" type="range" min="0.5" max="1" step="0.01" value="0.98" /></label>
         <button id="mixer-status-button" type="button">Refresh mixer status</button>
       </div>
-      <pre id="mixer-status">Mixer ready</pre>
+      <p>Signal path: channel trim → 3-band EQ → bipolar filter → equal-power crossfader → master → sample-peak limiter → safety clamp.</p>
+      <pre id="mixer-status">Mixer / DSP ready</pre>
     </fieldset>
 
     <details>

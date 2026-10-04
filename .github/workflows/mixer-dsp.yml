@@ -1,0 +1,53 @@
+name: Mixer DSP Gate
+
+on:
+  push:
+    branches: [module/mixer-dsp]
+    paths:
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'index.html'
+      - 'src/**'
+      - 'public/audio/**'
+      - 'tests/browser/**'
+      - 'docs/contracts/MIXER_DSP.md'
+      - 'docs/research/MIXER_DSP_2026.md'
+      - '.github/workflows/mixer-dsp.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  mixer-dsp:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install toolchain
+        run: npm install
+      - name: Typecheck, unit tests, production build
+        run: npm run check
+      - name: Install Chrome for Testing
+        run: npx playwright install --with-deps chromium
+      - name: Mixer DSP runtime and locked regressions
+        run: npm run test:browser
+      - name: Upload Phase 8 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mixer-dsp-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            package-lock.json
+            dist/
+            playwright-report/
+            test-results/

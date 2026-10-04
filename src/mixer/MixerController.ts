@@ -12,11 +12,20 @@ export interface MixerProcessorStatus {
   processedOutputFrames: number;
   frameDiscontinuities: number;
   masterVolume: number;
+  crossfader: number;
+  crossfaderGainA: number;
+  crossfaderGainB: number;
   inputAPeak: number;
   inputBPeak: number;
   summedPeakBeforeClamp: number;
   outputPeak: number;
   clippedSamples: number;
+  limitedSamples: number;
+  hardClippedSamplesAfterLimiter: number;
+  limiterThreshold: number;
+  limiterGain: number;
+  limiterGainReductionDb: number;
+  maxLimiterGainReductionDb: number;
 }
 
 export interface MixerStatus extends MixerProcessorStatus {
@@ -48,7 +57,11 @@ export class MixerController {
       numberOfInputs: 2,
       numberOfOutputs: 1,
       outputChannelCount: [2],
-      parameterData: { masterVolume: 1 },
+      parameterData: {
+        masterVolume: 1,
+        crossfader: 0,
+        limiterThreshold: 0.98,
+      },
     });
 
     const analyser = context.createAnalyser();
@@ -88,6 +101,24 @@ export class MixerController {
     const now = this.runtime.context.currentTime;
     parameter.cancelScheduledValues(now);
     parameter.setTargetAtTime(volume, now, Math.max(timeConstantSeconds, 0.001));
+  }
+
+  setCrossfader(position: number, timeConstantSeconds = 0.005): void {
+    if (!Number.isFinite(position) || position < -1 || position > 1) {
+      throw new RangeError('crossfader must be between -1 and 1');
+    }
+    const parameter = this.requireParameter('crossfader');
+    const now = this.runtime.context.currentTime;
+    parameter.cancelScheduledValues(now);
+    parameter.setTargetAtTime(position, now, Math.max(timeConstantSeconds, 0.001));
+  }
+
+  setLimiterThreshold(threshold: number): void {
+    if (!Number.isFinite(threshold) || threshold < 0.5 || threshold > 1) {
+      throw new RangeError('limiter threshold must be between 0.5 and 1');
+    }
+    const parameter = this.requireParameter('limiterThreshold');
+    parameter.setValueAtTime(threshold, this.runtime.context.currentTime);
   }
 
   requestStatus(timeoutMs = 2_000): Promise<MixerStatus> {
@@ -138,7 +169,7 @@ export class MixerController {
     };
   }
 
-  private requireParameter(name: 'masterVolume'): AudioParam {
+  private requireParameter(name: 'masterVolume' | 'crossfader' | 'limiterThreshold'): AudioParam {
     const parameter = this.inputNode.parameters.get(name);
     if (!parameter) throw new Error(`Mixer AudioParam is unavailable: ${name}`);
     return parameter;
