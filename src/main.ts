@@ -9,7 +9,7 @@ import { DeckBController, type DeckBStatus } from './deck/DeckBController';
 import type { DeckController, DeckStatus } from './deck/DeckController';
 import { MixerController, type MixerStatus } from './mixer/MixerController';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
-import { SyncController, type DeckId } from './sync/SyncController';
+import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 
@@ -56,9 +56,9 @@ interface LibertasMusicalClockTestApi {
 
 interface LibertasSyncTestApi {
   loadClickPair(durationSeconds?: number, bpmA?: number, bpmB?: number): Promise<{ a: DeckStatus; b: DeckStatus }>;
-  enable(leader: DeckId, options?: Partial<SyncControlOptions>): Promise<unknown>;
+  enable(leader: DeckId, options?: Partial<SyncControlOptions>): Promise<SyncSessionStatus>;
   disable(): Promise<void>;
-  status(): Promise<unknown>;
+  status(): Promise<SyncSessionStatus>;
 }
 
 interface LibertasDualDeckTestApi {

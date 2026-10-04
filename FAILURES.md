@@ -71,3 +71,13 @@
 - evidence: Musical Clock Gate run `37111377754`.
 - cause: test-edit defect only.
 - disposition: fixed at `ee7770e00b93cd90ce7ba6728b5ce8c8b4fc817d`; product and musical-clock implementation were unchanged.
+
+## F-0007 — SYNC browser API erased status type
+- date: 2026-10-03
+- exact SHA: `2bddfc188e3ff4b53a0a98f0fc525b120ebd3f2c`
+- module: sync
+- environment: GitHub Actions, TypeScript 6
+- symptom: Phase 6 stopped at typecheck because the browser test API declared SYNC enable/status results as `unknown`.
+- evidence: SYNC Gate run `37174159655`.
+- cause: test-harness typing defect; the exported `SyncSessionStatus` contract was not wired into `window.__libertasSyncTest`.
+- disposition: fixed by preserving the concrete SYNC session type through the browser test API. Product/controller logic unchanged.
