@@ -1,0 +1,92 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "performance-transport",
+  "gate": "phase7-composite-physical-runtime",
+  "status": "PASS",
+  "promotion_basis": "Composite evidence: physical audible validation on the unchanged Phase 7 transport engine plus automated visible Deck B follower-control telemetry on the proof-surface SHA.",
+  "product_engine_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "final_proof_surface_sha": "2fb5070237a9da8c36812351cde7053ea2aeba38",
+  "physical_evidence": [
+    {
+      "report_commit": "ef1c996aa6e5de9c0df94ca372ba048acd01b643",
+      "status": "BLOCKED_ONLY_ON_B_FOLLOWER_TELEMETRY_AND_FRESH_AUDIBLE_CONFIRMATION",
+      "carried_forward": {
+        "ordinary_deck_a_cue": "PASS",
+        "ordinary_deck_a_hotcue": "PASS",
+        "ordinary_deck_a_jog": "PASS",
+        "generated_loop": "PASS",
+        "five_minute_loop_hold": {
+          "status": "PASS",
+          "duration_seconds": 300,
+          "loop_wrap_count": 156,
+          "frame_discontinuities": 0
+        },
+        "ui_stall_600_ms": "PASS",
+        "dual_deck_independence": "PASS",
+        "sync_recovery": "PASS",
+        "console_runtime_errors": "NONE_OBSERVED"
+      }
+    },
+    {
+      "report_commit": "e8f590d5e141fc65d7a9e227877849e057a605c0",
+      "status": "BLOCKED_ONLY_ON_TINY_BROWSER_B_TELEMETRY_VISIBILITY",
+      "added_evidence": {
+        "fresh_cue": "PASS",
+        "fresh_hotcue": "PASS",
+        "fresh_loop": "PASS",
+        "fresh_jog": "PASS",
+        "audible_confirmation": "PASS — user confirmed hearing the decks syncing",
+        "sync_relock": "PASS",
+        "new_discontinuities": 0,
+        "additional_follower_transport_seeks": 0
+      }
+    }
+  ],
+  "automated_evidence": {
+    "final_run_id": 37177817318,
+    "system_contract_run_id": 37177817349,
+    "job_id": 111364032608,
+    "status": "PASS",
+    "unit_simulation_tests_passed": 24,
+    "browser_runtime_regression_tests_passed": 23,
+    "artifact": {
+      "id": 11294031938,
+      "name": "performance-transport-2fb5070237a9da8c36812351cde7053ea2aeba38",
+      "digest": "sha256:9996a01639932545047cace452741fb3edaff1f291e26fc712b6c34db27893ab",
+      "expires_at": "2026-10-18T04:44:27Z"
+    },
+    "deck_b_visible_follower_hotcue": {
+      "status": "PASS",
+      "visible_controls_used": true,
+      "performance_jump_delta": 1,
+      "hotcue_trigger_delta": 1,
+      "transport_seek_delta": 0,
+      "new_frame_discontinuities": 0,
+      "sync_tracking_after": true,
+      "phase_error_threshold_beats": "<0.05"
+    }
+  },
+  "engine_immutability": {
+    "status": "PASS",
+    "statement": "Between physical engine SHA b9a8317b... and final proof-surface SHA 2fb5070..., no realtime transport engine files changed.",
+    "unchanged_core_files": [
+      "public/audio/libertas-deck-a.worklet.js",
+      "src/deck/DeckController.ts",
+      "src/transport/PerformanceTransportController.ts",
+      "src/transport/PerformanceTransportMath.ts",
+      "src/sync/SyncController.ts",
+      "src/sync/SyncMath.ts"
+    ],
+    "changes_after_physical_engine_sha": [
+      "proof/evidence metadata",
+      "Deck B UI control exposure in index.html/src/main.ts",
+      "browser proof tests"
+    ]
+  },
+  "limitations": [
+    "The tiny Codex physical browser did not expose verifiable Deck B follower counter telemetry during the local run itself.",
+    "Deck B follower telemetry and visible control wiring are proven by the automated Chrome runtime on the unchanged realtime engine.",
+    "Phase 7 jog remains explicit source-frame displacement and is not continuous platter/scratch synthesis.",
+    "Ordinary-track SYNC with trusted BPM/first-beat grids remains outside the proven scope."
+  ]
+}

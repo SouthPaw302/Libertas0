@@ -136,10 +136,25 @@
     {
       "id": "audio.performance-transport",
       "class": "realtime-control",
-      "status": "runtime-proven-local-pending",
+      "status": "proven",
       "provider": "AudioWorklet explicit cue/hotcue/loop/jog transport",
       "contract": "docs/contracts/PERFORMANCE_TRANSPORT.md",
-      "evidence": "evidence/performance-transport/phase7-automated/RESULT.json"
+      "evidence": "evidence/performance-transport/phase7-local/RESULT.json",
+      "proven_scope": [
+        "cue",
+        "eight hot cues",
+        "sample-domain loops",
+        "beat-derived loops",
+        "bounded jog displacement",
+        "dual-deck independence",
+        "600 ms UI-stall survival",
+        "five-minute loop hold",
+        "SYNC recovery after explicit follower Hot Cue",
+        "visible Deck B performance controls"
+      ],
+      "not_yet_proven": [
+        "continuous platter/scratch synthesis"
+      ]
     }
   ]
 }

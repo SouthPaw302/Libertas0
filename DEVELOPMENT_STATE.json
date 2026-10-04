@@ -1,17 +1,19 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "performance_transport",
-  "active_module": "performance-transport",
-  "active_branch": "module/performance-transport",
-  "status": "LOCAL_DEBUG",
-  "current_objective": "Close the two remaining Phase 7 physical validation items on the Deck B proof-surface SHA: follower Hot Cue telemetry and fresh human audible confirmation.",
-  "last_passing_gate": "performance-transport-proof-surface-T4",
-  "last_evidence": "evidence/performance-transport/phase7-proof-surface-delta/RESULT.json",
-  "blockers": [
-    "Deck B follower Hot Cue physical telemetry has not yet returned PASS on the visible proof surface.",
-    "Fresh human audible confirmation has not yet been recorded for Phase 7."
+  "phase": "mixer_dsp",
+  "active_module": "mixer-dsp",
+  "active_branch": "main",
+  "status": "PLANNED",
+  "current_objective": "Phase 7 Performance Transport is complete and locked with composite automated + physical audible evidence. Await explicit user instruction before beginning Phase 8 Mixer/DSP.",
+  "last_passing_gate": "performance-transport-T5-composite",
+  "last_evidence": "evidence/performance-transport/phase7-local/RESULT.json",
+  "blockers": [],
+  "known_limitations": [
+    "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
+    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
+    "Deck B follower counter telemetry was not directly readable in the tiny physical browser; the visible B UI path and telemetry were proven in automated Chrome on the unchanged realtime engine."
   ],
-  "exact_next_action": "Execute PERFORMANCE-TRANSPORT-T5-002 on exact SHA 3df9f2536b6bf09137e74b3d572986704a13b263. Carry forward the valid five-minute/core T5 evidence from ef1c996; do not repeat it unless regression appears.",
+  "exact_next_action": "Await explicit instruction to start Phase 8 Mixer/DSP. Preserve audio kernel, Deck A/B, Musical Clock, SYNC, and Performance Transport as locked dependencies.",
   "product_code_authorized": false
 }

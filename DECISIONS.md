@@ -111,3 +111,17 @@ Cue, hotcue, loop and jog operate inside the existing deck AudioWorklet. Perform
 Status: ACCEPTED FOR PHASE 7
 
 Jog moves the source frame by an explicit signed amount while preserving play state. Continuous signed platter velocity/reverse scratch rendering is deferred rather than falsely claiming a scratch implementation.
+
+## D-0022 — Phase 7 closes on composite physical + deterministic runtime evidence
+Status: ACCEPTED
+
+The Windows/Codex physical run on `b9a8317b3c90d4d975746b01b62998792f195d6e` proved audible Cue/Hot Cue/Loop/Jog behavior, dual-deck independence, a five-minute 156-wrap loop hold with zero frame discontinuities, 600 ms UI-stall survival, and audible SYNC recovery with zero additional follower seeks.
+
+The tiny browser could not expose Deck B follower counter telemetry. This is treated as an observability limitation rather than a product failure because the same realtime transport engine already passed the B-follower Hot Cue runtime test, and the later proof-surface SHA `2fb5070237a9da8c36812351cde7053ea2aeba38` additionally proved the actual visible Deck B buttons produce `performanceJumpCount +1`, `hotCueTriggerCount +1`, `transportSeekCount +0`, zero new discontinuities, and SYNC recovery.
+
+No realtime deck, transport, or SYNC engine file changed between the physical engine SHA and the proof-surface SHA. The physical report remains historically BLOCKED on direct tiny-browser B telemetry; the module promotion is based on the combined evidence and does not rewrite that report.
+
+## D-0023 — Performance Transport promoted and locked
+Status: ACCEPTED
+
+Phase 7 is LOCKED. Cue, eight hot cues, sample-domain loops, beat-derived loops, bounded jog displacement, two-deck independence, UI-stall survival, five-minute loop stability, and SYNC recovery after explicit performance jumps are proven. Continuous platter/scratch synthesis remains explicitly outside Phase 7.
