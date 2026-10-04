@@ -1,0 +1,56 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "mixer-dsp",
+  "gate": "phase8-local-physical-listening",
+  "status": "PASS",
+  "tested_sha": "3c491c1fc37592e16a284676f569afcbe6423bf1",
+  "handoff_commit": "7c60686b80c3892549aa5d6eefe0b7c222bcbdbf",
+  "report_commit": "566e6d82ffa201da706138f8676072c684251995",
+  "task_id": "MIXER-DSP-T5-001",
+  "automated": {
+    "unit_simulation_tests": 30,
+    "browser_runtime_regression_tests": 29
+  },
+  "physical": {
+    "audible_confirmation": "PASS",
+    "limiter": {
+      "summed_peak_before_clamp": 1.797890067100525,
+      "max_gain_reduction_db": 5.538751036425838,
+      "hard_clipped_samples_after_limiter": 0,
+      "output_peak": 0.950220764039032
+    },
+    "sync_recovery": {
+      "relocked": true,
+      "follower_transport_seek_count_delta": 0,
+      "follower_frame_discontinuities_delta": 0
+    },
+    "ui_stall_600_ms": {
+      "new_discontinuities": {
+        "a": 0,
+        "b": 0,
+        "mixer": 0
+      }
+    },
+    "five_minute_mixed_hold": {
+      "status": "PASS",
+      "new_discontinuities": {
+        "a": 0,
+        "b": 0,
+        "mixer": 0
+      },
+      "lifetime_discontinuities_at_end": {
+        "a": 2,
+        "b": 0,
+        "mixer": 2
+      },
+      "sync_locked_final": true,
+      "stale_snapshots_final": 0
+    }
+  },
+  "limitations": [
+    "sample-peak limiter only",
+    "EQ is not full-kill",
+    "crossfader curve fixed equal-power",
+    "ordinary-track SYNC with verified grids remains unproven"
+  ]
+}
