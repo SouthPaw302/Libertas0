@@ -30,6 +30,9 @@ test('IndexedDB library deduplicates bytes and reloads stored PCM into a deck', 
 
 test('MIDI learn and synthetic CC drive the real mixer crossfader deterministically', async ({ page }) => {
   await openPhase10(page);
+  await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(5, 330, 550, 0.12));
+  await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
+  await page.waitForTimeout(80);
   await page.evaluate(() => {
     window.__libertasMidiTest.learn('mixer.crossfader', 'absolute', -1, 1);
     window.__libertasMidiTest.dispatch([0xb0, 10, 0]);

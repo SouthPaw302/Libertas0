@@ -242,3 +242,12 @@
   - a custom Web MIDI Navigator shim conflicted with the DOM's actual MIDIAccess definitions;
   - MediaRecorder was incorrectly assumed to expose an `error` property.
 - disposition: use conditional optional fields, native DOM Web MIDI types, and generic MediaRecorder error handling. Product architecture unchanged.
+
+## F-0021 — MIDI browser test sampled mixer while AudioContext was still suspended
+- date: 2026-10-04
+- exact SHA: `d7163d88d1a1d8c1e5090fa0eb506cf5a389b42f`
+- module: Phase 10 browser harness
+- symptom: 35/36 Chrome tests passed. MIDI learn created the binding, but mixer telemetry remained at center because the test had never started an audio source / resumed the audio context.
+- evidence: Phase 10 gate run `37185521528`.
+- cause: test precondition defect, not MIDI mapping logic. Mixer AudioParam state becomes observable through the render processor when the proven audio path is active.
+- disposition: load and start both generated decks before exercising learned MIDI CC against the real mixer crossfader. Product code unchanged.
