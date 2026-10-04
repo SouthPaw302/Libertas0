@@ -30,3 +30,15 @@
 - 600 ms active-DSP stall: A/B/mixer advanced 89,856 / 89,856 / 80,640 frames; discontinuity deltas 0 / 0 / 0; transport-seek deltas 0 / 0.
 - Final five-minute mixed hold used 610-second fixtures and passed all six checkpoints. Both decks remained playing; SYNC stayed locked; stale snapshots stayed 0; no new discontinuities; post-limiter hard clips 0.
 - User confirmed hearing the current Mixer/DSP run cleanly in the tiny browser. Report promoted to PASS. Phase 9 not started.
+
+## 2026-10-04 — INTELLIGENCE-T5-001
+
+- Exact SHA: `7fcb8627d5d7a82164bd097d1523941951f8d698`
+- Handoff commit: `c3082c3d6e366caed9b9891e8476c7fed114545b`
+- Runtime: Windows 10, Codex tiny in-app browser tab 10, port 5183, Realtek output, 48 kHz.
+- Automated gate: 33 unit/simulation PASS; 32 Chrome runtime/regression PASS.
+- Real material: both 305-second Tribal House WAVs were byte-identical (SHA-256 `639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D`).
+- Analyzer: `libertas.onset-autocorrelation.v1`, Web Worker; both files proposed 144.5839447 BPM, firstBeatFrame 13,920 (0.29 s), tempo confidence 0.252615, phase confidence 0.515058, grid confidence 0.360709, `recommended=false`.
+- Determinism: same file twice produced BPM delta 0, anchor delta 0 frames, stable confidence/provenance; duplicate agreement was exact.
+- Manual A/B grids stayed 120 BPM / firstBeatFrame 0 / 4 beats per bar after analysis. Apply, manual repair, analyzer-derived ordinary-track SYNC, and audible verification were not run because the required confidence/plausibility gate blocked.
+- Report status: BLOCKED. Phase 9 remains `LOCAL_DEBUG`; Phase 10 not started.

@@ -1,0 +1,47 @@
+{
+  "task_id": "INTELLIGENCE-T5-001",
+  "tested_sha": "7fcb8627d5d7a82164bd097d1523941951f8d698",
+  "handoff_commit": "c3082c3d6e366caed9b9891e8476c7fed114545b",
+  "status": "BLOCKED",
+  "phase": "9",
+  "mode": "LOCAL_DEBUG",
+  "browser": "Codex in-app browser (headed Chromium), tab 10, http://127.0.0.1:5183/",
+  "automated": {"bootstrap": "PASS", "npm_install": "PASS", "typecheck": "PASS", "unit_tests": "PASS (33 tests)", "chrome_runtime_regression_tests": "PASS (32 tests)"},
+  "source_files": [
+    {"name": "Tribal House  (Remastered).wav", "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D", "bytes": 58560172},
+    {"name": "Tribal House  (Remastered) (1).wav", "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D", "bytes": 58560172}
+  ],
+  "analysis_runs": {
+    "provider": "libertas.onset-autocorrelation.v1",
+    "execution": "web-worker",
+    "sample_rate_hz": 48000,
+    "frame_count": 14640000,
+    "duration_seconds": 305,
+    "proposal_a_first": {
+      "file": "Tribal House  (Remastered).wav",
+      "bpm": 144.58394471887152,
+      "tempo_confidence": 0.252614734751494,
+      "first_beat_frame": 13920,
+      "first_beat_seconds": 0.29,
+      "phase_confidence": 0.515057645063044,
+      "grid_confidence": 0.36070923247032366,
+      "recommended": false,
+      "beats_per_bar": 4,
+      "beat_unit": 4,
+      "descriptors": {"rms": 0.14237432212917464, "peak": 0.642974853515625, "crest_factor": 4.516087198169492, "zero_crossing_rate": 0.0578602498538422},
+      "diagnostics": {"envelope_rate_hz": 400, "hop_frames": 120, "tempo_lag": 165.99353439045746, "onset_count": 122000}
+    },
+    "proposal_a_repeat": {"bpm": 144.58394471887152, "first_beat_frame": 13920, "tempo_confidence": 0.252614734751494, "phase_confidence": 0.515057645063044, "grid_confidence": 0.36070923247032366, "provider": "libertas.onset-autocorrelation.v1", "bpm_delta": 0, "anchor_delta_frames": 0, "within_one_hop": true, "confidence_stable": true, "provenance_stable": true},
+    "proposal_b_duplicate": {"file": "Tribal House  (Remastered) (1).wav", "bpm": 144.58394471887152, "tempo_confidence": 0.252614734751494, "first_beat_frame": 13920, "first_beat_seconds": 0.29, "phase_confidence": 0.515057645063044, "grid_confidence": 0.36070923247032366, "recommended": false, "bpm_delta_vs_a": 0, "anchor_delta_frames_vs_a": 0, "anchor_musically_equivalent": true}
+  },
+  "grid_gate": {
+    "manual_before_analysis": {"A": {"bpm": 120, "first_beat_frame": 0, "beats_per_bar": 4}, "B": {"bpm": 120, "first_beat_frame": 0, "beats_per_bar": 4}},
+    "manual_after_analysis": {"A": {"bpm": 120, "first_beat_frame": 0, "beats_per_bar": 4}, "B": {"bpm": 120, "first_beat_frame": 0, "beats_per_bar": 4}},
+    "analysis_did_not_mutate_grid": true,
+    "explicit_apply": "NOT_RUN — proposal was low-confidence and recommended=false; no manual repair permitted",
+    "analyzer_bpm_plausibility": "BLOCKED — 144.5839 BPM is not a recommended ~128 BPM proposal"
+  },
+  "transport_gate": {"ordinary_track_sync": "NOT_RUN — blocked by low-confidence analyzer proposal", "background_analysis_safety": "NOT_RUN — blocked before analyzer-derived transport proof", "audible_verification": "NOT_RUN — no audible confirmation requested for a blocked grid", "five_minute_hold": "NOT_RUN — prior hold does not satisfy this analyzer gate"},
+  "blocker": "Both byte-identical real Tribal House files deterministically return the same low-confidence proposal (tempoConfidence 0.2526, gridConfidence 0.3607, recommended false). Per task instructions, do not apply or manually repair the grid; analyzer-derived ordinary-track SYNC and audible verification cannot be promoted.",
+  "product_files_changed": false
+}
