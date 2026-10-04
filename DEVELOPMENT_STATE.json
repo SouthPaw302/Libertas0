@@ -5,16 +5,13 @@
   "active_module": "performance-transport",
   "active_branch": "module/performance-transport",
   "status": "LOCAL_DEBUG",
-  "current_objective": "Complete physical/human-listening validation of Phase 7 cue, hotcue, loop and jog transport after automated gates passed.",
-  "last_passing_gate": "performance-transport-T4-browser-runtime",
-  "last_evidence": "evidence/performance-transport/phase7-automated/RESULT.json",
+  "current_objective": "Close the two remaining Phase 7 physical validation items on the Deck B proof-surface SHA: follower Hot Cue telemetry and fresh human audible confirmation.",
+  "last_passing_gate": "performance-transport-proof-surface-T4",
+  "last_evidence": "evidence/performance-transport/phase7-proof-surface-delta/RESULT.json",
   "blockers": [
-    "Physical/audible Phase 7 validation has not yet returned through the debug bus."
+    "Deck B follower Hot Cue physical telemetry has not yet returned PASS on the visible proof surface.",
+    "Fresh human audible confirmation has not yet been recorded for Phase 7."
   ],
-  "known_limitations": [
-    "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
-    "Phase 7 jog is explicit source-frame displacement, not continuous scratch synthesis."
-  ],
-  "exact_next_action": "Local debug agent executes PERFORMANCE-TRANSPORT-T5-001 against exact SHA b9a8317b3c90d4d975746b01b62998792f195d6e. Do not begin Phase 8 until PASS is recorded.",
+  "exact_next_action": "Execute PERFORMANCE-TRANSPORT-T5-002 on exact SHA 3df9f2536b6bf09137e74b3d572986704a13b263. Carry forward the valid five-minute/core T5 evidence from ef1c996; do not repeat it unless regression appears.",
   "product_code_authorized": false
 }

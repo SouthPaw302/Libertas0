@@ -1,0 +1,48 @@
+{
+  "task_id": "PERFORMANCE-TRANSPORT-T5-002",
+  "requested_sha": "3df9f2536b6bf09137e74b3d572986704a13b263",
+  "branch": "module/performance-transport",
+  "module": "performance-transport",
+  "objective": "Close only the two unresolved Phase 7 T5 items after Deck B performance controls were exposed in the physical UI.",
+  "prior_report_commit": "ef1c996aa6e5de9c0df94ca372ba048acd01b643",
+  "carry_forward": [
+    "Five-minute loop hold PASS: 156 wraps, zero discontinuities.",
+    "Deck A cue/hotcue/jog PASS.",
+    "600 ms active-loop UI-stall PASS.",
+    "Dual-deck independence PASS.",
+    "SYNC recovery PASS."
+  ],
+  "do_not_repeat": [
+    "Do not repeat the five-minute loop hold unless the new SHA shows a regression.",
+    "Do not repeat broad Phase 7 T5 coverage already proven in ef1c996."
+  ],
+  "steps": [
+    "Check out exact SHA 3df9f2536b6bf09137e74b3d572986704a13b263 and require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Open headed Codex/Chromium on the physical Windows audio output.",
+    "Confirm the Performance Transport proof surface now visibly exposes Deck B Set Cue/Cue Return/Hot Cue 1/Loop/Jog controls and Deck B performance status.",
+    "Load the generated click pair, apply trusted 120/128 BPM grids, play both decks, and SYNC B to leader A.",
+    "Wait for B follower to lock. Capture Deck B performanceJumpCount, hotCueTriggerCount, transportSeekCount, syncLocked, and phase error.",
+    "Use the visible Deck B controls to Set Hot Cue 1 at an audible/known point and then Trigger Hot Cue 1 while B is the SYNC follower.",
+    "Immediately capture Deck B telemetry, then allow SYNC to recover/re-lock and capture again.",
+    "Require performanceJumpCount +1 and hotCueTriggerCount +1 from the explicit Hot Cue; require transportSeekCount unchanged during SYNC recovery.",
+    "Confirm SYNC returns to tracking/lock without a hidden seek and with zero new worklet discontinuities.",
+    "Exercise audible Cue Return, Hot Cue, active loop, and +/-50 ms jog briefly on the physical output. Obtain explicit human confirmation that behavior was heard and there were no abnormal clicks/dropouts/stalls.",
+    "Update reports/local-debug/LATEST.json and SESSION_LOG.md with a combined Phase 7 result. If both missing items pass, set overall PERFORMANCE-TRANSPORT-T5 status PASS and reference prior report ef1c996 for carried-forward evidence.",
+    "Push validation/local-debug so the debug bus relays the result to issue #1."
+  ],
+  "pass_requirements": {
+    "follower_hotcue": {
+      "performanceJumpCount_delta": 1,
+      "hotCueTriggerCount_delta": 1,
+      "transportSeekCount_delta_during_sync_recovery": 0,
+      "sync_relocks": true,
+      "new_frame_discontinuities": 0
+    },
+    "audible_confirmation": "Explicit human confirmation that cue/hotcue/loop/jog were audible and no abnormal clicks/dropouts/stalls were heard."
+  },
+  "report_rules": [
+    "Evidence branch only; no product/system patches.",
+    "Do not begin Phase 8."
+  ]
+}

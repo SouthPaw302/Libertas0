@@ -1,0 +1,53 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "performance-transport",
+  "gate": "phase7-proof-surface-delta",
+  "status": "PASS",
+  "tested_sha": "3df9f2536b6bf09137e74b3d572986704a13b263",
+  "reason": "Expose Deck B performance controls/status for physical verification after T5-001 was blocked on proof-surface visibility. Realtime transport engine unchanged.",
+  "system_contract": {
+    "run_id": 37177395564,
+    "conclusion": "success"
+  },
+  "performance_transport_gate": {
+    "run_id": 37177395578,
+    "job_id": 111362773763,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "status": "PASS",
+      "tests_passed": 24
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 22,
+      "locked_regressions": "PASS"
+    }
+  },
+  "prior_physical_evidence": {
+    "report_commit": "ef1c996aa6e5de9c0df94ca372ba048acd01b643",
+    "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+    "preserved_results": [
+      "ordinary Deck A cue/hotcue/jog",
+      "generated 4-beat loop",
+      "five-minute loop hold: 156 wraps, zero discontinuities",
+      "600 ms loop UI-stall",
+      "dual-deck independence",
+      "SYNC recovery"
+    ],
+    "invalidated_by_ui_delta": false
+  },
+  "artifact": {
+    "id": 11293833241,
+    "name": "performance-transport-3df9f2536b6bf09137e74b3d572986704a13b263",
+    "digest": "sha256:0cacae254d0251ec05bea71e63ecf6873924b0892eed2d0fb16c6f03e83bf707",
+    "expires_at": "2026-10-18T04:35:31Z"
+  },
+  "remaining_t5_items": [
+    "Verify Deck B follower Hot Cue through visible UI and capture performanceJumpCount/hotCueTriggerCount/transportSeekCount before/after.",
+    "Fresh human audible confirmation for cue/hotcue/loop/jog behavior with no abnormal clicks/dropouts."
+  ]
+}
