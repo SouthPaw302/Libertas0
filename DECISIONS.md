@@ -101,3 +101,13 @@ Status: ACCEPTED
 Phase 6 passed deterministic simulation, full Chrome runtime/regression gates, and local physical/human-listening validation on `76f3c2e75538a5a89af25316508a9fef8e176ea1`. Generated 120/128 BPM click tracks converged without corrective seeks, leader-rate follow settled at the expected 0.984375 ratio, a 600 ms main-thread stall added zero A/B/mixer discontinuities, a five-minute lock held with zero deck discontinuities, and reverse leadership passed.
 
 Ordinary program-material SYNC is explicitly NOT_EVALUATED because no trusted BPM and first-beat grids were supplied. Promotion of the SYNC core does not erase that limitation.
+
+## D-0020 — Performance transport actions are explicit source-frame commands
+Status: ACCEPTED FOR PHASE 7
+
+Cue, hotcue, loop and jog operate inside the existing deck AudioWorklet. Performance jumps are counted separately from ordinary seeks so user actions remain distinguishable from the Phase 6 prohibition on hidden SYNC corrective seeks.
+
+## D-0021 — Phase 7 jog is displacement, not scratch synthesis
+Status: ACCEPTED FOR PHASE 7
+
+Jog moves the source frame by an explicit signed amount while preserving play state. Continuous signed platter velocity/reverse scratch rendering is deferred rather than falsely claiming a scratch implementation.

@@ -11,6 +11,7 @@ import { MixerController, type MixerStatus } from './mixer/MixerController';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
 import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
+import { PerformanceTransportController } from './transport/PerformanceTransportController';
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 
 interface LibertasKernelTestApi {
@@ -61,6 +62,22 @@ interface LibertasSyncTestApi {
   status(): Promise<SyncSessionStatus>;
 }
 
+interface LibertasPerformanceTransportTestApi {
+  setCueHere(): Promise<DeckStatus>;
+  setCueFrame(frame: number): Promise<DeckStatus>;
+  triggerCue(pause?: boolean): Promise<DeckStatus>;
+  setHotCueHere(slot: number): Promise<DeckStatus>;
+  setHotCue(slot: number, frame: number): Promise<DeckStatus>;
+  triggerHotCue(slot: number): Promise<DeckStatus>;
+  clearHotCue(slot: number): Promise<DeckStatus>;
+  setLoopFrames(startFrame: number, endFrame: number): Promise<DeckStatus>;
+  setBeatLoop(startBeat: number, lengthBeats: number): Promise<DeckStatus>;
+  setLoopEnabled(enabled: boolean): Promise<DeckStatus>;
+  clearLoop(): Promise<DeckStatus>;
+  jogByFrames(deltaFrames: number): Promise<DeckStatus>;
+  jogBySeconds(deltaSeconds: number): Promise<DeckStatus>;
+}
+
 interface LibertasDualDeckTestApi {
   loadGenerated(
     durationSeconds?: number,
@@ -84,6 +101,8 @@ declare global {
     __libertasDualDeckTest: LibertasDualDeckTestApi;
     __libertasMusicalClockTest: LibertasMusicalClockTestApi;
     __libertasSyncTest: LibertasSyncTestApi;
+    __libertasPerformanceATest: LibertasPerformanceTransportTestApi;
+    __libertasPerformanceBTest: LibertasPerformanceTransportTestApi;
   }
 }
 
@@ -95,6 +114,8 @@ await mixer.initialize();
 const deckA = new DeckAController(runtime, undefined, { node: mixer.inputNode, input: 0 });
 const deckB = new DeckBController(runtime, undefined, { node: mixer.inputNode, input: 1 });
 const sync = new SyncController(deckA, deckB);
+const performanceA = new PerformanceTransportController(deckA);
+const performanceB = new PerformanceTransportController(deckB);
 
 const musicalClocks = new Map<'A' | 'B', MusicalClock>();
 const pendingGrids = new Map<'A' | 'B', BeatGrid>([
@@ -114,6 +135,15 @@ const syncBToAButton = document.querySelector<HTMLButtonElement>('#sync-b-to-a')
 const syncDisableButton = document.querySelector<HTMLButtonElement>('#sync-disable');
 const syncStatusButton = document.querySelector<HTMLButtonElement>('#sync-status-button');
 const syncStatusElement = document.querySelector<HTMLPreElement>('#sync-status');
+const perfASetCue = document.querySelector<HTMLButtonElement>('#perf-a-set-cue');
+const perfACue = document.querySelector<HTMLButtonElement>('#perf-a-cue');
+const perfAHot1Set = document.querySelector<HTMLButtonElement>('#perf-a-hot1-set');
+const perfAHot1 = document.querySelector<HTMLButtonElement>('#perf-a-hot1');
+const perfALoop = document.querySelector<HTMLButtonElement>('#perf-a-loop');
+const perfALoopOff = document.querySelector<HTMLButtonElement>('#perf-a-loop-off');
+const perfAJogBack = document.querySelector<HTMLButtonElement>('#perf-a-jog-back');
+const perfAJogForward = document.querySelector<HTMLButtonElement>('#perf-a-jog-forward');
+const perfAStatus = document.querySelector<HTMLPreElement>('#perf-a-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -266,6 +296,35 @@ async function enableSyncFromUi(leader: DeckId): Promise<void> {
   render(syncStatusElement, result);
 }
 
+perfASetCue?.addEventListener('click', () => {
+  void performanceA.setCueHere().then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfACue?.addEventListener('click', () => {
+  void performanceA.triggerCue(true).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfAHot1Set?.addEventListener('click', () => {
+  void performanceA.setHotCueHere(1).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfAHot1?.addEventListener('click', () => {
+  void performanceA.triggerHotCue(1).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfALoop?.addEventListener('click', () => {
+  void (async () => {
+    const snap = await musicalSnapshot('A');
+    const startBeat = Math.floor(snap.position.beatPosition);
+    render(perfAStatus, await performanceA.setBeatLoop(pendingGrids.get('A')!, startBeat, 4));
+  })().catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfALoopOff?.addEventListener('click', () => {
+  void performanceA.setLoopEnabled(false).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfAJogBack?.addEventListener('click', () => {
+  void performanceA.jogBySeconds(-0.05).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+perfAJogForward?.addEventListener('click', () => {
+  void performanceA.jogBySeconds(0.05).then((s) => render(perfAStatus, s)).catch((e: unknown) => render(perfAStatus, { error: String(e) }));
+});
+
 syncAToBButton?.addEventListener('click', () => {
   void enableSyncFromUi('A').catch((error: unknown) => render(syncStatusElement, { error: String(error) }));
 });
@@ -386,6 +445,31 @@ window.__libertasSyncTest = {
   disable: () => sync.disable(),
   status: () => sync.status(),
 };
+
+function makePerformanceTestApi(
+  controller: PerformanceTransportController,
+  deck: 'A' | 'B',
+): LibertasPerformanceTransportTestApi {
+  return {
+    setCueHere: () => controller.setCueHere(),
+    setCueFrame: (frame) => controller.setCueAtFrame(frame),
+    triggerCue: (pause = true) => controller.triggerCue(pause),
+    setHotCueHere: (slot) => controller.setHotCueHere(slot),
+    setHotCue: (slot, frame) => controller.setHotCue(slot, frame),
+    triggerHotCue: (slot) => controller.triggerHotCue(slot),
+    clearHotCue: (slot) => controller.clearHotCue(slot),
+    setLoopFrames: (startFrame, endFrame) => controller.setLoopFrames(startFrame, endFrame),
+    setBeatLoop: (startBeat, lengthBeats) =>
+      controller.setBeatLoop(pendingGrids.get(deck)!, startBeat, lengthBeats),
+    setLoopEnabled: (enabled) => controller.setLoopEnabled(enabled),
+    clearLoop: () => controller.clearLoop(),
+    jogByFrames: (deltaFrames) => controller.jogByFrames(deltaFrames),
+    jogBySeconds: (deltaSeconds) => controller.jogBySeconds(deltaSeconds),
+  };
+}
+
+window.__libertasPerformanceATest = makePerformanceTestApi(performanceA, 'A');
+window.__libertasPerformanceBTest = makePerformanceTestApi(performanceB, 'B');
 
 window.__libertasDualDeckTest = {
   async loadGenerated(durationSeconds = 10, frequencyA = 330, frequencyB = 550, amplitude = 0.35) {

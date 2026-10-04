@@ -38,6 +38,16 @@ export interface DeckProcessorStatus {
   syncSnapshotAgeFrames: number | null;
   syncValidSnapshots: number;
   syncStaleSnapshots: number;
+  cueFrame: number | null;
+  hotCues: Array<number | null>;
+  loopEnabled: boolean;
+  loopStartFrame: number | null;
+  loopEndFrame: number | null;
+  loopWrapCount: number;
+  performanceJumpCount: number;
+  cueTriggerCount: number;
+  hotCueTriggerCount: number;
+  jogCount: number;
 }
 
 export interface DeckStatus extends DeckProcessorStatus {
@@ -164,6 +174,68 @@ export class DeckController {
 
   setMuted(muted: boolean): Promise<DeckStatus> {
     return this.request('mute', { muted });
+  }
+
+  setCueFrame(frame: number): Promise<DeckStatus> {
+    if (!Number.isFinite(frame)) throw new RangeError('cue frame must be finite');
+    return this.request('cue-set', { frame });
+  }
+
+  setCueHere(): Promise<DeckStatus> {
+    return this.request('cue-set-current');
+  }
+
+  triggerCue(pause = true): Promise<DeckStatus> {
+    return this.request('cue-trigger', { pause });
+  }
+
+  setHotCue(slot: number, frame: number): Promise<DeckStatus> {
+    if (!Number.isInteger(slot) || slot < 1 || slot > 8) {
+      throw new RangeError('hot cue slot must be an integer from 1 to 8');
+    }
+    if (!Number.isFinite(frame)) throw new RangeError('hot cue frame must be finite');
+    return this.request('hotcue-set', { slot, frame });
+  }
+
+  setHotCueHere(slot: number): Promise<DeckStatus> {
+    if (!Number.isInteger(slot) || slot < 1 || slot > 8) {
+      throw new RangeError('hot cue slot must be an integer from 1 to 8');
+    }
+    return this.request('hotcue-set-current', { slot });
+  }
+
+  clearHotCue(slot: number): Promise<DeckStatus> {
+    if (!Number.isInteger(slot) || slot < 1 || slot > 8) {
+      throw new RangeError('hot cue slot must be an integer from 1 to 8');
+    }
+    return this.request('hotcue-clear', { slot });
+  }
+
+  triggerHotCue(slot: number): Promise<DeckStatus> {
+    if (!Number.isInteger(slot) || slot < 1 || slot > 8) {
+      throw new RangeError('hot cue slot must be an integer from 1 to 8');
+    }
+    return this.request('hotcue-trigger', { slot });
+  }
+
+  setLoop(startFrame: number, endFrame: number, enabled = true): Promise<DeckStatus> {
+    if (!Number.isFinite(startFrame) || !Number.isFinite(endFrame)) {
+      throw new RangeError('loop frames must be finite');
+    }
+    return this.request('loop-set', { startFrame, endFrame, enabled });
+  }
+
+  setLoopEnabled(enabled: boolean): Promise<DeckStatus> {
+    return this.request('loop-enable', { enabled });
+  }
+
+  clearLoop(): Promise<DeckStatus> {
+    return this.request('loop-clear');
+  }
+
+  jogByFrames(deltaFrames: number): Promise<DeckStatus> {
+    if (!Number.isFinite(deltaFrames)) throw new RangeError('jog delta must be finite');
+    return this.request('jog', { deltaFrames });
   }
 
   configureSyncPublisher(sharedBuffer: SharedArrayBuffer, grid: {

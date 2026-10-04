@@ -1,0 +1,53 @@
+name: Performance Transport Gate
+
+on:
+  push:
+    branches: [module/performance-transport]
+    paths:
+      - 'package.json'
+      - 'tsconfig.json'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'index.html'
+      - 'src/**'
+      - 'public/audio/**'
+      - 'tests/browser/**'
+      - 'docs/contracts/PERFORMANCE_TRANSPORT.md'
+      - 'docs/research/PERFORMANCE_TRANSPORT_2026.md'
+      - '.github/workflows/performance-transport.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  performance-transport:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install toolchain
+        run: npm install
+      - name: Typecheck, unit tests, production build
+        run: npm run check
+      - name: Install Chrome for Testing
+        run: npx playwright install --with-deps chromium
+      - name: Performance transport runtime and locked regressions
+        run: npm run test:browser
+      - name: Upload Phase 7 evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: performance-transport-${{ github.sha }}
+          if-no-files-found: ignore
+          retention-days: 14
+          path: |
+            package-lock.json
+            dist/
+            playwright-report/
+            test-results/

@@ -89,7 +89,7 @@
     },
     {
       "id": "performance-transport",
-      "state": "PLANNED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "sync"
       ],

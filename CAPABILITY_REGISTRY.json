@@ -132,6 +132,13 @@
       "not_yet_proven": [
         "ordinary program tracks with verified BPM + first-beat grids"
       ]
+    },
+    {
+      "id": "audio.performance-transport",
+      "class": "realtime-control",
+      "status": "implementing",
+      "provider": "AudioWorklet explicit cue/hotcue/loop/jog transport",
+      "contract": "docs/contracts/PERFORMANCE_TRANSPORT.md"
     }
   ]
 }

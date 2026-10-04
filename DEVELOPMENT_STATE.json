@@ -3,15 +3,16 @@
   "project": "Libertas0",
   "phase": "performance_transport",
   "active_module": "performance-transport",
-  "active_branch": "main",
-  "status": "PLANNED",
-  "current_objective": "Phase 6 SYNC core is complete and locked with automated and local audible evidence. Ordinary-track SYNC remains explicitly unverified until trusted BPM and first-beat grids are available. Await explicit user instruction before Phase 7 Performance Transport.",
+  "active_branch": "module/performance-transport",
+  "status": "IMPLEMENTING",
+  "current_objective": "Build explicit cue, eight hot cues, sample-domain loops, beat-derived loops and bounded jog transport on the existing AudioWorklet source-frame authority without weakening SYNC invariants.",
   "last_passing_gate": "sync-T5-local-physical-listening",
   "last_evidence": "evidence/sync/phase6-local/RESULT.json",
   "blockers": [],
   "known_limitations": [
-    "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated."
+    "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
+    "Phase 7 jog is explicit source-frame displacement, not continuous scratch synthesis."
   ],
-  "exact_next_action": "Await explicit instruction to start Phase 7. When authorized, create module/performance-transport from this promoted main state and preserve SYNC plus all lower modules as locked dependencies.",
-  "product_code_authorized": false
+  "exact_next_action": "Run Phase 7 unit/build/browser gates including all locked regressions. Fix failures before issuing exact-SHA local physical transport validation.",
+  "product_code_authorized": true
 }

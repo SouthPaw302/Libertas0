@@ -60,6 +60,17 @@ class LibertasDeckAProcessor extends AudioWorkletProcessor {
     this.lastPlaybackRate = 1;
     this.outputPeak = 0;
 
+    this.cueFrame = null;
+    this.hotCues = Array(8).fill(null);
+    this.loopEnabled = false;
+    this.loopStartFrame = null;
+    this.loopEndFrame = null;
+    this.loopWrapCount = 0;
+    this.performanceJumpCount = 0;
+    this.cueTriggerCount = 0;
+    this.hotCueTriggerCount = 0;
+    this.jogCount = 0;
+
     this.syncRole = 'off';
     this.syncSeq = null;
     this.syncData = null;
@@ -105,6 +116,61 @@ class LibertasDeckAProcessor extends AudioWorkletProcessor {
             break;
           case 'mute':
             this.muted = Boolean(message.muted);
+            break;
+          case 'cue-set':
+            this.requireLoaded();
+            this.cueFrame = this.clampSourceFrame(Number(message.frame));
+            break;
+          case 'cue-set-current':
+            this.requireLoaded();
+            this.cueFrame = this.clampSourceFrame(this.sourceFrame);
+            break;
+          case 'cue-trigger':
+            this.requireLoaded();
+            if (this.cueFrame === null) throw new Error('Cue is not set');
+            this.sourceFrame = this.cueFrame;
+            this.ended = false;
+            this.playing = message.pause === false ? this.playing : false;
+            this.performanceJumpCount += 1;
+            this.cueTriggerCount += 1;
+            break;
+          case 'hotcue-set':
+            this.requireLoaded();
+            this.setHotCue(Number(message.slot), Number(message.frame));
+            break;
+          case 'hotcue-set-current':
+            this.requireLoaded();
+            this.setHotCue(Number(message.slot), this.sourceFrame);
+            break;
+          case 'hotcue-clear':
+            this.clearHotCue(Number(message.slot));
+            break;
+          case 'hotcue-trigger':
+            this.requireLoaded();
+            this.triggerHotCue(Number(message.slot));
+            break;
+          case 'loop-set':
+            this.requireLoaded();
+            this.configureLoop(Number(message.startFrame), Number(message.endFrame), Boolean(message.enabled));
+            break;
+          case 'loop-enable':
+            if (Boolean(message.enabled) && (this.loopStartFrame === null || this.loopEndFrame === null)) {
+              throw new Error('Loop boundaries are not set');
+            }
+            this.loopEnabled = Boolean(message.enabled);
+            break;
+          case 'loop-clear':
+            this.loopEnabled = false;
+            this.loopStartFrame = null;
+            this.loopEndFrame = null;
+            break;
+          case 'jog':
+            this.requireLoaded();
+            if (!Number.isFinite(message.deltaFrames)) throw new Error('jog delta must be finite');
+            this.sourceFrame = this.clampSourceFrame(this.sourceFrame + Number(message.deltaFrames));
+            this.ended = this.sourceFrame >= this.sourceFrames;
+            this.performanceJumpCount += 1;
+            this.jogCount += 1;
             break;
           case 'sync-configure':
             this.configureSync(message);
@@ -158,7 +224,78 @@ class LibertasDeckAProcessor extends AudioWorkletProcessor {
     this.ended = false;
     this.outputPeak = 0;
     this.transportSeekCount = 0;
+    this.cueFrame = null;
+    this.hotCues = Array(8).fill(null);
+    this.loopEnabled = false;
+    this.loopStartFrame = null;
+    this.loopEndFrame = null;
+    this.loopWrapCount = 0;
+    this.performanceJumpCount = 0;
+    this.cueTriggerCount = 0;
+    this.hotCueTriggerCount = 0;
+    this.jogCount = 0;
     this.disableSync();
+  }
+
+  requireLoaded() {
+    if (!this.sourceFrames) throw new Error('Deck has no loaded PCM');
+  }
+
+  clampSourceFrame(frame) {
+    if (!Number.isFinite(frame)) throw new Error('source frame must be finite');
+    return Math.min(Math.max(frame, 0), this.sourceFrames);
+  }
+
+  validateHotCueSlot(slot) {
+    if (!Number.isInteger(slot) || slot < 1 || slot > 8) {
+      throw new Error('hot cue slot must be an integer from 1 to 8');
+    }
+    return slot - 1;
+  }
+
+  setHotCue(slot, frame) {
+    const index = this.validateHotCueSlot(slot);
+    this.hotCues[index] = this.clampSourceFrame(frame);
+  }
+
+  clearHotCue(slot) {
+    const index = this.validateHotCueSlot(slot);
+    this.hotCues[index] = null;
+  }
+
+  triggerHotCue(slot) {
+    const index = this.validateHotCueSlot(slot);
+    const frame = this.hotCues[index];
+    if (frame === null) throw new Error(`Hot cue ${slot} is not set`);
+    this.sourceFrame = frame;
+    this.ended = false;
+    this.performanceJumpCount += 1;
+    this.hotCueTriggerCount += 1;
+  }
+
+  configureLoop(startFrame, endFrame, enabled) {
+    const start = this.clampSourceFrame(startFrame);
+    const end = this.clampSourceFrame(endFrame);
+    if (!(end > start)) throw new Error('loop end must be greater than loop start');
+    this.loopStartFrame = start;
+    this.loopEndFrame = end;
+    this.loopEnabled = enabled;
+    if (this.loopEnabled && (this.sourceFrame < start || this.sourceFrame >= end)) {
+      this.sourceFrame = start;
+      this.performanceJumpCount += 1;
+    }
+  }
+
+  wrapLoopPosition(frame) {
+    if (!this.loopEnabled || this.loopStartFrame === null || this.loopEndFrame === null) {
+      return frame;
+    }
+    const length = this.loopEndFrame - this.loopStartFrame;
+    if (length <= 0 || frame < this.loopEndFrame) return frame;
+    const overshoot = frame - this.loopStartFrame;
+    const wrapped = this.loopStartFrame + (overshoot % length);
+    this.loopWrapCount += Math.max(1, Math.floor(overshoot / length));
+    return wrapped;
   }
 
   configureSync(message) {
@@ -387,6 +524,16 @@ class LibertasDeckAProcessor extends AudioWorkletProcessor {
       syncSnapshotAgeFrames: this.syncSnapshotAgeFrames,
       syncValidSnapshots: this.syncValidSnapshots,
       syncStaleSnapshots: this.syncStaleSnapshots,
+      cueFrame: this.cueFrame,
+      hotCues: [...this.hotCues],
+      loopEnabled: this.loopEnabled,
+      loopStartFrame: this.loopStartFrame,
+      loopEndFrame: this.loopEndFrame,
+      loopWrapCount: this.loopWrapCount,
+      performanceJumpCount: this.performanceJumpCount,
+      cueTriggerCount: this.cueTriggerCount,
+      hotCueTriggerCount: this.hotCueTriggerCount,
+      jogCount: this.jogCount,
     });
   }
 
@@ -466,8 +613,9 @@ class LibertasDeckAProcessor extends AudioWorkletProcessor {
         left = this.sampleAt(0, this.sourceFrame) * volume;
         right = this.sampleAt(this.sourceChannels > 1 ? 1 : 0, this.sourceFrame) * volume;
         this.sourceFrame += rate;
+        this.sourceFrame = this.wrapLoopPosition(this.sourceFrame);
 
-        if (this.sourceFrame >= this.sourceFrames) {
+        if (!this.loopEnabled && this.sourceFrame >= this.sourceFrames) {
           this.sourceFrame = this.sourceFrames;
           this.playing = false;
           this.ended = true;
