@@ -74,7 +74,7 @@
     },
     {
       "id": "sync",
-      "state": "PLANNED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "musical-clock"
       ],

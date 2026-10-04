@@ -25,6 +25,19 @@ export interface DeckProcessorStatus {
   volume: number;
   playbackRate: number;
   outputPeak: number;
+  transportSeekCount: number;
+  manualPlaybackRate: number;
+  syncRole: 'off' | 'leader' | 'follower';
+  syncEnabled: boolean;
+  syncTracking: boolean;
+  syncLocked: boolean;
+  syncPhaseErrorBeats: number | null;
+  syncTempoMatchedRate: number | null;
+  syncCorrectionRate: number | null;
+  syncTargetRate: number | null;
+  syncSnapshotAgeFrames: number | null;
+  syncValidSnapshots: number;
+  syncStaleSnapshots: number;
 }
 
 export interface DeckStatus extends DeckProcessorStatus {
@@ -151,6 +164,43 @@ export class DeckController {
 
   setMuted(muted: boolean): Promise<DeckStatus> {
     return this.request('mute', { muted });
+  }
+
+  configureSyncPublisher(sharedBuffer: SharedArrayBuffer, grid: {
+    bpm: number;
+    firstBeatFrame: number;
+  }): Promise<DeckStatus> {
+    return this.request('sync-configure', {
+      role: 'leader',
+      sharedBuffer,
+      grid,
+    });
+  }
+
+  configureSyncFollower(
+    sharedBuffer: SharedArrayBuffer,
+    leaderGrid: { bpm: number; firstBeatFrame: number },
+    followerGrid: { bpm: number; firstBeatFrame: number },
+    options: {
+      phaseSettleSeconds: number;
+      maxPhaseCorrectionRate: number;
+      phaseDeadbandBeats: number;
+      rateSmoothingSeconds: number;
+      lockThresholdBeats: number;
+      staleSnapshotSeconds: number;
+    },
+  ): Promise<DeckStatus> {
+    return this.request('sync-configure', {
+      role: 'follower',
+      sharedBuffer,
+      leaderGrid,
+      followerGrid,
+      options,
+    });
+  }
+
+  disableSync(): Promise<DeckStatus> {
+    return this.request('sync-disable');
   }
 
   requestStatus(timeoutMs = 2_000): Promise<DeckStatus> {

@@ -79,3 +79,13 @@ Phase 5 uses explicit manual grids as ground truth for future SYNC work. Automat
 Status: ACCEPTED
 
 Phase 5 passed deterministic unit/simulation and live Chrome integration on `ee7770e00b93cd90ce7ba6728b5ce8c8b4fc817d`. Manual per-deck grids, source-frame/beat round trips, signed pre-roll semantics, bar/beat phase, and non-mutating quantization are proven while all audio-kernel, Deck A, Deck B, and mixer regressions remain green. No new physical gate was required because Musical Clock does not create an audible execution path or control transport.
+
+## D-0017 — SYNC runs inside the realtime deck processors
+Status: ACCEPTED FOR PHASE 6
+
+Leader state is exchanged through SharedArrayBuffer under an atomic sequence lock. The follower projects the leader snapshot to its current render frame and computes tempo/phase control without depending on UI polling or JavaScript timers.
+
+## D-0018 — Hidden corrective seeks are prohibited in SYNC maintenance
+Status: ACCEPTED FOR PHASE 6
+
+After engagement, SYNC may alter only follower effective playback rate. Steady-state tempo comes from the exact BPM ratio; phase error adds a bounded, smoothed transient rate correction. Any future hard alignment must be an explicit scheduled transport operation, not background maintenance.

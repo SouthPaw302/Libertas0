@@ -8,7 +8,9 @@ import { DeckAController, type DeckAStatus } from './deck/DeckAController';
 import { DeckBController, type DeckBStatus } from './deck/DeckBController';
 import type { DeckController, DeckStatus } from './deck/DeckController';
 import { MixerController, type MixerStatus } from './mixer/MixerController';
-import { createSineWav } from './testing/wavFixture';
+import { createClickTrackWav, createSineWav } from './testing/wavFixture';
+import { SyncController, type DeckId } from './sync/SyncController';
+import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 
 interface LibertasKernelTestApi {
@@ -52,6 +54,13 @@ interface LibertasMusicalClockTestApi {
   quantize(deck: 'A' | 'B', sourceFrame: number, quantumBeats?: number, direction?: 'previous' | 'nearest' | 'next'): number;
 }
 
+interface LibertasSyncTestApi {
+  loadClickPair(durationSeconds?: number, bpmA?: number, bpmB?: number): Promise<{ a: DeckStatus; b: DeckStatus }>;
+  enable(leader: DeckId, options?: Partial<SyncControlOptions>): Promise<unknown>;
+  disable(): Promise<void>;
+  status(): Promise<unknown>;
+}
+
 interface LibertasDualDeckTestApi {
   loadGenerated(
     durationSeconds?: number,
@@ -74,6 +83,7 @@ declare global {
     __libertasMixerTest: LibertasMixerTestApi;
     __libertasDualDeckTest: LibertasDualDeckTestApi;
     __libertasMusicalClockTest: LibertasMusicalClockTestApi;
+    __libertasSyncTest: LibertasSyncTestApi;
   }
 }
 
@@ -84,6 +94,7 @@ await mixer.initialize();
 
 const deckA = new DeckAController(runtime, undefined, { node: mixer.inputNode, input: 0 });
 const deckB = new DeckBController(runtime, undefined, { node: mixer.inputNode, input: 1 });
+const sync = new SyncController(deckA, deckB);
 
 const musicalClocks = new Map<'A' | 'B', MusicalClock>();
 const pendingGrids = new Map<'A' | 'B', BeatGrid>([
@@ -98,6 +109,11 @@ const mixerStatusElement = document.querySelector<HTMLPreElement>('#mixer-status
 const mixerMaster = document.querySelector<HTMLInputElement>('#mixer-master');
 const mixerStatusButton = document.querySelector<HTMLButtonElement>('#mixer-status-button');
 const clockRefreshButton = document.querySelector<HTMLButtonElement>('#clock-refresh');
+const syncAToBButton = document.querySelector<HTMLButtonElement>('#sync-a-to-b');
+const syncBToAButton = document.querySelector<HTMLButtonElement>('#sync-b-to-a');
+const syncDisableButton = document.querySelector<HTMLButtonElement>('#sync-disable');
+const syncStatusButton = document.querySelector<HTMLButtonElement>('#sync-status-button');
+const syncStatusElement = document.querySelector<HTMLPreElement>('#sync-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -242,6 +258,27 @@ clockRefreshButton?.addEventListener('click', () => {
   });
 });
 
+async function enableSyncFromUi(leader: DeckId): Promise<void> {
+  const follower: DeckId = leader === 'A' ? 'B' : 'A';
+  const leaderGrid = pendingGrids.get(leader)!;
+  const followerGrid = pendingGrids.get(follower)!;
+  const result = await sync.enable(leader, leaderGrid, followerGrid);
+  render(syncStatusElement, result);
+}
+
+syncAToBButton?.addEventListener('click', () => {
+  void enableSyncFromUi('A').catch((error: unknown) => render(syncStatusElement, { error: String(error) }));
+});
+syncBToAButton?.addEventListener('click', () => {
+  void enableSyncFromUi('B').catch((error: unknown) => render(syncStatusElement, { error: String(error) }));
+});
+syncDisableButton?.addEventListener('click', () => {
+  void sync.disable().then(() => render(syncStatusElement, { enabled: false })).catch((error: unknown) => render(syncStatusElement, { error: String(error) }));
+});
+syncStatusButton?.addEventListener('click', () => {
+  void sync.status().then((status) => render(syncStatusElement, status)).catch((error: unknown) => render(syncStatusElement, { error: String(error) }));
+});
+
 activateButton?.addEventListener('click', () => {
   void kernelStart().catch((error: unknown) => renderKernel({ error: String(error) }));
 });
@@ -327,6 +364,29 @@ window.__libertasMusicalClockTest = {
   },
 };
 
+window.__libertasSyncTest = {
+  async loadClickPair(durationSeconds = 20, bpmA = 120, bpmB = 128) {
+    const [a, b] = await Promise.all([
+      deckA.loadEncodedAudio(createClickTrackWav({ durationSeconds, sampleRate: 48_000, bpm: bpmA, amplitude: 0.45 })),
+      deckB.loadEncodedAudio(createClickTrackWav({ durationSeconds, sampleRate: 48_000, bpm: bpmB, amplitude: 0.45 })),
+    ]);
+    setMusicalGrid('A', { bpm: bpmA, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 });
+    setMusicalGrid('B', { bpm: bpmB, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 });
+    return { a, b };
+  },
+  enable(leader, options = {}) {
+    const follower: DeckId = leader === 'A' ? 'B' : 'A';
+    return sync.enable(
+      leader,
+      pendingGrids.get(leader)!,
+      pendingGrids.get(follower)!,
+      { ...DEFAULT_SYNC_OPTIONS, ...options },
+    );
+  },
+  disable: () => sync.disable(),
+  status: () => sync.status(),
+};
+
 window.__libertasDualDeckTest = {
   async loadGenerated(durationSeconds = 10, frequencyA = 330, frequencyB = 550, amplitude = 0.35) {
     const [a, b] = await Promise.all([
@@ -364,5 +424,6 @@ renderKernel({ capabilities: detectAudioKernelCapabilities() });
 render(document.querySelector('#deck-a-status'), { phase: 'Deck A', state: 'locked behavior / ready for load' });
 render(document.querySelector('#deck-b-status'), { phase: 'Deck B', state: 'ready for load' });
 render(mixerStatusElement, { phase: 'Mixer', state: 'two-input realtime mixer ready' });
+render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
 
 export {};

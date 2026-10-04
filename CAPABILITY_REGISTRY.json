@@ -111,6 +111,13 @@
       "provider": "source-frame musical coordinate transform",
       "contract": "docs/contracts/MUSICAL_CLOCK.md",
       "evidence": "evidence/musical-clock/phase5-automated/RESULT.json"
+    },
+    {
+      "id": "audio.sync",
+      "class": "realtime-control",
+      "status": "implementing",
+      "provider": "AudioWorklet shared-memory phase-lock controller",
+      "contract": "docs/contracts/SYNC.md"
     }
   ]
 }
