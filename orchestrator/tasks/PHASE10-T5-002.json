@@ -67,12 +67,32 @@
     "A/B/mixer continuity counters and follower seek delta.",
     "Performance-action/re-lock telemetry.",
     "Physical MIDI PASS or NOT_EVALUATED.",
-    "Console/runtime errors."
+    "Console/runtime errors.",
+    "Drive upload confirmation for the fresh master recording, source/test audio used (unless already identifiable in Drive), and runtime JSON.",
+    "Drive file IDs or URLs for uploaded artifacts; local filesystem paths alone do not satisfy the evidence gate."
   ],
   "report_rules": [
     "On validation/local-debug modify only reports/local-debug/**.",
     "Do not patch product/system code from the report branch.",
     "Push the report branch so the debug bus relays it to issue #1.",
+    "Upload required audio/evidence artifacts to Drive folder Libertas0/Phase 10/PHASE10-T5-002 before reporting PASS.",
     "Do not begin Phase 11."
-  ]
+  ],
+  "drive_artifacts": {
+    "required": true,
+    "folder_path": "Libertas0/Phase 10/PHASE10-T5-002",
+    "folder_id": "10xE_sVV607lbDtbKpEt_jK9ufYPPzhZA",
+    "folder_url": "https://drive.google.com/drive/folders/10xE_sVV607lbDtbKpEt_jK9ufYPPzhZA",
+    "upload_before_completion": [
+      "Fresh >=60-second saved master recording produced by this exact T5-002 run, preserving its browser-produced audio format (normally .webm).",
+      "Exact source/test audio file or files used for the T5-002 physical run if they are not already present and identifiable in Drive.",
+      "Fresh PHASE10-T5-002 runtime/evidence JSON containing product SHA, source filenames + SHA-256 hashes, recording duration/bytes/MIME, continuity telemetry, and human confirmations."
+    ],
+    "completion_rule": "PHASE10-T5-002 cannot be reported PASS until the required artifacts are uploaded to this Drive folder and the local report records the resulting Drive file IDs or URLs. Local Windows paths alone are not acceptable evidence for master analysis.",
+    "naming": [
+      "Keep original source-track filenames.",
+      "Name the saved mix PHASE10-T5-002-master-recording.<browser extension> when practical.",
+      "Name the runtime evidence PHASE10-T5-002-runtime.json."
+    ]
+  }
 }

@@ -9,7 +9,8 @@
   "last_passing_gate": "phase10-T4-browser-runtime-replay-fix",
   "last_evidence": "evidence/phase10/automated/RESULT.json",
   "blockers": [
-    "Fresh exact-SHA physical confirmation is still required for saved-recording replay and audible automation-through-stall behavior."
+    "Fresh exact-SHA physical confirmation is still required for saved-recording replay and audible automation-through-stall behavior.",
+    "Required T5-002 audio/evidence artifacts must be uploaded to Google Drive folder Libertas0/Phase 10/PHASE10-T5-002 before Phase 10 can close."
   ],
   "known_limitations": [
     "Physical MIDI hardware may be NOT_EVALUATED if no controller is attached; deterministic mapping and browser integration are runtime-proven.",
@@ -17,6 +18,6 @@
     "Recording codec/container depends on browser MediaRecorder support.",
     "Automation v1 covers continuous AudioParams, not discrete transport-command sequencing."
   ],
-  "exact_next_action": "Execute PHASE10-T5-002 on exact SHA 3ff1083f4a5824059643d41097025c62b0511a27. Carry forward the accepted PHASE10-T5-001 evidence and retest only the remaining replay/audible gates plus locked-core telemetry. Do not begin Phase 11.",
+  "exact_next_action": "Execute PHASE10-T5-002 on exact SHA 3ff1083f4a5824059643d41097025c62b0511a27, then upload the fresh master recording, required source/test audio, and runtime JSON to Drive folder 10xE_sVV607lbDtbKpEt_jK9ufYPPzhZA. Record Drive file IDs/URLs in the local report. Do not begin Phase 11.",
   "product_code_authorized": false
 }
