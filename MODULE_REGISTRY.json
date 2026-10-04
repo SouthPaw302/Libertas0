@@ -126,7 +126,7 @@
     },
     {
       "id": "library-midi-recording-automation",
-      "state": "IMPLEMENTING",
+      "state": "LOCAL_DEBUG",
       "depends_on": [
         "intelligence"
       ],

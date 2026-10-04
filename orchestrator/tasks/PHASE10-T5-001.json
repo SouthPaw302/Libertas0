@@ -1,0 +1,91 @@
+{
+  "task_id": "PHASE10-T5-001",
+  "requested_sha": "4b65a29c819b69fb46df79bc2cf13e124d030982",
+  "branch": "module/library-midi-recording-automation",
+  "module": "library-midi-recording-automation",
+  "objective": "Validate Phase 10 local library persistence, master recording, AudioParam automation and MIDI mapping on the real Windows/browser/audio path without disturbing the locked DJ core.",
+  "setup": [
+    "Check out exact SHA 4b65a29c819b69fb46df79bc2cf13e124d030982.",
+    "Run python bootstrap.py and require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Start Vite in the headed Codex/Chromium browser on the normal physical audio output.",
+    "Record OS/browser/output, sample rate, base/output latency and render quantum."
+  ],
+  "tests": [
+    {
+      "id": "library-persistence",
+      "instructions": "Use the Library UI to import at least one ordinary local audio file. Record its displayed identity/name. Reload the page without clearing site data, Refresh Library, then load the persisted track into Deck A and Deck B.",
+      "pass": [
+        "Track remains listed after page reload.",
+        "Importing the exact same bytes again does not create a second library identity.",
+        "Stored audio loads and plays on both existing deck engines.",
+        "No new transport implementation or playback regression appears."
+      ]
+    },
+    {
+      "id": "master-recording",
+      "instructions": "Run ordinary two-deck mixed playback with representative Mixer/DSP settings. Start Master Recording, keep recording for at least 60 seconds while using crossfader/EQ/filter and at least one performance transport action, then stop and save/replay the produced recording.",
+      "pass": [
+        "Recording state reaches ready.",
+        "Recorded blob/file is non-empty and browser reports an audio MIME type.",
+        "Replayed/exported recording audibly contains the post-mixer program.",
+        "No recording-induced A/B/mixer discontinuities or transport stalls.",
+        "Human confirms recording is intelligible and does not contain abnormal dropouts caused by the recorder."
+      ]
+    },
+    {
+      "id": "automation-physical",
+      "instructions": "With both decks audibly playing, schedule the 4-second A-to-B crossfader automation. During the scheduled automation run the provided 600 ms main-thread block.",
+      "pass": [
+        "Crossfade continues while the UI thread is blocked.",
+        "The final crossfader state reaches the B side.",
+        "A/B/mixer continue advancing.",
+        "0 new A/B/mixer frame discontinuities.",
+        "Human hears a continuous crossfade with no UI-stall dropout."
+      ]
+    },
+    {
+      "id": "midi-synthetic-real-path",
+      "instructions": "Use MIDI learn for mixer.crossfader, then dispatch synthetic CC values 0, 64 and 127 through the Phase 10 test API while audio is active.",
+      "pass": [
+        "Learned binding is visible.",
+        "CC 0 moves to A side, ~64 to center, 127 to B side.",
+        "Audio responds through the real mixer path.",
+        "MIDI does not become a clock and causes no transport seek/discontinuity."
+      ]
+    },
+    {
+      "id": "midi-hardware-optional",
+      "instructions": "If a physical MIDI controller is attached and Web MIDI permission is available, connect it, learn one CC to crossfader or master and verify physical control. If no device is attached or permission cannot be granted, report NOT_EVALUATED with the environmental reason.",
+      "pass": [
+        "If evaluated: permission/connect/learn/control works and the correct mixer control responds.",
+        "If no hardware is available: record NOT_EVALUATED, not FAIL."
+      ]
+    },
+    {
+      "id": "locked-core-integration",
+      "instructions": "During Phase 10 physical testing keep SYNC active for a representative interval and exercise one Cue/Hot Cue/Loop/Jog action while library/recording/automation services are active.",
+      "pass": [
+        "SYNC remains tracking/locked or re-locks normally after the explicit performance jump.",
+        "No hidden corrective seek.",
+        "0 new A/B/mixer discontinuities attributable to Phase 10 services."
+      ]
+    }
+  ],
+  "evidence_required": [
+    "Exact tested SHA and PASS/FAIL/BLOCKED.",
+    "Library persistence/dedup/load evidence.",
+    "Recording duration, bytes, MIME type and audible replay/export confirmation.",
+    "Automation before/after crossfader plus 600 ms stress continuity counters.",
+    "Synthetic MIDI binding and endpoint/center results.",
+    "Hardware MIDI PASS or NOT_EVALUATED with reason.",
+    "SYNC/performance integration telemetry.",
+    "Console/runtime errors."
+  ],
+  "report_rules": [
+    "On validation/local-debug modify only reports/local-debug/**.",
+    "Do not patch product/system code from the report branch.",
+    "Push the report branch so the debug bus relays it to issue #1.",
+    "Do not begin Phase 11."
+  ]
+}

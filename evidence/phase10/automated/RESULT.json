@@ -1,0 +1,47 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "library-midi-recording-automation",
+  "gate": "phase10-automated",
+  "status": "PASS",
+  "tested_sha": "4b65a29c819b69fb46df79bc2cf13e124d030982",
+  "system_contract": {
+    "run_id": 37185645004,
+    "conclusion": "success"
+  },
+  "phase10_gate": {
+    "run_id": 37185644948,
+    "job_id": 111386861956,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "test_files": 10,
+      "tests_passed": 39,
+      "status": "PASS"
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "tests_passed": 36,
+      "status": "PASS",
+      "library_indexeddb_dedupe_and_reload": "PASS",
+      "midi_learn_synthetic_cc_to_real_crossfader": "PASS",
+      "master_media_recorder_capture": "PASS",
+      "scheduled_crossfader_600ms_ui_stall": "PASS",
+      "locked_phase_2_through_9_regressions": "PASS"
+    }
+  },
+  "artifact": {
+    "id": 11296408428,
+    "name": "phase10-4b65a29c819b69fb46df79bc2cf13e124d030982",
+    "digest": "sha256:679a14d36f8669d89c6a18e24773cce438c19fb57e6a618c365eb95eca9c3af6",
+    "expires_at": "2026-10-18T07:24:59Z"
+  },
+  "physical_gate_required": true,
+  "limitations": [
+    "Web MIDI hardware availability is environmental; physical hardware MIDI is only claimed if a device is attached and explicitly tested.",
+    "Browser library provider is local IndexedDB, not the future distributed library.",
+    "Recording container/codec is browser MediaRecorder dependent.",
+    "Automation v1 covers continuous AudioParams, not discrete cue/hotcue/seek commands."
+  ]
+}

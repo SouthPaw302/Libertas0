@@ -4,17 +4,19 @@
   "phase": "library_midi_recording_automation",
   "active_module": "library-midi-recording-automation",
   "active_branch": "module/library-midi-recording-automation",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build browser-local library persistence, deterministic MIDI mapping/learn, post-mixer recording and AudioParam-timeline automation without changing realtime transport or SYNC authority.",
-  "last_passing_gate": "track-intelligence-T5-ordinary-track",
-  "last_evidence": "evidence/intelligence/phase9-local/RESULT.json",
-  "blockers": [],
-  "known_limitations": [
-    "Web MIDI is permissioned and not universally available; hardware-controller proof is environment-dependent.",
-    "Library v1 stores encoded audio in browser IndexedDB and is not yet the distributed library provider.",
-    "Recording format depends on MediaRecorder codecs supported by the current browser.",
-    "Automation v1 covers continuous AudioParams; cue/hotcue/seek command automation is not included."
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical validation of browser-local library persistence, master recording, AudioParam automation and MIDI mapping after all Phase 10 automated gates passed.",
+  "last_passing_gate": "phase10-T4-browser-runtime",
+  "last_evidence": "evidence/phase10/automated/RESULT.json",
+  "blockers": [
+    "Physical Phase 10 workflow validation has not yet returned through the debug bus."
   ],
-  "exact_next_action": "Run Phase 10 unit/build/browser gates including IndexedDB persistence, MIDI routing, master recording, AudioParam automation under UI stall and all locked Phase 2-9 regressions.",
-  "product_code_authorized": true
+  "known_limitations": [
+    "Physical MIDI hardware may be NOT_EVALUATED if no controller is attached; deterministic mapping and browser integration are already runtime-proven.",
+    "Library v1 is browser-local IndexedDB rather than distributed storage.",
+    "Recording codec/container depends on browser MediaRecorder support.",
+    "Automation v1 covers continuous AudioParams, not discrete transport-command sequencing."
+  ],
+  "exact_next_action": "Execute PHASE10-T5-001 on exact SHA 4b65a29c819b69fb46df79bc2cf13e124d030982. Do not begin Phase 11 until Phase 10 receives an acceptable local PASS.",
+  "product_code_authorized": false
 }
