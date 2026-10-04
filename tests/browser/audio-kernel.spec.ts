@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function openKernel(page: Page): Promise<void> {
+  await page.goto('/');
+  await page.waitForFunction(() => Boolean(window.__libertasKernelTest));
+}
 
 test('AudioWorklet clock advances while the browser main thread is blocked', async ({ page }) => {
-  await page.goto('/');
+  await openKernel(page);
 
   const capabilities = await page.evaluate(() => window.__libertasKernelTest.capabilities());
   expect(capabilities.audioContext).toBe(true);
@@ -43,7 +48,7 @@ test('AudioWorklet clock advances while the browser main thread is blocked', asy
 });
 
 test('kernel reports actual runtime quantum instead of assuming 128 frames', async ({ page }) => {
-  await page.goto('/');
+  await openKernel(page);
   await page.evaluate(() => window.__libertasKernelTest.start());
   const status = await page.evaluate(async () => {
     await new Promise((resolve) => setTimeout(resolve, 100));
