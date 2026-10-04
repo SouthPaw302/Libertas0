@@ -101,3 +101,13 @@
 - evidence: SYNC Gate run `37174293181`.
 - cause: `page.goto()` completed before the top-level async application module had finished mixer initialization and installed the SYNC test API.
 - disposition: browser SYNC tests now wait explicitly for the stable harness API before invoking it. Controller/worklet behavior unchanged.
+
+## F-0010 — SYNC readiness helper recursively called itself
+- date: 2026-10-03
+- exact SHA: `f6ee91cb48e9a471aa3f6fd79f94f0e1d7ce4266`
+- module: sync browser gate
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12
+- symptom: all four SYNC browser tests failed in `openSyncHarness()` before SYNC execution because the helper recursively called itself.
+- evidence: SYNC Gate run `37174386575`; all 13 locked audio/deck/mixer/musical-clock browser regressions passed in the same run.
+- cause: an over-broad test edit replaced the helper's own `page.goto('/')` call with `openSyncHarness(page)`.
+- disposition: restored `page.goto('/')` followed by explicit wait for `window.__libertasSyncTest`. SYNC controller/worklet logic unchanged.
