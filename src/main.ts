@@ -335,6 +335,8 @@ const recordingStart = document.querySelector<HTMLButtonElement>('#recording-sta
 const recordingStop = document.querySelector<HTMLButtonElement>('#recording-stop');
 const recordingStatus = document.querySelector<HTMLPreElement>('#recording-status');
 const recordingDownload = document.querySelector<HTMLAnchorElement>('#recording-download');
+const recordingPlayback = document.querySelector<HTMLAudioElement>('#recording-playback');
+let recordingObjectUrl: string | null = null;
 const automationDemo = document.querySelector<HTMLButtonElement>('#automation-demo');
 const automationStatus = document.querySelector<HTMLPreElement>('#automation-status');
 
@@ -777,10 +779,17 @@ recordingStop?.addEventListener('click', () => {
   void recording.stop()
     .then(({ status, blob }) => {
       render(recordingStatus, status);
+      if (recordingObjectUrl) URL.revokeObjectURL(recordingObjectUrl);
+      recordingObjectUrl = URL.createObjectURL(blob);
       if (recordingDownload) {
-        recordingDownload.href = URL.createObjectURL(blob);
+        recordingDownload.href = recordingObjectUrl;
         recordingDownload.download = `libertas0-mix-${Date.now()}.webm`;
         recordingDownload.hidden = false;
+      }
+      if (recordingPlayback) {
+        recordingPlayback.src = recordingObjectUrl;
+        recordingPlayback.hidden = false;
+        recordingPlayback.load();
       }
     })
     .catch((error: unknown) => render(recordingStatus, { error: String(error) }));

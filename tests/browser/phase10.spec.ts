@@ -76,6 +76,38 @@ test('master recording captures post-mixer audio into a non-empty blob', async (
   await page.evaluate(() => window.__libertasDualDeckTest.close());
 });
 
+test('stopped master recording is exposed for in-app replay and download', async ({ page }) => {
+  await openPhase10(page);
+  const supported = await page.evaluate(() => window.__libertasRecordingTest.supported());
+  test.skip(!supported, 'MediaRecorder unavailable in this Chrome runtime');
+
+  await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(5, 330, 550, 0.22));
+  await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
+
+  await page.locator('#recording-start').click();
+  await page.waitForTimeout(900);
+  await page.locator('#recording-stop').click();
+
+  const status = page.locator('#recording-status');
+  await expect(status).toContainText('"state": "ready"');
+
+  const playback = page.locator('#recording-playback');
+  const download = page.locator('#recording-download');
+  await expect(playback).toBeVisible();
+  await expect(download).toBeVisible();
+
+  const playbackSrc = await playback.getAttribute('src');
+  const downloadHref = await download.getAttribute('href');
+  expect(playbackSrc).toMatch(/^blob:/);
+  expect(downloadHref).toBe(playbackSrc);
+
+  await playback.evaluate((element: HTMLAudioElement) => {
+    if (element.readyState === 0) element.load();
+  });
+
+  await page.evaluate(() => window.__libertasDualDeckTest.close());
+});
+
 test('scheduled crossfader automation survives a 600 ms blocked main thread', async ({ page }) => {
   await openPhase10(page);
   await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(8, 330, 550, 0.2));
