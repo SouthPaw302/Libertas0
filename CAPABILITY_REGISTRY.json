@@ -184,10 +184,10 @@
     {
       "id": "audio.track-intelligence",
       "class": "analysis",
-      "status": "runtime-proven-real-track-pending",
-      "provider": "Web Worker deterministic onset/autocorrelation DSP",
+      "status": "implementing-v2-after-real-track-failure",
+      "provider": "Web Worker ensemble: legacy energy autocorrelation diagnostics + @audio/beat spectral-flux comb tempo",
       "contract": "docs/contracts/TRACK_INTELLIGENCE.md",
-      "evidence": "evidence/intelligence/phase9-automated/RESULT.json"
+      "evidence": "reports/local-debug report commit 12a2a48107ca3cd0028812b4d08c40a273abaa20"
     }
   ]
 }

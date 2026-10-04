@@ -33,19 +33,21 @@ It runs outside the realtime audio render path in a Web Worker. It may propose a
 The grid changes only through an explicit Apply action.
 
 ## Reference analyzer
-The reference provider is `libertas.onset-autocorrelation.v1`.
+The reference provider is `libertas.rhythm-ensemble.v2`.
 
 Pipeline:
 1. decode encoded audio with the existing replaceable PCM decoder;
 2. mix PCM to mono;
 3. transfer mono PCM to a Web Worker;
-4. compute a ~400 Hz RMS energy envelope;
-5. half-wave rectify positive log-energy changes into an onset-strength envelope;
-6. search BPM in the configured DJ range with normalized autocorrelation plus octave-bias correction;
-7. refine the winning lag;
-8. estimate beat phase from the first 16 beat periods;
-9. locate the earliest strong onset aligned to that phase;
-10. return confidence and descriptors.
+4. retain the v1 log-energy onset/autocorrelation estimate as an independent diagnostic;
+5. compute a spectral-flux onset detection function with a 2048-frame STFT and 512-frame hop;
+6. rank 70–180 BPM candidates with comb-filter resonance across beat-period harmonics using `@audio/beat` 3.0.0;
+7. retain the top five non-duplicate tempo candidates in diagnostics;
+8. derive absolute tempo confidence from spectral autocorrelation plus winner/runner-up separation rather than trusting the comb's normalized winner alone;
+9. estimate beat phase against the spectral onset function;
+10. return confidence, descriptors, candidate provenance and the proposal.
+
+The v1 estimate never overrides the v2 spectral-comb result. It remains visible so ordinary-track failures can show whether the two estimators agree or diverge.
 
 Default tempo search range: 70–180 BPM.
 
@@ -83,3 +85,7 @@ Users may edit/replace it with the existing manual grid tools.
 
 ### Real-track validation
 Generated fixtures prove algorithm mechanics, not universal real-music accuracy. Ordinary-track BPM/grid accuracy must be separately measured before removing the existing ordinary-track SYNC limitation.
+
+
+## Ordinary-track failure rule
+A deterministic result is not automatically a valid result. If ordinary material returns a low-confidence or implausible proposal, the proposal remains non-recommended and must not be applied merely to continue the test. Phase 9 keeps the local gate closed until the analyzer itself produces a defensible grid.

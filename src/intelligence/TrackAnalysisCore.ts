@@ -1,3 +1,5 @@
+import { ODF, combTempo, spectralFlux } from '@audio/beat';
+
 export interface TrackAnalysisOptions {
   minBpm?: number;
   maxBpm?: number;
@@ -5,7 +7,7 @@ export interface TrackAnalysisOptions {
 }
 
 export interface TrackAnalysisResult {
-  provider: 'libertas.onset-autocorrelation.v1';
+  provider: 'libertas.rhythm-ensemble.v2';
   execution: 'web-worker';
   sampleRate: number;
   frameCount: number;
@@ -29,6 +31,13 @@ export interface TrackAnalysisResult {
     hopFrames: number;
     tempoLag: number;
     onsetCount: number;
+    legacyTempoBpm: number;
+    legacyTempoConfidence: number;
+    spectralCombBpm: number;
+    spectralCombCorrelation: number;
+    spectralCombCandidateMargin: number;
+    tempoCandidates: Array<{ bpm: number; relativeScore: number }>;
+    spectralHopFrames: number;
   };
 }
 
@@ -66,6 +75,15 @@ export function computeOnsetEnvelope(
     hopFrames,
     actualEnvelopeRateHz: sampleRate / hopFrames,
   };
+}
+
+function correlationConfidence(correlation: number): number {
+  return clamp01((correlation - 0.08) / 0.5);
+}
+
+function candidateMarginConfidence(candidates: Array<{ bpm: number; confidence: number }>): number {
+  if (candidates.length <= 1) return 1;
+  return clamp01(1 - (candidates[1]?.confidence ?? 0));
 }
 
 function normalizedCorrelation(values: Float64Array, lag: number): number {
@@ -235,35 +253,99 @@ export function analyzeMonoPcm(
 
   const minBpm = options.minBpm ?? 70;
   const maxBpm = options.maxBpm ?? 180;
+
+  // Keep the original inexpensive energy-onset estimator as an independent
+  // diagnostic. It is no longer the sole tempo authority after F-0016.
   const { onset, hopFrames, actualEnvelopeRateHz } = computeOnsetEnvelope(
     samples,
     sampleRate,
     options.envelopeRateHz ?? 400,
   );
-  const tempo = estimateTempoFromOnsets(onset, actualEnvelopeRateHz, minBpm, maxBpm);
-  const periodHops = (actualEnvelopeRateHz * 60) / tempo.bpm;
-  const phase = estimateBeatAnchor(onset, periodHops, hopFrames);
-  const gridConfidence = Math.sqrt(tempo.confidence * phase.confidence);
+  const legacyTempo = estimateTempoFromOnsets(
+    onset,
+    actualEnvelopeRateHz,
+    minBpm,
+    maxBpm,
+  );
+
+  // Full-band musical material needs spectral onset evidence and a comb score
+  // across beat-period harmonics. The @audio/beat implementation runs entirely
+  // on the transferred PCM inside this Worker; it has no realtime authority.
+  const spectral = spectralFlux(samples, {
+    fs: sampleRate,
+    frameSize: 2048,
+    hopSize: 512,
+  });
+  if (spectral.nFrames < 2) throw new Error('insufficient spectral onset data');
+
+  const comb = combTempo(null, {
+    fs: sampleRate,
+    minBpm,
+    maxBpm,
+    candidates: 5,
+    [ODF]: spectral,
+  });
+  if (!Number.isFinite(comb.bpm) || comb.bpm <= 0) {
+    throw new Error('spectral comb tempo analysis failed');
+  }
+
+  const candidates = (comb.candidates ?? [{ bpm: comb.bpm, confidence: comb.confidence }])
+    .map((candidate) => ({
+      bpm: candidate.bpm,
+      relativeScore: candidate.confidence,
+    }));
+
+  const spectralPeriodHops = (spectral.fs / spectral.hopSize) * 60 / comb.bpm;
+  const spectralLag = Math.max(1, Math.round(spectralPeriodHops));
+  const spectralCorrelation = normalizedCorrelation(spectral.odf, spectralLag);
+  const marginConfidence = candidateMarginConfidence(
+    candidates.map((candidate) => ({
+      bpm: candidate.bpm,
+      confidence: candidate.relativeScore,
+    })),
+  );
+
+  // Absolute periodicity prevents the comb's normalized winner from becoming
+  // "high confidence" merely because every alternative is worse. Candidate
+  // separation rewards a clear winning tempo without hard-coding a genre BPM.
+  const periodicityConfidence = correlationConfidence(spectralCorrelation);
+  const tempoConfidence = clamp01(
+    0.72 * periodicityConfidence + 0.28 * marginConfidence,
+  );
+
+  const phase = estimateBeatAnchor(
+    spectral.odf,
+    spectralPeriodHops,
+    spectral.hopSize,
+  );
+  const gridConfidence = Math.sqrt(tempoConfidence * phase.confidence);
 
   return {
-    provider: 'libertas.onset-autocorrelation.v1',
+    provider: 'libertas.rhythm-ensemble.v2',
     sampleRate,
     frameCount: samples.length,
     durationSeconds: samples.length / sampleRate,
-    bpm: tempo.bpm,
-    tempoConfidence: tempo.confidence,
+    bpm: comb.bpm,
+    tempoConfidence,
     firstBeatFrame: Math.min(samples.length - 1, Math.max(0, phase.firstBeatFrame)),
     phaseConfidence: phase.confidence,
     gridConfidence,
-    recommended: gridConfidence >= 0.45,
+    recommended: gridConfidence >= 0.45 && tempoConfidence >= 0.35,
     beatsPerBar: 4,
     beatUnit: 4,
     descriptors: computeDescriptors(samples),
     diagnostics: {
       envelopeRateHz: actualEnvelopeRateHz,
       hopFrames,
-      tempoLag: tempo.lag,
-      onsetCount: onset.length,
+      tempoLag: spectralPeriodHops,
+      onsetCount: spectral.nFrames,
+      legacyTempoBpm: legacyTempo.bpm,
+      legacyTempoConfidence: legacyTempo.confidence,
+      spectralCombBpm: comb.bpm,
+      spectralCombCorrelation: spectralCorrelation,
+      spectralCombCandidateMargin: marginConfidence,
+      tempoCandidates: candidates,
+      spectralHopFrames: spectral.hopSize,
     },
   };
 }

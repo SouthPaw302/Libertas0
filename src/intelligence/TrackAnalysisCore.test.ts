@@ -5,6 +5,20 @@ import {
   estimateTempoFromOnsets,
 } from './TrackAnalysisCore';
 
+function syntheticClicks(sampleRate: number, bpm: number, seconds: number, offsetSeconds = 0.25): Float32Array {
+  const samples = new Float32Array(Math.ceil(sampleRate * seconds));
+  const period = sampleRate * 60 / bpm;
+  const clickFrames = Math.max(24, Math.round(sampleRate * 0.012));
+  for (let position = offsetSeconds * sampleRate; position < samples.length; position += period) {
+    const start = Math.round(position);
+    for (let i = 0; i < clickFrames && start + i < samples.length; i += 1) {
+      const envelope = Math.exp(-8 * i / clickFrames);
+      samples[start + i] += 0.75 * envelope * Math.sin(2 * Math.PI * 1400 * i / sampleRate);
+    }
+  }
+  return samples;
+}
+
 function syntheticOnsets(rate: number, bpm: number, seconds: number, offsetSeconds = 0.25): Float64Array {
   const values = new Float64Array(Math.ceil(rate * seconds));
   const period = (rate * 60) / bpm;
@@ -21,6 +35,18 @@ describe('Track intelligence core', () => {
       expect(result.bpm).toBeCloseTo(bpm, 0);
       expect(result.confidence).toBeGreaterThan(0.4);
     }
+  });
+
+  it('the Phase 9 v2 ensemble uses spectral-comb tempo evidence on PCM', () => {
+    const result = analyzeMonoPcm(syntheticClicks(48_000, 128, 24, 0.37), 48_000);
+    expect(result.provider).toBe('libertas.rhythm-ensemble.v2');
+    expect(result.bpm).toBeCloseTo(128, 0);
+    expect(result.firstBeatFrame / 48_000).toBeCloseTo(0.37, 1);
+    expect(result.tempoConfidence).toBeGreaterThan(0.35);
+    expect(result.gridConfidence).toBeGreaterThan(0.45);
+    expect(result.recommended).toBe(true);
+    expect(result.diagnostics.tempoCandidates.length).toBeGreaterThan(1);
+    expect(result.diagnostics.spectralCombBpm).toBeCloseTo(128, 0);
   });
 
   it('finds an early beat anchor near the dominant phase', () => {

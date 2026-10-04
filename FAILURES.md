@@ -191,3 +191,14 @@
 - evidence: Track Intelligence Gate run `37181042563`.
 - cause: legacy Playwright readiness race. Phase 9 Worker analysis, proposal non-mutation, explicit apply, and analysis-to-SYNC tests all passed on the same run.
 - disposition: Musical Clock browser tests now wait for both the dual-deck and musical-clock APIs before executing. Product/intelligence algorithm unchanged.
+
+## F-0016 — Phase 9 v1 ordinary-track tempo proposal was deterministic but wrong/low-confidence
+- date: 2026-10-04
+- exact SHA: `7fcb8627d5d7a82164bd097d1523941951f8d698`
+- report commit: `12a2a48107ca3cd0028812b4d08c40a273abaa20`
+- module: intelligence
+- material: two byte-identical 305-second 48 kHz Tribal House WAVs
+- symptom: v1 returned 144.5839447 BPM, tempo confidence 0.252615, grid confidence 0.360709, recommended=false; repeated analysis and duplicate file agreed exactly.
+- correct gate behavior: Musical Clock remained unchanged; no Apply, manual repair, analyzer-derived SYNC or audible promotion test was run.
+- cause hypothesis: single broadband energy-onset/global-autocorrelation evidence can lock onto a dominant rhythmic subdivision/pattern in full-band program material.
+- disposition: retain v1 output as diagnostics and add a v2 spectral-flux + harmonic comb tempo candidate with ranked alternatives and independent absolute-confidence calculation. Re-run the same untouched ordinary files before any grid Apply.

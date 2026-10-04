@@ -19,7 +19,7 @@ test('Track Intelligence runs in a worker and recovers BPM + beat anchor from an
   );
 
   expect(result.execution).toBe('web-worker');
-  expect(result.provider).toBe('libertas.onset-autocorrelation.v1');
+  expect(result.provider).toBe('libertas.rhythm-ensemble.v2');
   expect(result.bpm).toBeCloseTo(128, 0);
   expect(result.tempoConfidence).toBeGreaterThan(0.35);
   expect(result.firstBeatFrame / result.sampleRate).toBeCloseTo(0.37, 1);
