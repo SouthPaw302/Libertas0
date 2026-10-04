@@ -1,0 +1,102 @@
+{
+  "task_id": "PERFORMANCE-TRANSPORT-T5-001",
+  "requested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "branch": "module/performance-transport",
+  "module": "performance-transport",
+  "objective": "Validate audible cue, hotcue, loop and jog behavior on the real Windows/browser/audio path while preserving Deck A/B and SYNC invariants.",
+  "setup": [
+    "Check out the exact requested SHA.",
+    "Run python bootstrap.py; require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Start Vite and open headed Edge/Chrome on the normal physical audio output.",
+    "Record Windows/browser/output identity, AudioContext sample rate, base/output latency and render quantum."
+  ],
+  "tests": [
+    {
+      "id": "ordinary-track-cue-hotcue",
+      "instructions": "Load an ordinary local audio file into Deck A. Play it, set Cue at a clearly recognizable point, play farther, trigger Cue Return, then set and trigger Hot Cue 1 at another recognizable point.",
+      "pass": [
+        "Cue Return audibly returns to the stored point and pauses.",
+        "Hot Cue 1 audibly jumps to its stored point while preserving play state.",
+        "No stuck transport, crash, or unexpected state change.",
+        "cueTriggerCount/hotCueTriggerCount/performanceJumpCount change exactly as commanded."
+      ]
+    },
+    {
+      "id": "generated-beat-loop",
+      "instructions": "Use generated 120 BPM click material with the known manual grid. Enable a 4-beat loop and listen through repeated wraps.",
+      "pass": [
+        "Loop remains inside the expected source-frame interval.",
+        "Loop wraps repeatedly and loopWrapCount increases.",
+        "No new frameDiscontinuities.",
+        "No unexpected pause or end-of-track."
+      ]
+    },
+    {
+      "id": "five-minute-loop-hold",
+      "instructions": "Run a generated beat loop continuously for at least five minutes.",
+      "pass": [
+        "Loop remains active and responsive for the full interval.",
+        "No progressive timing drift or transport stall.",
+        "No new worklet frame discontinuities.",
+        "Human reports no abnormal clicks/dropouts beyond the intended musical loop boundary."
+      ]
+    },
+    {
+      "id": "jog",
+      "instructions": "On an ordinary local track while playing, exercise -50 ms and +50 ms jog repeatedly, then one larger bounded jog in each direction.",
+      "pass": [
+        "Play state remains running.",
+        "Source frame moves in the requested direction and clamps at PCM limits.",
+        "jogCount increases only for explicit jog actions.",
+        "No browser/audio stall."
+      ]
+    },
+    {
+      "id": "dual-deck-independence",
+      "instructions": "Run both decks. Exercise cue/hotcue/loop/jog on one deck while the other continues playing.",
+      "pass": [
+        "Untouched deck continues without jump, pause, rate change, or reset.",
+        "Mixer continues producing physical output.",
+        "No new A/B/mixer discontinuities."
+      ]
+    },
+    {
+      "id": "loop-main-thread-stress",
+      "instructions": "While a loop is active and audible, capture status, run the provided 600 ms main-thread block, capture again, and listen.",
+      "pass": [
+        "Loop remains enabled and inside its boundaries.",
+        "Audio continues through the stall.",
+        "0 new deck/mixer frame discontinuities.",
+        "No audible dropout caused by the UI stall."
+      ]
+    },
+    {
+      "id": "sync-explicit-jump",
+      "instructions": "Using generated click tracks and their trusted grids, lock B to A with SYNC. Record follower transportSeekCount and performanceJumpCount, trigger an explicit Hot Cue on follower B, then allow SYNC to re-lock.",
+      "pass": [
+        "performanceJumpCount increases by the explicit command.",
+        "transportSeekCount does not increase from SYNC recovery.",
+        "SYNC resumes tracking/re-locks.",
+        "No hidden corrective seek."
+      ]
+    }
+  ],
+  "evidence_required": [
+    "Exact tested SHA and PASS/FAIL/BLOCKED.",
+    "Human audible confirmation for cue, hotcue, loop, jog and five-minute loop hold.",
+    "Cue/hotcue frames and counters.",
+    "Loop start/end, loopWrapCount delta and discontinuity delta.",
+    "Jog deltas/count and resulting source frames.",
+    "Dual-deck independence result.",
+    "600 ms loop-stress before/after telemetry.",
+    "SYNC explicit-jump before/after performanceJumpCount and transportSeekCount.",
+    "Console/runtime errors."
+  ],
+  "report_rules": [
+    "On validation/local-debug modify only reports/local-debug/**.",
+    "Do not patch product/system code from the report branch.",
+    "Push the report branch so the runner-backed debug bus relays it to issue #1.",
+    "Do not begin Phase 8."
+  ]
+}

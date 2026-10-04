@@ -136,9 +136,10 @@
     {
       "id": "audio.performance-transport",
       "class": "realtime-control",
-      "status": "implementing",
+      "status": "runtime-proven-local-pending",
       "provider": "AudioWorklet explicit cue/hotcue/loop/jog transport",
-      "contract": "docs/contracts/PERFORMANCE_TRANSPORT.md"
+      "contract": "docs/contracts/PERFORMANCE_TRANSPORT.md",
+      "evidence": "evidence/performance-transport/phase7-automated/RESULT.json"
     }
   ]
 }

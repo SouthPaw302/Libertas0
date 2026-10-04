@@ -89,7 +89,7 @@
     },
     {
       "id": "performance-transport",
-      "state": "IMPLEMENTING",
+      "state": "LOCAL_DEBUG",
       "depends_on": [
         "sync"
       ],

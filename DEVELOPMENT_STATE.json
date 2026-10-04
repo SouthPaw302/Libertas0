@@ -4,15 +4,17 @@
   "phase": "performance_transport",
   "active_module": "performance-transport",
   "active_branch": "module/performance-transport",
-  "status": "IMPLEMENTING",
-  "current_objective": "Build explicit cue, eight hot cues, sample-domain loops, beat-derived loops and bounded jog transport on the existing AudioWorklet source-frame authority without weakening SYNC invariants.",
-  "last_passing_gate": "sync-T5-local-physical-listening",
-  "last_evidence": "evidence/sync/phase6-local/RESULT.json",
-  "blockers": [],
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Complete physical/human-listening validation of Phase 7 cue, hotcue, loop and jog transport after automated gates passed.",
+  "last_passing_gate": "performance-transport-T4-browser-runtime",
+  "last_evidence": "evidence/performance-transport/phase7-automated/RESULT.json",
+  "blockers": [
+    "Physical/audible Phase 7 validation has not yet returned through the debug bus."
+  ],
   "known_limitations": [
     "Ordinary-track SYNC with verified BPM/first-beat grids has not yet been evaluated.",
     "Phase 7 jog is explicit source-frame displacement, not continuous scratch synthesis."
   ],
-  "exact_next_action": "Run Phase 7 unit/build/browser gates including all locked regressions. Fix failures before issuing exact-SHA local physical transport validation.",
-  "product_code_authorized": true
+  "exact_next_action": "Local debug agent executes PERFORMANCE-TRANSPORT-T5-001 against exact SHA b9a8317b3c90d4d975746b01b62998792f195d6e. Do not begin Phase 8 until PASS is recorded.",
+  "product_code_authorized": false
 }

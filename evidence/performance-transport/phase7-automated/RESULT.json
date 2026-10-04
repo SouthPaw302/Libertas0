@@ -1,0 +1,56 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "performance-transport",
+  "gate": "phase7-automated",
+  "status": "PASS",
+  "tested_sha": "b9a8317b3c90d4d975746b01b62998792f195d6e",
+  "system_contract": {
+    "run_id": 37176715762,
+    "conclusion": "success"
+  },
+  "performance_transport_gate": {
+    "run_id": 37176715711,
+    "job_id": 111360735476,
+    "conclusion": "success"
+  },
+  "automated_results": {
+    "typecheck": "PASS",
+    "unit_simulation": {
+      "status": "PASS",
+      "test_files": 6,
+      "tests_passed": 24,
+      "performance_transport_tests": 4
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "status": "PASS",
+      "tests_passed": 22,
+      "locked_regressions": "PASS",
+      "phase7_checks": [
+        "cue and hotcue explicit deterministic jumps",
+        "sample-domain loop repeated wraps with zero new worklet discontinuities",
+        "beat-loop boundaries derived from Musical Clock",
+        "active beat loop survives 600 ms main-thread stall",
+        "jog clamps and preserves play state",
+        "explicit follower hotcue is performanceJumpCount, not transportSeekCount",
+        "SYNC continues tracking/relocks after explicit follower hotcue"
+      ]
+    },
+    "loop_stress": {
+      "main_thread_block_ms": 600,
+      "new_frame_discontinuities": 0
+    }
+  },
+  "artifact": {
+    "id": 11293159147,
+    "name": "performance-transport-b9a8317b3c90d4d975746b01b62998792f195d6e",
+    "digest": "sha256:cc59aaf3232daf0eeef715f75df79cfe79d8d19282b255278e049375cde2a400",
+    "expires_at": "2026-10-18T04:21:25Z"
+  },
+  "physical_gate_required": true,
+  "limitations": [
+    "Phase 7 jog is explicit source-frame displacement, not continuous platter/scratch synthesis.",
+    "Ordinary-track SYNC remains outside the proven scope unless accurate grids are supplied.",
+    "Headless Chrome cannot prove audible cue/hotcue/loop boundary quality."
+  ]
+}
