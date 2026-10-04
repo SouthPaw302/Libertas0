@@ -1150,10 +1150,14 @@ async function createRtcLoopbackPair(): Promise<{
 
   await pcA.setLocalDescription(await pcA.createOffer());
   await waitForIceGatheringComplete(pcA);
-  await pcB.setRemoteDescription(pcA.localDescription);
+  const offer = pcA.localDescription;
+  if (!offer) throw new Error('WebRTC offer local description missing');
+  await pcB.setRemoteDescription(offer);
   await pcB.setLocalDescription(await pcB.createAnswer());
   await waitForIceGatheringComplete(pcB);
-  await pcA.setRemoteDescription(pcB.localDescription);
+  const answer = pcB.localDescription;
+  if (!answer) throw new Error('WebRTC answer local description missing');
+  await pcA.setRemoteDescription(answer);
 
   const channelB = await remoteChannel;
   await Promise.all([waitForDataChannelOpen(channelA), waitForDataChannelOpen(channelB)]);
