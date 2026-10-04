@@ -184,10 +184,10 @@
     {
       "id": "audio.track-intelligence",
       "class": "analysis",
-      "status": "implementing-v2-after-real-track-failure",
-      "provider": "Web Worker ensemble: legacy energy autocorrelation diagnostics + @audio/beat spectral-flux comb tempo",
+      "status": "runtime-proven-local-retest-pending",
+      "provider": "Web Worker rhythm ensemble v2: spectral flux + harmonic comb + sub-BPM refinement",
       "contract": "docs/contracts/TRACK_INTELLIGENCE.md",
-      "evidence": "reports/local-debug report commit 12a2a48107ca3cd0028812b4d08c40a273abaa20"
+      "evidence": "evidence/intelligence/phase9-v2-automated/RESULT.json"
     }
   ]
 }

@@ -1,0 +1,51 @@
+{
+  "task_id": "INTELLIGENCE-T5-002",
+  "requested_sha": "efacc9e40237a01f054fea9fb5a29503f622fa6c",
+  "branch": "module/intelligence",
+  "module": "intelligence",
+  "objective": "Re-run the exact ordinary Tribal House material that blocked Phase 9 v1 and determine whether the v2 spectral-comb analyzer now produces a defensible untouched grid for real DJ use.",
+  "source_identity": {
+    "required_sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D",
+    "duration_seconds": 305,
+    "sample_rate_hz": 48000,
+    "known_context": "constant-tempo Tribal House material expected around 128 BPM"
+  },
+  "setup": [
+    "Check out exact SHA efacc9e40237a01f054fea9fb5a29503f622fa6c.",
+    "Require python bootstrap.py -> LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Use the same byte-identical Tribal House WAV(s) from INTELLIGENCE-T5-001; verify SHA-256 before analysis.",
+    "Use the tiny headed Codex/Chromium browser and normal physical audio path."
+  ],
+  "analyzer_gate": [
+    "Analyze the same WAV on Deck A twice and the duplicate WAV on Deck B once.",
+    "Record provider, BPM, tempoConfidence, firstBeatFrame/seconds, phaseConfidence, gridConfidence, recommended, and the complete tempoCandidates diagnostics.",
+    "Record diagnostics.legacyTempoBpm and diagnostics.legacyTempoConfidence so F-0016 remains visible.",
+    "Require deterministic repeat: BPM/anchor/provenance stable within analyzer resolution.",
+    "Require duplicate agreement for the byte-identical second WAV.",
+    "Confirm analysis alone does not mutate the existing manual grids.",
+    "Do not manually type 128 BPM, repair firstBeatFrame, or alter confidence.",
+    "If recommended=false, or if the proposal remains musically implausible for this ~128 BPM material, STOP and report BLOCKED."
+  ],
+  "apply_and_sync_only_if_gate_passes": [
+    "Explicitly Apply the untouched v2 proposal to A and B.",
+    "Load the ordinary WAV into both decks.",
+    "Start both decks and enable SYNC with A as leader.",
+    "Run ordinary-program-material SYNC for at least 3 minutes.",
+    "Capture phase error, sync lock/tracking, follower rate, transportSeekCount, frame discontinuities, stale snapshots, and mixer discontinuities at start and end.",
+    "Exercise one explicit follower Hot Cue or jog and verify SYNC re-locks without hidden corrective seeks.",
+    "Obtain human audible confirmation that the ordinary tracks are aligned and remain aligned, with no abnormal clicks/dropouts."
+  ],
+  "pass_requirements": {
+    "analyzer": "Untouched v2 proposal must be recommended and plausibly near the track's known ~128 BPM pulse; deterministic and duplicate-stable.",
+    "grid_authority": "No mutation before explicit Apply; no manual repair.",
+    "ordinary_track_sync": "At least 3 minutes locked/tracking with no hidden corrective seek and no new A/B/mixer discontinuities.",
+    "audible": "Human confirms the ordinary track pair is actually heard in sync."
+  },
+  "report_rules": [
+    "Write only reports/local-debug/** on validation/local-debug.",
+    "Return PASS / FAIL / BLOCKED with exact raw v2 diagnostics.",
+    "Preserve the old v1 144.5839 failure in history.",
+    "Do not start Phase 10."
+  ]
+}

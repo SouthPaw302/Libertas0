@@ -1,0 +1,51 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "intelligence",
+  "gate": "phase9-v2-automated",
+  "status": "PASS",
+  "tested_sha": "efacc9e40237a01f054fea9fb5a29503f622fa6c",
+  "system_contract": {
+    "run_id": 37182446100,
+    "conclusion": "success"
+  },
+  "intelligence_gate": {
+    "run_id": 37182446049,
+    "job_id": 111377563471,
+    "conclusion": "success"
+  },
+  "results": {
+    "unit_simulation": {
+      "test_files": 8,
+      "tests_passed": 34,
+      "status": "PASS"
+    },
+    "production_build": "PASS",
+    "browser_runtime": {
+      "tests_passed": 32,
+      "status": "PASS",
+      "locked_phase_2_through_8_regressions": "PASS"
+    },
+    "worker_unknown_grid_bpm_anchor": "PASS",
+    "proposal_non_mutation": "PASS",
+    "explicit_apply": "PASS",
+    "analyzer_grid_to_sync": "PASS"
+  },
+  "provider": {
+    "id": "libertas.rhythm-ensemble.v2",
+    "execution": "web-worker",
+    "candidate_selection": "spectral flux + harmonic comb tempo ranking",
+    "precision_refinement": "local spectral-onset autocorrelation + parabolic lag interpolation",
+    "diagnostic_fallback": "v1 energy-onset/autocorrelation retained as provenance only",
+    "dependency": "@audio/beat 3.0.0"
+  },
+  "prior_real_track_failure": {
+    "report_commit": "12a2a48107ca3cd0028812b4d08c40a273abaa20",
+    "tested_sha": "7fcb8627d5d7a82164bd097d1523941951f8d698",
+    "bpm": 144.58394471887152,
+    "tempo_confidence": 0.252614734751494,
+    "grid_confidence": 0.36070923247032366,
+    "recommended": false
+  },
+  "ordinary_track_retest_required": true,
+  "rule": "Do not manually repair or apply a non-recommended v2 proposal merely to continue the gate."
+}

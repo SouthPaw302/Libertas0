@@ -4,18 +4,18 @@
   "phase": "intelligence",
   "active_module": "intelligence",
   "active_branch": "module/intelligence",
-  "status": "IMPLEMENTING",
-  "current_objective": "Repair the Phase 9 ordinary-track analyzer after F-0016 by adding spectral-flux + harmonic-comb tempo evidence while preserving advisory-only grid authority.",
-  "last_passing_gate": "intelligence-T4-browser-runtime",
-  "last_evidence": "evidence/intelligence/phase9-automated/RESULT.json",
+  "status": "LOCAL_DEBUG",
+  "current_objective": "Re-run the exact ordinary Tribal House material that exposed F-0016 against the green v2 analyzer. No manual BPM/grid repair is permitted.",
+  "last_passing_gate": "track-intelligence-v2-T4-browser-runtime",
+  "last_evidence": "evidence/intelligence/phase9-v2-automated/RESULT.json",
   "blockers": [
-    "F-0016: v1 ordinary-track proposal was deterministic but low-confidence/implausible (144.5839 BPM, recommended=false)."
+    "Phase 9 ordinary-track accuracy remains unproven until INTELLIGENCE-T5-002 passes on the same material that failed v1."
   ],
   "known_limitations": [
-    "firstBeatFrame is a beat-phase anchor candidate, not semantic bar/downbeat classification.",
-    "Reference analyzer does not detect key, phrases, stems or variable-tempo warp maps.",
-    "Generated-fixture success must not be generalized to arbitrary ordinary music."
+    "Semantic downbeat/bar classification is not implemented; firstBeatFrame remains a beat-phase anchor candidate.",
+    "Variable-tempo warp maps, key, phrase and stem analysis are not Phase 9 features.",
+    "Phase 9 must not be promoted from synthetic accuracy alone."
   ],
-  "exact_next_action": "Run Phase 9 v2 automated gates. If green, repeat ordinary-track analyzer gate on the same byte-identical Tribal House material before Apply or SYNC.",
-  "product_code_authorized": true
+  "exact_next_action": "Execute INTELLIGENCE-T5-002 on exact SHA efacc9e40237a01f054fea9fb5a29503f622fa6c using the same Tribal House WAV SHA-256 639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D. Do not manually repair the proposal.",
+  "product_code_authorized": false
 }
