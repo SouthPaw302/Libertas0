@@ -54,3 +54,16 @@
 - Ordinary A-leader/B-follower SYNC held for 180 seconds. All 45/90/135/180-second checkpoints remained locked/tracking with zero follower seeks, zero follower discontinuities, and zero stale snapshots; final valid snapshots: 96,716.
 - Explicit B-follower +50 ms jog produced `jogCount=1`, `performanceJumpCount=1`, hidden SYNC seek delta 0, and re-lock with zero discontinuities.
 - User confirmed audible verification: “Roger sound on.” Report status: PASS. Prior v1 blocker remains preserved in history. Phase 10 not started.
+
+## 2026-10-04 — PHASE10-T5-001 — SEMI-PASS / OPEN
+
+- Fetched refs before validation. Exact product SHA: `4b65a29c819b69fb46df79bc2cf13e124d030982`; handoff commit: `078b96e078be635febbc073d7b9003012c19a120`. Product files were not changed.
+- Required automated gate passed: bootstrap, typecheck, 39 unit tests, 36 Chrome runtime/regression tests, including library, recording, automation, MIDI synthetic path, and locked-core regressions.
+- Roles were kept distinct as requested. Phase 10 test audio was `Midnight Tribal Pulse (Remastered).wav`, SHA-256 `742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F`. Track scanning used `Tribal House  (Remastered).wav`, SHA-256 `639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D`.
+- Library persistence passed: Midnight identity persisted across reload, duplicate bytes did not create a second identity, and persisted PCM loaded into both decks with zero load discontinuities.
+- Tribal House v2 scan passed: Web Worker proposal 125.8478959 BPM, firstBeatFrame 512, tempo confidence 0.806715, phase confidence 0.786217, grid confidence 0.796400, recommended true, spectral comb 126 BPM.
+- Distinct-song master recording artifact passed: 70.341333 seconds, 1,136,037 bytes, `audio/webm;codecs=opus`; live mix included crossfader, EQ/filter, B Hot Cue, and jog actions. The browser has a download link but no in-app replay control.
+- Physical automation passed: 4-second A→B crossfade reached crossfader 1 through a 600 ms main-thread stall; A/B/mixer discontinuities remained zero and SYNC stayed locked/tracking with zero follower seeks.
+- Same-track reset run passed telemetry: both Midnight decks started from the top with centered crossfader; SYNC locked/tracked at approximately -0.000941 beats with zero seeks and zero discontinuities. User said the live path sounded synced.
+- Physical MIDI hardware is `NOT_EVALUATED`: Web MIDI returned `NotAllowedError`, no inputs were enumerated. Synthetic MIDI is covered by the 36 browser-test PASS.
+- Report is intentionally `BLOCKED` as `SEMI-PASS / OPEN`: GUI navigation, saved-recording replay/audible confirmation, and physical MIDI remain open. Phase 11 remains forbidden and was not started.

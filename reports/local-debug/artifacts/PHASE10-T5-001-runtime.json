@@ -1,0 +1,107 @@
+{
+  "task_id": "PHASE10-T5-001",
+  "tested_sha": "4b65a29c819b69fb46df79bc2cf13e124d030982",
+  "handoff_commit": "078b96e078be635febbc073d7b9003012c19a120",
+  "status": "BLOCKED",
+  "result": "SEMI-PASS / OPEN",
+  "phase": "10",
+  "phase_11_started": false,
+  "mode": "LOCAL_DEBUG",
+  "browser": "Codex in-app browser (headed Chromium), tab 18, http://127.0.0.1:5185/",
+  "product_files_changed": false,
+  "automated": {
+    "bootstrap": "PASS — exact SHA 4b65a29c819b69fb46df79bc2cf13e124d030982",
+    "npm_install": "PASS",
+    "typecheck": "PASS",
+    "unit_tests": "PASS (39 tests)",
+    "chrome_runtime_regression_tests": "PASS (36 tests)",
+    "product_source_matches_handoff": "Not applicable to product code; handoff task file verified at 078b96e078be635febbc073d7b9003012c19a120"
+  },
+  "source_roles": {
+    "phase10_test_song": {
+      "name": "Midnight Tribal Pulse (Remastered).wav",
+      "sha256": "742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F",
+      "bytes": 50701850,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 264,
+      "frame_count": 12672000
+    },
+    "scan_song": {
+      "name": "Tribal House  (Remastered).wav",
+      "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D",
+      "bytes": 58560172,
+      "sample_rate_hz": 48000,
+      "duration_seconds": 305,
+      "frame_count": 14640000
+    }
+  },
+  "library_persistence": {
+    "status": "PASS",
+    "midnight_identity": "742cbe8e1b9740aa29856d5d503e5d8436285deecab2803fcce3274bf199635f",
+    "tribal_identity": "639634136fe1630941f391b7667c7cd5cd0855d95651bf1ed77971618854fe1d",
+    "duplicate_midnight_import_created_second_identity": false,
+    "reload_refresh_preserved_entries": true,
+    "persisted_midnight_loaded_into_a_and_b": true,
+    "loaded_source_frames": {"a": 12672000, "b": 12672000},
+    "load_discontinuities": {"a": 0, "b": 0}
+  },
+  "scan": {
+    "status": "PASS",
+    "file": "Tribal House  (Remastered).wav",
+    "provider": "libertas.rhythm-ensemble.v2",
+    "execution": "web-worker",
+    "bpm": 125.84789589523987,
+    "tempo_confidence": 0.8067152468712988,
+    "first_beat_frame": 512,
+    "phase_confidence": 0.7862169919853077,
+    "grid_confidence": 0.7964001725162028,
+    "recommended": true,
+    "spectral_comb_bpm": 126,
+    "spectral_comb_correlation": 0.8693698328371311,
+    "manual_grid_mutation": false
+  },
+  "master_recording": {
+    "status": "PASS — artifact captured during distinct-song physical run",
+    "duration_seconds": 70.34133333333334,
+    "bytes": 1136037,
+    "mime_type": "audio/webm;codecs=opus",
+    "live_mix_actions": ["crossfader", "EQ/filter", "B Hot Cue set/trigger", "B jog"],
+    "replay_audible_confirmation": "OPEN — browser surface exposes download link but no in-app replay control; user confirmed the live SYNC sound, not the saved blob itself"
+  },
+  "automation": {
+    "status": "PASS",
+    "target": "mixer.crossfader",
+    "event_count": 3,
+    "scheduled_duration_seconds": 4,
+    "main_thread_block_seconds": 0.6,
+    "before": {"a_source_frame": 4428416, "b_source_frame": 3636393.3636328764, "a_discontinuities": 0, "b_discontinuities": 0, "b_transport_seeks": 0, "b_locked": true},
+    "after": {"a_source_frame": 4730880, "b_source_frame": 3938857.3636328764, "a_discontinuities": 0, "b_discontinuities": 0, "b_transport_seeks": 0, "b_locked": true, "b_tracking": true, "phase_beats": 0.0009431819634926342},
+    "final_crossfader": 1,
+    "mixer_discontinuities": 0,
+    "human_gate": "OPEN — user says the live path sounds synced; additional GUI/audible testing requested"
+  },
+  "midi": {
+    "synthetic_automated_path": "PASS — covered by 36 browser tests",
+    "physical_status": "NOT_EVALUATED",
+    "reason": "Web MIDI permission returned NotAllowedError; no hardware inputs were enumerated",
+    "learn_surface": "mixer.crossfader learn state was visible"
+  },
+  "locked_core": {
+    "same_track_reset_run": "PASS telemetry",
+    "leader": "A",
+    "follower": "B",
+    "locked": true,
+    "tracking": true,
+    "phase_beats": -0.0009409595672735804,
+    "transport_seek_count": 0,
+    "frame_discontinuities": 0,
+    "caveat": "Explicit follower Hot Cue/jog was exercised in earlier distinct-song physical runs; this exact two-file rerun left the decks reset and synced for audible verification rather than adding another jump."
+  },
+  "console_runtime_errors": "No unexpected runtime errors observed; Web MIDI NotAllowedError is the recorded environmental limitation.",
+  "open_items": [
+    "Keep the mini browser open for additional GUI navigation and audible testing.",
+    "Obtain human confirmation of the saved recording replay/export, not only the live mix.",
+    "If Web MIDI permission or hardware becomes available, repeat the physical MIDI gate.",
+    "Do not begin Phase 11."
+  ]
+}
