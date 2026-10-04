@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function openSyncHarness(page: Page): Promise<void> {
-  await page.goto('/');
+  await openSyncHarness(page);
   await page.waitForFunction(() => Boolean(window.__libertasSyncTest));
 }
 

@@ -111,3 +111,13 @@
 - evidence: SYNC Gate run `37174386575`; all 13 locked audio/deck/mixer/musical-clock browser regressions passed in the same run.
 - cause: an over-broad test edit replaced the helper's own `page.goto('/')` call with `openSyncHarness(page)`.
 - disposition: restored `page.goto('/')` followed by explicit wait for `window.__libertasSyncTest`. SYNC controller/worklet logic unchanged.
+
+## F-0009 — SYNC Playwright tests raced module initialization
+- date: 2026-10-03
+- exact SHA: `76e591fcb5c4c821d280961e06d52faf98780b20`
+- module: sync test harness
+- environment: GitHub Actions, Chrome for Testing 153.0.8010.12, Playwright parallel workers
+- symptom: 15/17 browser tests passed; two SYNC cases failed immediately because `window.__libertasSyncTest` was undefined. Leader-rate following and reverse-leadership convergence passed on the same SHA.
+- evidence: SYNC Gate run `37174293181`.
+- cause: `page.goto` completed before the top-level module finished initializing AudioWorklet/mixer and installing the SYNC test API in two parallel test workers.
+- disposition: SYNC browser tests now wait explicitly for the stable harness API before executing. Product/controller logic unchanged.
