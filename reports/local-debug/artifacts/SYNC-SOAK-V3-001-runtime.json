@@ -1,7 +1,7 @@
 {
   "task_id": "SYNC-SOAK-V3-001",
   "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
-  "handoff_commit": "ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d",
+  "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8",
   "status": "BLOCKED",
   "result": "AUTOMATED PASS / PHYSICAL AUDIO BLOCKED",
   "phase": "12",

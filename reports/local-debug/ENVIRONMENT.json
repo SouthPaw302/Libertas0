@@ -12,6 +12,6 @@
   "sample_rate_hz": 48000,
   "render_quantum_frames": 128,
   "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
-  "handoff_commit": "ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d",
+  "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8",
   "audio_capability_observation": "AudioContext and AudioWorkletNode were undefined in the tiny-browser tab; physical audio gate was not evaluated."
 }

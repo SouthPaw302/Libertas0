@@ -70,7 +70,7 @@
 
 ## 2026-10-05 — SYNC-SOAK-V3-001 — AUTOMATED PASS / PHYSICAL AUDIO BLOCKED
 
-- Exact SHA: `93d6c5b83549e598cc8718e830cb7effbf35eb0d`; handoff commit: `ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d`.
+- Exact SHA: `93d6c5b83549e598cc8718e830cb7effbf35eb0d`; updated handoff commit: `695ec0108670556f0239054aeca519ae2948e8a8`.
 - Bootstrap, npm install, typecheck, 51 unit tests, and build passed on the exact checkout. Product files were not changed.
 - Exact browser soak passed: 180-second SYNC hold, max phase error `0.0009430668577579127` beats, final `0.0009406080138205652`, hidden seeks `0`, discontinuities `0`, performance jumps `3`.
 - Enable/disable and leadership-reversal cycle soak passed: 24 successful enables, A/B hidden seek deltas `0/0`, A/B discontinuity deltas `0/0`.
