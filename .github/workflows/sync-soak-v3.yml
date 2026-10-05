@@ -1,0 +1,52 @@
+name: Libertas0 SYNC Soak v3
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - 'validation/sync-soak-v3'
+    paths:
+      - 'src/audio/**'
+      - 'src/deck/**'
+      - 'src/music/**'
+      - 'src/sync/**'
+      - 'src/transport/**'
+      - 'src/main.ts'
+      - 'tests/browser/sync*.spec.ts'
+      - '.github/workflows/sync-soak-v3.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: libertas0-sync-soak-v3-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sync-soak:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install
+        run: npm install
+      - name: Core check
+        run: npm run check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Existing SYNC and performance regressions
+        run: npx playwright test tests/browser/sync.spec.ts tests/browser/performance-transport.spec.ts
+      - name: Long SYNC soak
+        run: npx playwright test tests/browser/sync-soak.spec.ts --workers=1
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sync-soak-v3-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30
