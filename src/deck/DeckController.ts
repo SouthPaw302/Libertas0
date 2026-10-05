@@ -76,6 +76,7 @@ export class DeckController {
   private readonly pending = new Map<number, PendingRequest>();
   private readonly decoder: PcmDecoder;
   private waveformEnvelope: WaveformEnvelope | null = null;
+  private requestedPlaybackRate = 1;
 
   constructor(
     private readonly runtime: BrowserAudioRuntime,
@@ -160,8 +161,13 @@ export class DeckController {
     if (!Number.isFinite(rate) || rate < 0.25 || rate > 4) {
       throw new RangeError('playback rate must be between 0.25 and 4');
     }
+    this.requestedPlaybackRate = rate;
     const parameter = this.requireParameter('playbackRate');
     parameter.setValueAtTime(rate, this.runtime.context.currentTime);
+  }
+
+  requestedRate(): number {
+    return this.requestedPlaybackRate;
   }
 
   setVolume(volume: number, timeConstantSeconds = 0.005): void {
