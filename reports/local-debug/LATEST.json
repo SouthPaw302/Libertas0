@@ -50,6 +50,11 @@
     "No product files were changed",
     "Phase 11 is forbidden and was not started"
   ],
+  "reproduction": [
+    "Use product SHA 93d6c5b83549e598cc8718e830cb7effbf35eb0d and updated handoff commit 695ec0108670556f0239054aeca519ae2948e8a8.",
+    "Run the exact local browser at http://127.0.0.1:5187/ with the two Drive-referenced WAVs and review the uploaded runtime JSON and recording.",
+    "Review reports/local-debug/artifacts/SYNC-SOAK-V3-001-real-browser-runtime.json for the summarized telemetry; the full runtime JSON is linked in drive_artifacts."
+  ],
   "notes": "All required machine-verifiable soak gates passed. Audible assessment is explicitly NOT_EVALUATED because this run used a headless browser harness.",
   "completed_at": "2026-10-05T07:30:00Z"
 }
