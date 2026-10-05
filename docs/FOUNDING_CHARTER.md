@@ -76,6 +76,7 @@ Flow:
 11. Distributed Libertas
 12. Monitor / Cue Bus
 13. Waveform / Track View
+14. FX Engine
 
 ## Test hierarchy
 T1 unit -> T2 simulation -> T3 integration -> T4 runtime -> T5 physical/local.

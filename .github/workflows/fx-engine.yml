@@ -1,0 +1,58 @@
+name: FX Engine Gate
+
+on:
+  push:
+    branches:
+      - 'module/fx-engine'
+    paths:
+      - 'src/fx/**'
+      - 'src/mixer/MixerController.ts'
+      - 'src/recording/MasterRecordingController.ts'
+      - 'src/main.ts'
+      - 'index.html'
+      - 'tests/browser/fx-engine.spec.ts'
+      - 'docs/contracts/FX_ENGINE.md'
+      - 'MODULE_REGISTRY.json'
+      - 'DEVELOPMENT_STATE.json'
+      - 'SYSTEM_CONTRACT.json'
+      - 'CAPABILITY_REGISTRY.json'
+      - '.github/workflows/fx-engine.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: fx-engine-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  fx:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install
+        run: npm install
+      - name: Bootstrap / contract
+        run: python bootstrap.py && python scripts/validate_system.py
+      - name: Typecheck, unit tests, build
+        run: npm run check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: FX browser gate
+        run: npx playwright test tests/browser/fx-engine.spec.ts
+      - name: Locked mixer, recording, transport and SYNC regressions
+        run: npx playwright test tests/browser/mixer-dsp.spec.ts tests/browser/phase10.spec.ts tests/browser/performance-transport.spec.ts tests/browser/sync.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: fx-engine-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30

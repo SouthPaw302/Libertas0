@@ -320,6 +320,17 @@
         "waveform-driven scratching/seeking"
       ],
       "evidence": "evidence/waveform-track-view/module13-automated/RESULT.json"
+    },
+    {
+      "id": "audio.fx-engine",
+      "class": "audio-dsp-routing",
+      "status": "implementing",
+      "provider": "Web Audio equal-power dry/wet + beat-derived DelayNode + filtered feedback",
+      "contract": "docs/contracts/FX_ENGINE.md",
+      "proven_scope": [],
+      "not_yet_proven": [
+        "module gate pending"
+      ]
     }
   ]
 }

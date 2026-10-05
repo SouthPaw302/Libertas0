@@ -170,6 +170,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "fx-engine",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "waveform-track-view"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

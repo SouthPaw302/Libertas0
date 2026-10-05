@@ -65,6 +65,7 @@
     "library_midi_recording_automation",
     "distributed",
     "monitor_cue_bus",
-    "waveform_track_view"
+    "waveform_track_view",
+    "fx_engine"
   ]
 }

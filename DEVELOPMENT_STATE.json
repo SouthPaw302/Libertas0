@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "waveform_track_view",
-  "active_module": "waveform-track-view",
-  "active_branch": "main",
-  "status": "LOCKED",
-  "current_objective": "Module 13 Waveform / Track View is complete and locked: full-track overview, scrolling 12-second detail waveform, source-frame playhead, Musical Clock beat/bar grid, Cue/Hot Cue markers, and loop overlays are integrated as read-only presentation.",
+  "phase": "fx_engine",
+  "active_module": "fx-engine",
+  "active_branch": "module/fx-engine",
+  "status": "IMPLEMENTING",
+  "current_objective": "Module 14 — FX Engine: deck A/B beat-synced echo buses and a final master FX bus with equal-power wet/dry, feedback, tone shaping, and Musical Clock/playback-rate-derived delay timing.",
   "last_passing_gate": "module13-waveform-track-view",
   "last_evidence": "evidence/waveform-track-view/module13-automated/RESULT.json",
   "blockers": [],
@@ -16,6 +16,6 @@
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
     "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
   ],
-  "exact_next_action": "Begin Module 14 — FX Engine. Add deck/master effects with explicit wet/dry and beat-aware parameters driven from the proven Musical Clock, while preserving the realtime authority boundary.",
-  "product_code_authorized": false
+  "exact_next_action": "Run the bounded Module 14 unit/integration/runtime gate. If green, record evidence and lock fx-engine.",
+  "product_code_authorized": true
 }
