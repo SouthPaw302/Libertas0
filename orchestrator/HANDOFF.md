@@ -116,3 +116,42 @@ Audible assessment remains `NOT_EVALUATED`; do not rewrite that as human listeni
 The run also exposed an unrelated recording-status duration bug. The completed-duration telemetry is now frozen after MediaRecorder stop and covered by a browser regression test.
 
 Next bounded work after Full Validation: expose validation/evidence state in the simple operator Test Console.
+
+
+## Current main after Step 12 closeout
+
+Current validated main runtime/integration SHA:
+
+`2ca30b85f5142e3504fa842c1d7c7270bede33ab`
+
+Full Validation:
+- run `37279051458` — PASS;
+- System Contract run `37279051463` — PASS;
+- Linux core — PASS;
+- Windows core — PASS;
+- full Chromium regression — PASS;
+- repeated realtime torture — PASS;
+- evidence aggregation — PASS.
+
+Step 12 SYNC technical evidence is locked in:
+- `evidence/sync/soak-v3-real-browser/RESULT.json`
+- `docs/STEP12_SYNC_SOAK_V3.md`
+
+The real-WAV run held for 620 seconds with 0 hidden seeks and 0 A/B frame discontinuities through rate changes, follower performance actions, loop use, and leadership reversal.
+
+Audible assessment remains `NOT_EVALUATED`. This is not a blocker for the machine-verifiable SYNC technical gate, but it must not be represented as human listening evidence.
+
+The recorder-duration telemetry defect discovered during the soak is fixed and regression-covered.
+
+### Next bounded step
+
+**Step 13 — Evidence/Status panel**
+
+Add a compact informational panel to the existing simple Test Console showing:
+- current SHA;
+- latest Full Validation state;
+- latest SYNC soak state;
+- testing-agent/local gate state;
+- remaining human-only checks.
+
+The panel is read-only operator visibility. It must never become realtime timing authority.
