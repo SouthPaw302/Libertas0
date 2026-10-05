@@ -49,7 +49,7 @@ Before expensive work:
 
 ### V1 — Cross-platform core
 Linux and Windows:
-- `npm ci`;
+- `npm install`;
 - TypeScript;
 - unit/simulation tests;
 - production build.
