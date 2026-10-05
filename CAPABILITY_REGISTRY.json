@@ -243,30 +243,34 @@
     {
       "id": "distributed.session-control",
       "class": "distributed-control",
-      "status": "implemented-runtime-pending",
+      "status": "proven",
       "provider": "libertas.distributed.v1 session protocol + host role authority",
-      "contract": "docs/contracts/DISTRIBUTED.md"
+      "contract": "docs/contracts/DISTRIBUTED.md",
+      "evidence": "evidence/distributed/phase11-automated/RESULT.json"
     },
     {
       "id": "distributed.webrtc-datachannel",
       "class": "network",
-      "status": "implemented-runtime-pending",
+      "status": "proven",
       "provider": "ordered RTCDataChannel",
-      "contract": "docs/contracts/DISTRIBUTED.md"
+      "contract": "docs/contracts/DISTRIBUTED.md",
+      "evidence": "evidence/distributed/phase11-automated/RESULT.json"
     },
     {
       "id": "distributed.remote-work",
       "class": "distributed-work",
-      "status": "implemented-runtime-pending",
+      "status": "proven",
       "provider": "content-reference analysis/render/reconstruction/agent job protocol",
-      "contract": "docs/contracts/DISTRIBUTED.md"
+      "contract": "docs/contracts/DISTRIBUTED.md",
+      "evidence": "evidence/distributed/phase11-automated/RESULT.json"
     },
     {
       "id": "distributed.worker-pool",
       "class": "distributed-work",
-      "status": "implemented-runtime-pending",
+      "status": "proven",
       "provider": "capability-aware least-inflight worker routing with bounded retry",
-      "contract": "docs/contracts/DISTRIBUTED.md"
+      "contract": "docs/contracts/DISTRIBUTED.md",
+      "evidence": "evidence/distributed/phase11-automated/RESULT.json"
     }
   ]
 }
