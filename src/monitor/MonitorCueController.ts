@@ -3,10 +3,9 @@ import { cueNormalization, monitorBlendGains } from './MonitorCueMath';
 
 type DeckId = 'A' | 'B';
 
-interface SinkSelectableAudioElement extends HTMLAudioElement {
+type SinkSelectableAudioElement = HTMLAudioElement & {
   setSinkId?: (sinkId: string) => Promise<void>;
-  sinkId?: string;
-}
+};
 
 export interface MonitorOutputDevice {
   deviceId: string;
