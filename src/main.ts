@@ -11,6 +11,7 @@ import { MixerController, type MixerStatus } from './mixer/MixerController';
 import { ChannelStripController, type ChannelStripStatus } from './mixer/ChannelStripController';
 import type { EqBand } from './mixer/MixerDspMath';
 import { MonitorCueController, type MonitorCueStatus, type MonitorOutputDevice } from './monitor/MonitorCueController';
+import { WaveformTrackView, type WaveformRenderSnapshot } from './waveform/WaveformTrackView';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
 import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
@@ -66,6 +67,12 @@ interface LibertasMixerTestApi {
   channelStatus(deck: 'A' | 'B'): ChannelStripStatus;
   channelRms(deck: 'A' | 'B'): number;
   rms(): number;
+}
+
+interface LibertasWaveformTestApi {
+  refresh(deck: 'A' | 'B'): Promise<WaveformRenderSnapshot>;
+  snapshot(deck: 'A' | 'B'): WaveformRenderSnapshot;
+  envelope(deck: 'A' | 'B'): { buckets: number; sourceFrames: number; sampleRate: number } | null;
 }
 
 interface LibertasMonitorCueTestApi {
@@ -200,6 +207,7 @@ declare global {
     __libertasDeckBTest: LibertasDeckTestApi;
     __libertasMixerTest: LibertasMixerTestApi;
     __libertasMonitorCueTest: LibertasMonitorCueTestApi;
+    __libertasWaveformTest: LibertasWaveformTestApi;
     __libertasDualDeckTest: LibertasDualDeckTestApi;
     __libertasMusicalClockTest: LibertasMusicalClockTestApi;
     __libertasSyncTest: LibertasSyncTestApi;
@@ -414,6 +422,10 @@ const recordingPlayback = document.querySelector<HTMLAudioElement>('#recording-p
 let recordingObjectUrl: string | null = null;
 const automationDemo = document.querySelector<HTMLButtonElement>('#automation-demo');
 const automationStatus = document.querySelector<HTMLPreElement>('#automation-status');
+const waveformAOverview = document.querySelector<HTMLCanvasElement>('#waveform-a-overview');
+const waveformADetail = document.querySelector<HTMLCanvasElement>('#waveform-a-detail');
+const waveformBOverview = document.querySelector<HTMLCanvasElement>('#waveform-b-overview');
+const waveformBDetail = document.querySelector<HTMLCanvasElement>('#waveform-b-detail');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -506,6 +518,34 @@ document.querySelector<HTMLInputElement>('#deck-b-file')?.addEventListener('chan
 function getDeck(deck: 'A' | 'B'): DeckController {
   return deck === 'A' ? deckA : deckB;
 }
+
+const waveformViews = new Map<'A' | 'B', WaveformTrackView>();
+if (waveformAOverview && waveformADetail) waveformViews.set('A', new WaveformTrackView(waveformAOverview, waveformADetail));
+if (waveformBOverview && waveformBDetail) waveformViews.set('B', new WaveformTrackView(waveformBOverview, waveformBDetail));
+
+async function refreshWaveform(deck: 'A' | 'B'): Promise<WaveformRenderSnapshot> {
+  const view = waveformViews.get(deck);
+  if (!view) throw new Error(`Deck ${deck} waveform canvases are unavailable`);
+  const status = await getDeck(deck).requestStatus();
+  return view.render(getDeck(deck).waveform(), status, pendingGrids.get(deck)!);
+}
+
+let waveformPresentationActive = true;
+let waveformRefreshPending = false;
+let lastWaveformRefreshMs = 0;
+
+function waveformPresentationFrame(timestamp: number): void {
+  if (!waveformPresentationActive) return;
+  if (!waveformRefreshPending && timestamp - lastWaveformRefreshMs >= 100) {
+    lastWaveformRefreshMs = timestamp;
+    waveformRefreshPending = true;
+    void Promise.allSettled([refreshWaveform('A'), refreshWaveform('B')])
+      .finally(() => { waveformRefreshPending = false; });
+  }
+  requestAnimationFrame(waveformPresentationFrame);
+}
+
+requestAnimationFrame(waveformPresentationFrame);
 
 function getMusicalClock(deck: 'A' | 'B', sampleRate: number): MusicalClock {
   const existing = musicalClocks.get(deck);
@@ -1020,6 +1060,21 @@ window.__libertasMonitorCueTest = {
   status: () => monitor.status(),
   listOutputs: () => monitor.listOutputDevices(),
   setOutputDevice: (deviceId) => monitor.setOutputDevice(deviceId),
+};
+
+window.__libertasWaveformTest = {
+  refresh: (deck) => refreshWaveform(deck),
+  snapshot: (deck) => {
+    const view = waveformViews.get(deck);
+    if (!view) throw new Error(`Deck ${deck} waveform view is unavailable`);
+    return view.snapshot();
+  },
+  envelope: (deck) => {
+    const envelope = getDeck(deck).waveform();
+    return envelope
+      ? { buckets: envelope.buckets, sourceFrames: envelope.sourceFrames, sampleRate: envelope.sampleRate }
+      : null;
+  },
 };
 
 window.__libertasMusicalClockTest = {

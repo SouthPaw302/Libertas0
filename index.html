@@ -57,6 +57,14 @@
     input[type="file"] { max-width: 100%; }
     input[type="range"] { width: min(260px, 52vw); accent-color: #d9dee7; }
     audio { width: min(520px, 100%); margin-top: .5rem; }
+    .waveform-stack { display: grid; gap: .38rem; margin: .7rem 0 .85rem; }
+    .waveform-canvas {
+      display: block; width: 100%; background: #090b0f; border: 1px solid #303845;
+      border-radius: 7px;
+    }
+    .waveform-overview { height: 72px; }
+    .waveform-detail { height: 132px; }
+    .waveform-caption { color: #8f99a8; font-size: .78rem; display: flex; justify-content: space-between; gap: 1rem; }
     pre {
       white-space: pre-wrap; overflow-wrap: anywhere; background: #080a0d; color: #dce2eb;
       border: 1px solid #282d35; border-radius: 8px; padding: .75rem; max-height: 260px; overflow: auto;
@@ -116,6 +124,11 @@
     <div class="decks" id="decks">
       <fieldset class="deck-card">
         <legend>Deck A</legend>
+        <div class="waveform-stack" aria-label="Deck A waveform">
+          <canvas id="waveform-a-overview" class="waveform-canvas waveform-overview"></canvas>
+          <canvas id="waveform-a-detail" class="waveform-canvas waveform-detail"></canvas>
+          <div class="waveform-caption"><span>Overview</span><span>12s scrolling detail · beat/cue/loop markers</span></div>
+        </div>
         <div class="row">
           <input id="deck-a-file" type="file" accept="audio/*" />
           <button id="deck-a-load" type="button">Load A</button>
@@ -135,6 +148,11 @@
 
       <fieldset class="deck-card">
         <legend>Deck B</legend>
+        <div class="waveform-stack" aria-label="Deck B waveform">
+          <canvas id="waveform-b-overview" class="waveform-canvas waveform-overview"></canvas>
+          <canvas id="waveform-b-detail" class="waveform-canvas waveform-detail"></canvas>
+          <div class="waveform-caption"><span>Overview</span><span>12s scrolling detail · beat/cue/loop markers</span></div>
+        </div>
         <div class="row">
           <input id="deck-b-file" type="file" accept="audio/*" />
           <button id="deck-b-load" type="button">Load B</button>
