@@ -146,6 +146,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "monitor-cue-bus",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "distributed"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

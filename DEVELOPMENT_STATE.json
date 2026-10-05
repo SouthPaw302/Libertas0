@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "distributed",
-  "active_module": "distributed",
-  "active_branch": "main",
-  "status": "LOCKED",
-  "current_objective": "Step 12 SYNC Soak v3 is closed as a technical PASS on main. Preserve the proven realtime core and improve operator visibility through the simple Test Console.",
+  "phase": "monitor_cue_bus",
+  "active_module": "monitor-cue-bus",
+  "active_branch": "module/monitor-cue-bus",
+  "status": "IMPLEMENTING",
+  "current_objective": "Module 12 — Monitor / Cue Bus: per-deck prelisten, equal-power Cue/Master blend, monitor level, and selectable browser audio output without changing the proven master/SYNC timing path.",
   "last_passing_gate": "step12-closeout-full-validation",
   "last_evidence": "evidence/verification-fabric/step12-closeout/RESULT.json",
   "blockers": [],
@@ -13,8 +13,9 @@
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping and browser integration are proven.",
     "Human listening, physical audio routing, and browser/device-specific behavior unavailable on hosted runners remain residual physical gates when relevant.",
     "Phase 11 does not claim production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
-    "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing."
+    "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
+    "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
   ],
-  "exact_next_action": "Step 13: add a compact Evidence/Status panel to the Libertas0 Test Console showing current SHA, latest Full Validation result, SYNC soak status, testing-agent/local gate status, and any residual human-only checks. Keep it informational only; it must not become realtime authority.",
-  "product_code_authorized": false
+  "exact_next_action": "Finish Module 12 implementation and run its bounded unit/integration/runtime gate. If green, record evidence and lock monitor-cue-bus.",
+  "product_code_authorized": true
 }

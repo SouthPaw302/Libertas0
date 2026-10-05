@@ -63,6 +63,7 @@
     "mixer_dsp",
     "intelligence",
     "library_midi_recording_automation",
-    "distributed"
+    "distributed",
+    "monitor_cue_bus"
   ]
 }

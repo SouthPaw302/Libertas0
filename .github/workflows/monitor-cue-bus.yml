@@ -1,0 +1,57 @@
+name: Monitor Cue Bus Gate
+
+on:
+  push:
+    branches:
+      - 'module/monitor-cue-bus'
+    paths:
+      - 'src/monitor/**'
+      - 'src/mixer/ChannelStripController.ts'
+      - 'src/main.ts'
+      - 'index.html'
+      - 'tests/browser/monitor-cue-bus.spec.ts'
+      - 'docs/contracts/MONITOR_CUE_BUS.md'
+      - 'MODULE_REGISTRY.json'
+      - 'DEVELOPMENT_STATE.json'
+      - 'SYSTEM_CONTRACT.json'
+      - 'CAPABILITY_REGISTRY.json'
+      - '.github/workflows/monitor-cue-bus.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: monitor-cue-bus-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  monitor-cue:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install
+        run: npm install
+      - name: Bootstrap / contract
+        run: python bootstrap.py && python scripts/validate_system.py
+      - name: Typecheck, unit tests, build
+        run: npm run check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Monitor / cue browser gate
+        run: npx playwright test tests/browser/monitor-cue-bus.spec.ts
+      - name: Locked realtime regressions
+        run: npx playwright test tests/browser/mixer-dsp.spec.ts tests/browser/sync.spec.ts tests/browser/performance-transport.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: monitor-cue-bus-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30
