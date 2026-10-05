@@ -1,0 +1,30 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "distributed",
+  "gate": "phase11-automated-runtime-torture",
+  "status": "PASS",
+  "tested_sha": "51518afe2aa2b4eabacd55bf22028d12502e099a",
+  "system_contract_run": 37192351268,
+  "distributed_gate_run": 37192351263,
+  "unit_tests_passed": 51,
+  "browser_tests_passed": 40,
+  "artifact_id": 11299139553,
+  "artifact_digest": "sha256:e478a84b81fb421801822939f2bc186e7560759c096da45eb90068a098b778e8",
+  "proven": [
+    "protocol validation",
+    "host role authority",
+    "capability negotiation",
+    "ordered RTCDataChannel transport",
+    "remote mixer command through the local mixer path",
+    "artifact-reference remote work",
+    "capability-aware worker routing with bounded retry",
+    "repeated browser session churn",
+    "locked realtime core continuity"
+  ],
+  "limitations": [
+    "No production rendezvous or authentication.",
+    "No TURN or WAN validation.",
+    "No distributed file replication.",
+    "No production remote rendering or reconstruction provider claimed."
+  ]
+}
