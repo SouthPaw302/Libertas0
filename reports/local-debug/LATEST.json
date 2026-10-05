@@ -1,14 +1,14 @@
 {
-  "task_id": "PHASE10-T5-001",
-  "tested_sha": "4b65a29c819b69fb46df79bc2cf13e124d030982",
+  "task_id": "SYNC-SOAK-V3-001",
+  "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
   "status": "BLOCKED",
-  "result": "SEMI-PASS / OPEN",
+  "result": "AUTOMATED PASS / PHYSICAL AUDIO BLOCKED",
   "environment": {
     "schema": "libertas.local-environment.v1",
     "status": "real-local-runtime",
     "os": "Microsoft Windows 10 Home build 19045",
-    "browser": "Codex in-app browser (headed Chromium), tab 18",
-    "url": "http://127.0.0.1:5185/",
+    "browser": "Codex in-app tiny browser (headed Chromium), tab 20",
+    "url": "http://127.0.0.1:5187/",
     "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
     "python": "3.12.10",
     "node": "v24.18.0",
@@ -16,41 +16,40 @@
     "git": "2.55.0.windows.2",
     "sample_rate_hz": 48000,
     "render_quantum_frames": 128,
-    "tested_sha": "4b65a29c819b69fb46df79bc2cf13e124d030982",
-    "handoff_commit": "078b96e078be635febbc073d7b9003012c19a120"
+    "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
+    "handoff_commit": "ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d"
   },
   "measurements": {
     "exact_sha_bound": true,
-    "handoff_commit": "078b96e078be635febbc073d7b9003012c19a120",
+    "handoff_commit": "ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d",
     "product_files_changed": false,
     "bootstrap": "PASS",
     "typecheck": "PASS",
-    "unit_tests": "PASS (39 tests)",
-    "chrome_runtime_regression_tests": "PASS (36 tests)",
-    "test_song": "Midnight Tribal Pulse (Remastered).wav — SHA-256 742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F",
-    "scan_song": "Tribal House (Remastered).wav — SHA-256 639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D",
-    "library": "PASS — reload persistence, byte deduplication, and persisted load into both decks",
-    "scan": "PASS — v2 Web Worker proposal 125.8478959 BPM, recommended=true, grid confidence 0.796400",
-    "recording": "PASS artifact — 70.341333 s, 1,136,037 bytes, audio/webm;codecs=opus",
-    "automation": "PASS — 4-second crossfade reached B through a 600 ms main-thread block; A/B/mixer discontinuities 0",
-    "sync": "PASS telemetry — locked/tracking, phase -0.00094096 beats, follower seeks 0, discontinuities 0",
-    "midi": "AUTOMATED PASS; physical hardware NOT_EVALUATED — Web MIDI permission denied and no inputs",
-    "human_gate": "OPEN — user says live audio sounds synced; saved-recording replay and additional GUI navigation remain open",
-    "console_runtime_errors": "No unexpected errors; Web MIDI NotAllowedError recorded as environmental limitation"
+    "unit_tests": "PASS (51 tests)",
+    "build": "PASS",
+    "sync_soak_180s": "PASS — max phase error 0.0009430668577579127 beats; final 0.0009406080138205652; hidden seeks 0; discontinuities 0; performance jumps 3",
+    "sync_cycle_soak": "PASS — 24 successful enables; A/B hidden seeks 0/0; A/B discontinuities 0/0",
+    "physical_gate": "BLOCKED — tiny-browser AudioContext and AudioWorkletNode were undefined; real-music hold not run",
+    "audible_assessment": "NOT_EVALUATED",
+    "console_runtime_errors": "No page console errors surfaced; browser capability check blocked runtime initialization"
   },
-  "artifacts": ["reports/local-debug/artifacts/PHASE10-T5-001-runtime.json"],
+  "artifacts": ["reports/local-debug/artifacts/SYNC-SOAK-V3-001-runtime.json"],
+  "drive_artifacts": {
+    "runtime_json": "https://drive.google.com/file/d/1p1WMqfH9h4kMVpw6oKiVw7iWlvSv1R9B/view?usp=drivesdk",
+    "test_song": "https://drive.google.com/file/d/1gIkxs2LuTpFqXiVbjBa62gH8se3o7jot/view?usp=drivesdk",
+    "scan_song": "https://drive.google.com/file/d/1wdO4XY63OVoL8bQHkgFFVK5a_6gaEX0i/view?usp=drivesdk"
+  },
   "logs": [
     "Fetched refs before validation; exact product SHA and handoff commit exist",
-    "No product/system files were changed",
-    "Testing and scanning used different specified files: Midnight Tribal Pulse for Phase 10 test audio; Tribal House for scanning",
-    "Prior Phase 9 report remains historical; this is the fresh Phase 10 handoff",
+    "Two distinct source WAVs were hashed and uploaded to the task Drive folder",
+    "No product files were changed",
     "Phase 11 is forbidden and was not started"
   ],
   "reproduction": [
-    "Use product SHA 4b65a29c819b69fb46df79bc2cf13e124d030982 and handoff 078b96e078be635febbc073d7b9003012c19a120 in the Codex in-app browser at http://127.0.0.1:5185/.",
-    "Use Midnight Tribal Pulse for Phase 10 playback/recording and scan Tribal House separately; preserve the exact file hashes in the runtime artifact.",
-    "Review reports/local-debug/artifacts/PHASE10-T5-001-runtime.json for raw measurements and open gates."
+    "Use product SHA 93d6c5b83549e598cc8718e830cb7effbf35eb0d and handoff ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d.",
+    "Use the exact tiny-browser runtime at http://127.0.0.1:5187/; the current environment lacks AudioContext/AudioWorkletNode and must be replaced or repaired before physical testing.",
+    "Review reports/local-debug/artifacts/SYNC-SOAK-V3-001-runtime.json for raw automated and physical-gate evidence."
   ],
-  "notes": "Evidence-only open handoff for the coding agent. Product hash is unchanged. Semi-pass: core automated and physical audio/SYNC telemetry passed, but GUI navigation, saved-recording replay confirmation, and physical MIDI remain open. Do not begin Phase 11.",
-  "completed_at": "2026-10-04T07:30:00Z"
+  "notes": "Automated SYNC soak passed. Physical real-music 10+ minute gate remains BLOCKED by the tiny-browser audio capability; do not convert this to PASS without audible evidence and Drive-backed recording/runtime artifacts.",
+  "completed_at": "2026-10-05T07:00:00Z"
 }

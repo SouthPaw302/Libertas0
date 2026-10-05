@@ -67,3 +67,13 @@
 - Same-track reset run passed telemetry: both Midnight decks started from the top with centered crossfader; SYNC locked/tracked at approximately -0.000941 beats with zero seeks and zero discontinuities. User said the live path sounded synced.
 - Physical MIDI hardware is `NOT_EVALUATED`: Web MIDI returned `NotAllowedError`, no inputs were enumerated. Synthetic MIDI is covered by the 36 browser-test PASS.
 - Report is intentionally `BLOCKED` as `SEMI-PASS / OPEN`: GUI navigation, saved-recording replay/audible confirmation, and physical MIDI remain open. Phase 11 remains forbidden and was not started.
+
+## 2026-10-05 — SYNC-SOAK-V3-001 — AUTOMATED PASS / PHYSICAL AUDIO BLOCKED
+
+- Exact SHA: `93d6c5b83549e598cc8718e830cb7effbf35eb0d`; handoff commit: `ec8505f6dc73755554af7ff8ac9d10ff1d9fb87d`.
+- Bootstrap, npm install, typecheck, 51 unit tests, and build passed on the exact checkout. Product files were not changed.
+- Exact browser soak passed: 180-second SYNC hold, max phase error `0.0009430668577579127` beats, final `0.0009406080138205652`, hidden seeks `0`, discontinuities `0`, performance jumps `3`.
+- Enable/disable and leadership-reversal cycle soak passed: 24 successful enables, A/B hidden seek deltas `0/0`, A/B discontinuity deltas `0/0`.
+- Distinct source material was used for the evidence set: Midnight Tribal Pulse SHA-256 `742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F`; Tribal House SHA-256 `639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D`. Both were uploaded to the task Drive folder.
+- Physical gate is `BLOCKED`: the tiny-browser tab exposed no `AudioContext` or `AudioWorkletNode`, so the real-music 10+ minute hold, rate changes, follower jog/hotcue, loop, reversal, recording, and audible assessment were not run.
+- Phase 11 remains forbidden and was not started.
