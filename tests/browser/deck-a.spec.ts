@@ -1,7 +1,12 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function openDeckA(page: Page): Promise<void> {
+  await openDeckA(page);
+  await page.waitForFunction(() => Boolean(window.__libertasDeckATest));
+}
 
 test('Deck A decode, transport, seek, rate, volume and mute share the AudioWorklet clock', async ({ page }) => {
-  await page.goto('/');
+  await openDeckA(page);
 
   const loaded = await page.evaluate(() => window.__libertasDeckATest.loadGeneratedTone(10));
   expect(loaded.loaded).toBe(true);
@@ -58,7 +63,7 @@ test('Deck A decode, transport, seek, rate, volume and mute share the AudioWorkl
 });
 
 test('Deck A transport keeps advancing through a blocked main thread without new worklet discontinuities', async ({ page }) => {
-  await page.goto('/');
+  await openDeckA(page);
   await page.evaluate(() => window.__libertasDeckATest.loadGeneratedTone(10));
   await page.evaluate(() => window.__libertasDeckATest.setVolume(0.1));
   await page.evaluate(() => window.__libertasDeckATest.play());
@@ -87,7 +92,7 @@ test('Deck A transport keeps advancing through a blocked main thread without new
 });
 
 test('Deck A ends cleanly at the PCM boundary and clamps out-of-range seeks', async ({ page }) => {
-  await page.goto('/');
+  await openDeckA(page);
   const loaded = await page.evaluate(() => window.__libertasDeckATest.loadGeneratedTone(1));
 
   const high = await page.evaluate((frame) => window.__libertasDeckATest.seekFrame(frame), loaded.sourceFrames * 2);
