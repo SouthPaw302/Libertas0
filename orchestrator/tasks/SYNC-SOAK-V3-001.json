@@ -1,0 +1,82 @@
+{
+  "task_id": "SYNC-SOAK-V3-001",
+  "requested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
+  "branch": "validation/sync-soak-v3",
+  "module": "sync",
+  "objective": "Run the new proven Libertas0 SYNC module through a real local-browser/music soak after the hosted soak passed. Validate only the real-browser/audio-path residue; do not patch product code from the report branch.",
+  "scope": [
+    "real local browser/audio path",
+    "10-minute continuous SYNC hold with ordinary music",
+    "leader rate changes",
+    "explicit follower jog/hotcue recovery",
+    "one loop while SYNC is active",
+    "one leadership reversal",
+    "recorded mix and runtime telemetry",
+    "no hidden corrective seeks or new frame discontinuities"
+  ],
+  "steps": [
+    "Fetch refs and check out exact SHA 93d6c5b83549e598cc8718e830cb7effbf35eb0d.",
+    "Run python bootstrap.py and require LIBERTAS BOOT: PASS.",
+    "Run npm install && npm run check.",
+    "Open the simple Libertas0 Test Console in the normal headed local browser and physical audio output; Fullscreen may be used.",
+    "Load two ordinary constant-tempo music tracks. Prefer material already used in prior Libertas0 physical gates. If different source files are used, upload them to the task Drive folder.",
+    "Use Track Intelligence/manual grid only as needed to establish correct grids. Record the actual applied BPM/grid identities.",
+    "Start both decks and enable SYNC with Deck A as leader. Hold continuously for at least 10 minutes.",
+    "During the hold, change Deck A rate several times within approximately 0.95x to 1.05x, execute at least two explicit follower jog or hotcue actions, and exercise one loop.",
+    "Reverse leadership once and allow normal convergence.",
+    "Record the full test mix from the post-master recording path for at least the 10-minute SYNC interval when practical.",
+    "Capture telemetry before/after and at representative intervals: syncTracking, syncLocked, syncPhaseErrorBeats, transportSeekCount, frameDiscontinuities, performanceJumpCount, sourceFrame, playbackRate.",
+    "Upload the saved recording and runtime JSON to Drive folder Libertas0/Step 12/SYNC-SOAK-V3-001.",
+    "On validation/local-debug modify only reports/local-debug/** and push the report branch."
+  ],
+  "evidence_required": [
+    "exact tested SHA",
+    "browser/OS/audio environment",
+    "source track filenames and hashes or Drive references",
+    "applied BPM/grid identities",
+    ">=10-minute hold duration",
+    "phase-error samples and final phase error",
+    "hidden transport seek delta for both decks",
+    "frame discontinuity deltas for both decks",
+    "performance jump delta",
+    "leader-rate-change observations",
+    "leadership-reversal result",
+    "recording duration/bytes/MIME",
+    "Drive file IDs or URLs for recording/runtime evidence and any new source files",
+    "console/runtime errors",
+    "audible assessment if the local testing setup can genuinely assess it; otherwise NOT_EVALUATED rather than invented"
+  ],
+  "stop_conditions": [
+    "Any hidden SYNC maintenance seek occurs.",
+    "Any new A/B frame discontinuity attributable to SYNC occurs.",
+    "SYNC repeatedly fails to re-lock after explicit follower performance actions.",
+    "Leadership reversal fails to converge.",
+    "The test cannot produce or persist the required runtime evidence."
+  ],
+  "requested_by": "master-developer",
+  "created_at": "2026-10-05T06:41:00-04:00",
+  "drive": {
+    "folder_path": "Libertas0/Step 12/SYNC-SOAK-V3-001",
+    "folder_id": "17UJZ5H5H450_cB_jl1Go-Nyyhd08BxfK",
+    "folder_url": "https://drive.google.com/drive/folders/17UJZ5H5H450_cB_jl1Go-Nyyhd08BxfK"
+  },
+  "hosted_soak_proof": {
+    "run_id": 37273234870,
+    "status": "PASS",
+    "unit_simulation_tests": 51,
+    "existing_sync_performance_browser_tests": 10,
+    "long_soak_tests": 2,
+    "hold_seconds": 180,
+    "max_phase_error_beats": 0.000942996918723793,
+    "hidden_seek_delta": 0,
+    "discontinuity_delta": 0,
+    "performance_jump_delta": 3,
+    "enable_disable_leadership_cycles": 24,
+    "cycle_hidden_seek_delta_a": 0,
+    "cycle_hidden_seek_delta_b": 0,
+    "cycle_discontinuity_delta_a": 0,
+    "cycle_discontinuity_delta_b": 0,
+    "artifact_id": 11329166780,
+    "artifact_digest": "sha256:0b361b3dd9ac6e5885de4842ff5d67966f0ce5b35790372dc6f23e9d656546f0"
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "sync",
+  "gate": "sync-soak-v3-hosted",
+  "status": "PASS",
+  "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
+  "run_id": 37273234870,
+  "results": {
+    "unit_simulation_tests": 51,
+    "existing_sync_performance_browser_tests": 10,
+    "long_soak_tests": 2,
+    "hold_seconds": 180,
+    "max_phase_error_beats": 0.000942996918723793,
+    "hidden_seek_delta": 0,
+    "frame_discontinuity_delta": 0,
+    "explicit_follower_performance_jumps": 3,
+    "enable_disable_leadership_cycles": 24,
+    "a_hidden_seek_delta": 0,
+    "b_hidden_seek_delta": 0,
+    "a_discontinuity_delta": 0,
+    "b_discontinuity_delta": 0
+  },
+  "artifact": {
+    "id": 11329166780,
+    "digest": "sha256:0b361b3dd9ac6e5885de4842ff5d67966f0ce5b35790372dc6f23e9d656546f0"
+  },
+  "next_gate": "SYNC-SOAK-V3-001 real local browser/music residue"
+}
