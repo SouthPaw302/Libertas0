@@ -1,20 +1,20 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "distributed",
-  "active_module": "distributed",
+  "phase": "post_lock_hardening",
+  "active_module": "validation-fabric-v2",
   "active_branch": "main",
   "status": "LOCKED",
-  "current_objective": "Phase 11 Distributed Libertas is complete and locked within its proven local/browser scope. Perform the full Libertas0 audit before any surgical upgrade of LibertyDJ/DJtest.",
-  "last_passing_gate": "phase11-automated-runtime-torture",
-  "last_evidence": "evidence/distributed/phase11-automated/RESULT.json",
+  "current_objective": "Operate and evolve Libertas0 from the locked Phase 0-11 baseline using the automated-first validation fabric and the simple operator test console.",
+  "last_passing_gate": "full-validation-v2",
+  "last_evidence": "evidence/verification-fabric/full-validation-v2/RESULT.json",
   "blockers": [],
   "known_limitations": [
-    "Phase 11 core does not implement production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
-    "Networking is forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or loop/cue execution timing.",
-    "WebRTC transport encryption does not by itself define application identity/trust policy.",
-    "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping/browser integration are proven."
+    "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping and browser integration are proven.",
+    "Human listening, physical audio routing, and browser/device-specific behavior unavailable on hosted runners remain residual physical gates when relevant.",
+    "Phase 11 does not claim production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
+    "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing."
   ],
-  "exact_next_action": "Audit all Libertas0 contracts, module boundaries, evidence, regressions, workflow coverage, and known limitations. Then produce a surgical DJtest upgrade map; do not modify DJtest until the audit is complete.",
+  "exact_next_action": "Use main as authority. For any future Libertas0 change, run Libertas0 Full Validation first and reserve local/manual testing only for the residual facts automation cannot prove. Keep the operator GUI simple and test-focused.",
   "product_code_authorized": false
 }

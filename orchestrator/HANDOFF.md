@@ -4,15 +4,35 @@
 
 Work on **SouthPaw302/Libertas0 only** unless the user explicitly changes scope.
 
-Product authority is `main` at the last locked Phase 11 line. All planned phases 0-11 are locked within their recorded scope.
+All planned phases 0-11 are locked within their recorded scope. The current authority is `main`.
 
-Current post-lock hardening work:
-- validation fabric: `system/validation-fabric-v2`;
-- simple operator/test GUI: `ui/test-console`.
+The post-lock validation fabric and simple operator test console are now integrated into main.
 
-Do not redirect work into other DJ repositories from this handoff.
+## Proven automated baseline
 
-## First action
+Validated system/product baseline SHA:
+
+`670887b4cc6bb4b139e2dd760c66075591c223f7`
+
+Full Validation run: `37271806628`
+
+PASS:
+- bootstrap / system / workflow sanity;
+- Linux core check;
+- Windows core check;
+- 51 unit/simulation tests;
+- production build;
+- full Chromium regression: **40/40 PASS**;
+- repeated high-risk realtime torture: PASS;
+- exact-SHA evidence aggregation: PASS.
+
+Aggregate evidence artifact:
+- ID: `11328224800`
+- digest: `sha256:9e7d06223d5cd5e71e0ec3c06984af155a504196c83a72ced9d75a61eefd68bd`
+
+The simple test console is part of this proven baseline. It includes the Fullscreen control and preserves the existing test/control IDs.
+
+## First action in a new session
 
 1. Run `python bootstrap.py`.
 2. Read `.libertas/SECOND_BRAIN.md`.
@@ -25,32 +45,34 @@ Do not redirect work into other DJ repositories from this handoff.
 
 Before asking the user to perform a test, exhaust the repeatable automated proof surfaces:
 
-1. system/bootstrap/contract sanity;
-2. cross-platform core check;
-3. full Chromium runtime/regression suite;
-4. focused realtime torture;
-5. exact-SHA evidence bundle.
+1. contract/static sanity;
+2. unit/simulation;
+3. Linux + Windows hosted core checks;
+4. full Chromium runtime/regression;
+5. focused realtime torture;
+6. exact-SHA evidence aggregation.
 
-Only then create a local/physical task, and that task must contain **only** facts that hosted automation cannot prove.
+Only then create a local/physical task, and that task must contain **only** facts hosted automation cannot prove.
 
-Do not ask the user to manually repeat typechecks, unit tests, browser regressions, continuity counters, deterministic synthetic MIDI, generated-audio analysis, or other runner-provable checks.
+Do not ask the user to manually repeat typechecks, unit tests, browser regressions, deterministic synthetic MIDI, generated-audio checks, continuity counters, or other runner-provable work.
 
 ## Manual residue
 
-Valid examples:
+Valid residual gates include:
 - human listening judgment;
 - physical MIDI/controller interaction;
 - real speaker/interface routing;
-- browser/device-specific behavior unavailable on runners;
-- other genuinely physical hardware state.
+- browser/device-specific behavior unavailable on hosted runners;
+- other genuinely physical hardware facts.
 
 ## Cross-repo reuse rule
 
-The wider SouthPaw302 stack is a pattern library, not a dependency graph. Borrow validated ideas, normalize them into Libertas0 contracts, and record why they were adopted. Never silently import another repo's authority, assumptions, or runtime.
+The wider SouthPaw302 repository ecosystem is a pattern library, not a runtime dependency graph.
 
-## Current next actions
+Useful patterns have been normalized into Libertas0 from multiple projects: contract/workflow guards, exact-runtime evidence, Windows validation, browser smoke, workflow sanity, artifact/QC handling, and inspectable evidence concepts.
 
-1. Make `Libertas0 Full Validation` green on `system/validation-fabric-v2`.
-2. Preserve exact-SHA evidence from that run.
-3. Finish validation of `ui/test-console`; keep the GUI plain and operator-friendly.
-4. After both are green, promote the infrastructure/UI changes without weakening any locked realtime contract.
+Never silently import another project's authority, assumptions, or runtime.
+
+## Current next action
+
+Use `main` as authority. Keep Libertas0 automated-first and keep the operator GUI plain, practical, and test-focused. Future changes must pass `Libertas0 Full Validation` before any residual physical gate is requested.

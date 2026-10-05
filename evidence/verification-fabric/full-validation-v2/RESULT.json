@@ -1,0 +1,42 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "verification-fabric",
+  "gate": "full-validation-v2",
+  "status": "PASS",
+  "tested_sha": "670887b4cc6bb4b139e2dd760c66075591c223f7",
+  "run_id": 37271806628,
+  "results": {
+    "system_contract": "PASS",
+    "sanity": "PASS",
+    "core_linux": "PASS",
+    "core_windows": "PASS",
+    "unit_simulation_tests": 51,
+    "browser_runtime_tests": 40,
+    "browser_runtime": "PASS",
+    "repeated_realtime_torture": "PASS",
+    "evidence_aggregation": "PASS"
+  },
+  "artifacts": {
+    "aggregate": {
+      "id": 11328224800,
+      "digest": "sha256:9e7d06223d5cd5e71e0ec3c06984af155a504196c83a72ced9d75a61eefd68bd"
+    },
+    "browser": {
+      "id": 11328930407,
+      "digest": "sha256:08d9385d8463d194c8a9fb7858c70112b72b237c72f853ba9aaeb31f43ea14ca"
+    },
+    "torture": {
+      "id": 11328504064,
+      "digest": "sha256:490934f71d7cdf4897966d27b98e005e2f9c4c0ea6c91170d78b57830c2a0eeb"
+    },
+    "core_windows": {
+      "id": 11328860526,
+      "digest": "sha256:75ec73cc89cbb6bffa5cc19c313e0ae315039ef84adaaccdeed717a5c4b11051"
+    },
+    "core_linux": {
+      "id": 11328568353,
+      "digest": "sha256:19d981192cb9c5d794e218880ef63c4cdea80664ec00e9e9329cff08ec5a1f97"
+    }
+  },
+  "manual_residue_policy": "Only human listening, physical MIDI/controller, real audio routing, unavailable browser/device-specific behavior, or other genuinely physical facts remain eligible for manual validation."
+}
