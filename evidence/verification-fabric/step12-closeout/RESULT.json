@@ -1,0 +1,50 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "verification-fabric",
+  "gate": "step12-closeout-full-validation",
+  "status": "PASS",
+  "tested_sha": "2ca30b85f5142e3504fa842c1d7c7270bede33ab",
+  "system_contract_run": 37279051463,
+  "full_validation_run": 37279051458,
+  "results": {
+    "system_contract": "PASS",
+    "sanity": "PASS",
+    "core_linux": "PASS",
+    "core_windows": "PASS",
+    "browser_runtime": "PASS",
+    "realtime_torture": "PASS",
+    "evidence_aggregation": "PASS"
+  },
+  "step12_sync_evidence": "evidence/sync/soak-v3-real-browser/RESULT.json",
+  "recording_duration_fix": {
+    "status": "PASS",
+    "description": "Completed recording duration is frozen after MediaRecorder stop and covered by the Phase 10 browser regression."
+  },
+  "artifacts": {
+    "aggregate": {
+      "id": 11330944218,
+      "digest": "sha256:1024f9be9a7cb45731f82afda4504d7a19ba776506a2ebe4e282fc9854965900"
+    },
+    "browser": {
+      "id": 11331433254,
+      "digest": "sha256:b42bf95f4982ae70be9c2dcb337fc8673d592990a0399e6a8813a60d453e9948"
+    },
+    "torture": {
+      "id": 11331178893,
+      "digest": "sha256:7246618af58824548a11b70d85bba90ce7c4ccfd43accd914025c27257fd0de5"
+    },
+    "core_linux": {
+      "id": 11331183643,
+      "digest": "sha256:1d24f5e171de1c9a574f7c12db9d922dbdc8181662ef51b89cf663beb98fdffa"
+    },
+    "core_windows": {
+      "id": 11331602148,
+      "digest": "sha256:e13bc3b506a243e046bc2a0af30b8f203868fa215974f25aed3d6b9a5f886a2b"
+    }
+  },
+  "residuals": [
+    "Audible assessment remains NOT_EVALUATED; no human speaker-listening claim was made.",
+    "Physical MIDI hardware remains NOT_EVALUATED."
+  ],
+  "next_step": "Step 13 — Evidence/Status panel in the simple operator Test Console."
+}
