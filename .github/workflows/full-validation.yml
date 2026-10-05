@@ -91,10 +91,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - name: Install exact JS dependencies
-        run: npm ci
+      - name: Install JS dependencies
+        run: npm install
       - name: Core check
         run: npm run check
       - name: Runner fingerprint
@@ -131,9 +129,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - run: npm ci
+      - run: npm install
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Full locked browser regression
@@ -157,9 +153,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '24'
-          cache: npm
-          cache-dependency-path: package-lock.json
-      - run: npm ci
+      - run: npm install
       - run: npx playwright install --with-deps chromium
       - name: Repeat high-risk realtime suites
         run: >
