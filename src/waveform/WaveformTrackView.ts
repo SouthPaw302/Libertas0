@@ -149,8 +149,8 @@ export class WaveformTrackView {
     for (let x = 0; x < width; x += 1) {
       const frame = range.startFrame + (x / Math.max(1, width - 1)) * (range.endFrame - range.startFrame);
       const bucket = Math.max(0, Math.min(envelope.buckets - 1, Math.floor((frame / Math.max(1, envelope.sourceFrames)) * envelope.buckets)));
-      const yTop = center - envelope.max[bucket] * center * 0.88;
-      const yBottom = center - envelope.min[bucket] * center * 0.88;
+      const yTop = center - (envelope.max[bucket] ?? 0) * center * 0.88;
+      const yBottom = center - (envelope.min[bucket] ?? 0) * center * 0.88;
       context.moveTo(x + 0.5, yTop);
       context.lineTo(x + 0.5, yBottom);
     }
