@@ -13,6 +13,8 @@ on:
       - 'src/transport/**'
       - 'src/main.ts'
       - 'tests/browser/sync*.spec.ts'
+      - 'scripts/local-sync-physical-soak.mjs'
+      - 'orchestrator/tasks/SYNC-SOAK-V3-002.json'
       - '.github/workflows/sync-soak-v3.yml'
 
 permissions:
@@ -35,6 +37,8 @@ jobs:
         run: npm install
       - name: Core check
         run: npm run check
+      - name: Local physical runner syntax
+        run: node --check scripts/local-sync-physical-soak.mjs
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
       - name: Existing SYNC and performance regressions
