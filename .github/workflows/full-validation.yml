@@ -1,0 +1,222 @@
+name: Libertas0 Full Validation
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+      - 'system/**'
+      - 'ui/**'
+    paths:
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - 'vite.config.ts'
+      - 'playwright.config.ts'
+      - 'index.html'
+      - 'src/**'
+      - 'tests/**'
+      - 'scripts/**'
+      - 'bootstrap.py'
+      - 'SYSTEM_CONTRACT.json'
+      - 'CAPABILITY_REGISTRY.json'
+      - 'MODULE_REGISTRY.json'
+      - 'VALIDATION_REGISTRY.json'
+      - 'DEVELOPMENT_STATE.json'
+      - '.github/workflows/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: libertas0-full-validation-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sanity:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Bootstrap
+        run: python bootstrap.py
+      - name: System validation
+        run: python scripts/validate_system.py
+      - name: Workflow and JSON sanity
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json, pathlib, sys
+          errors = []
+          for path in pathlib.Path('.github/workflows').glob('*.y*ml'):
+              if b'\t' in path.read_bytes():
+                  errors.append(f'tab character in workflow: {path}')
+          for path in [
+              'SYSTEM_CONTRACT.json',
+              'CAPABILITY_REGISTRY.json',
+              'MODULE_REGISTRY.json',
+              'VALIDATION_REGISTRY.json',
+              'DEVELOPMENT_STATE.json',
+          ]:
+              try:
+                  json.loads(pathlib.Path(path).read_text())
+              except Exception as exc:
+                  errors.append(f'{path}: {exc}')
+          if errors:
+              print('\n'.join(errors))
+              sys.exit(1)
+          print('LIBERTAS0 VALIDATION SANITY: PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-validation-sanity-${{ github.sha }}
+          path: .libertas/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  core:
+    needs: sanity
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Install exact JS dependencies
+        run: npm ci
+      - name: Core check
+        run: npm run check
+      - name: Runner fingerprint
+        shell: bash
+        if: runner.os != 'Windows'
+        run: |
+          mkdir -p reports/full-validation
+          node -e "require('fs').writeFileSync('reports/full-validation/runner-${{ runner.os }}.json', JSON.stringify({sha:process.env.GITHUB_SHA,ref:process.env.GITHUB_REF_NAME,runner:process.env.RUNNER_OS,arch:process.arch,node:process.version},null,2))"
+          df -h > reports/full-validation/disk-${{ runner.os }}.txt || true
+          free -h > reports/full-validation/memory-${{ runner.os }}.txt || true
+      - name: Runner fingerprint Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path reports/full-validation | Out-Null
+          node -e "require('fs').writeFileSync('reports/full-validation/runner-Windows.json', JSON.stringify({sha:process.env.GITHUB_SHA,ref:process.env.GITHUB_REF_NAME,runner:process.env.RUNNER_OS,arch:process.arch,node:process.version},null,2))"
+          Get-ComputerInfo | Select-Object WindowsProductName, WindowsVersion, OsArchitecture | Out-File reports/full-validation/windows.txt
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-validation-core-${{ runner.os }}-${{ github.sha }}
+          path: |
+            reports/full-validation/
+            dist/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  browser:
+    needs: sanity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Full locked browser regression
+        run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-validation-browser-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  torture:
+    needs: sanity
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Repeat high-risk realtime suites
+        run: >
+          npx playwright test
+          tests/browser/sync.spec.ts
+          tests/browser/performance-transport.spec.ts
+          tests/browser/distributed-torture.spec.ts
+          --repeat-each=3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: full-validation-torture-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  evidence:
+    if: always()
+    needs: [sanity, core, browser, torture]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          path: reports/full-validation/collected
+      - name: Build exact-SHA manifest
+        shell: bash
+        env:
+          SANITY_RESULT: ${{ needs.sanity.result }}
+          CORE_RESULT: ${{ needs.core.result }}
+          BROWSER_RESULT: ${{ needs.browser.result }}
+          TORTURE_RESULT: ${{ needs.torture.result }}
+        run: |
+          mkdir -p reports/full-validation
+          python - <<'PY'
+          import json, os, pathlib
+          result = {
+            "schema": "libertas.full-validation.v1",
+            "sha": os.environ["GITHUB_SHA"],
+            "ref": os.environ["GITHUB_REF_NAME"],
+            "run_id": os.environ["GITHUB_RUN_ID"],
+            "results": {
+              "sanity": os.environ["SANITY_RESULT"],
+              "core_cross_platform": os.environ["CORE_RESULT"],
+              "browser_runtime": os.environ["BROWSER_RESULT"],
+              "realtime_torture": os.environ["TORTURE_RESULT"],
+            },
+            "manual_residue_policy": "Only human listening, physical hardware, physical routing, or unavailable browser/device facts remain eligible for manual validation."
+          }
+          pathlib.Path("reports/full-validation/LATEST.json").write_text(json.dumps(result, indent=2) + "\n")
+          print(json.dumps(result, indent=2))
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: libertas0-full-validation-${{ github.sha }}
+          path: reports/full-validation/
+          retention-days: 30
