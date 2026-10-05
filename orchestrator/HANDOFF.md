@@ -4,37 +4,47 @@
 
 Work on **SouthPaw302/Libertas0 only** unless the user explicitly changes scope.
 
-All planned phases 0-11 are locked within their recorded scope. The current authority is `main`.
+All planned phases 0-11 are LOCKED within their recorded scope. Use `main` as authority.
 
-The post-lock validation fabric and simple operator test console are now integrated into main.
+The current baseline includes:
+- Validation Fabric v2;
+- Linux + Windows hosted core checks;
+- full Chromium regression;
+- repeated realtime torture;
+- exact-SHA evidence packaging;
+- the plain Libertas0 Test Console with Fullscreen.
 
-## Proven automated baseline
+## Latest proven automated baseline
 
-Validated system/product baseline SHA:
+Latest runtime-affecting validated SHA:
 
-`670887b4cc6bb4b139e2dd760c66075591c223f7`
+`f1a32adc5ba2d57d85a56a8681fa4924e4eb6726`
 
-Full Validation run: `37271806628`
+Full Validation run:
+
+`37272284570`
 
 PASS:
 - bootstrap / system / workflow sanity;
-- Linux core check;
-- Windows core check;
-- 51 unit/simulation tests;
+- Linux core;
+- Windows core;
+- **51/51 unit/simulation tests**;
 - production build;
-- full Chromium regression: **40/40 PASS**;
-- repeated high-risk realtime torture: PASS;
-- exact-SHA evidence aggregation: PASS.
+- **40/40 Chromium runtime/regression tests**;
+- **33/33 repeated high-risk realtime torture tests**;
+- evidence aggregation.
 
-Aggregate evidence artifact:
-- ID: `11328224800`
-- digest: `sha256:9e7d06223d5cd5e71e0ec3c06984af155a504196c83a72ced9d75a61eefd68bd`
+Aggregate evidence:
+- artifact ID: `11327899791`
+- digest: `sha256:668f346e27a38d89cd8b06705deb98e329d2d6de29a69e81f9b94dc8726609a5`
 
-The simple test console is part of this proven baseline. It includes the Fullscreen control and preserves the existing test/control IDs.
+The WebRTC torture harness now allows a bounded 10-second cold-start condition window. This changes test startup tolerance only; role, ordering, continuity, zero-discontinuity, and local realtime-authority assertions remain unchanged.
+
+Later commits may update documentation/evidence only; the validated runtime-affecting SHA above remains the reference until another runtime-affecting Full Validation PASS supersedes it.
 
 ## First action in a new session
 
-1. Run `python bootstrap.py`.
+1. Run `python bootstrap.py` and require `LIBERTAS BOOT: PASS`.
 2. Read `.libertas/SECOND_BRAIN.md`.
 3. Read `DEVELOPMENT_STATE.json`.
 4. Read `VALIDATION_REGISTRY.json`.
@@ -43,13 +53,13 @@ The simple test console is part of this proven baseline. It includes the Fullscr
 
 ## Automated-first proof rule
 
-Before asking the user to perform a test, exhaust the repeatable automated proof surfaces:
+Before asking the user to perform a test, exhaust:
 
 1. contract/static sanity;
 2. unit/simulation;
 3. Linux + Windows hosted core checks;
 4. full Chromium runtime/regression;
-5. focused realtime torture;
+5. focused repeated realtime torture;
 6. exact-SHA evidence aggregation.
 
 Only then create a local/physical task, and that task must contain **only** facts hosted automation cannot prove.
@@ -69,10 +79,22 @@ Valid residual gates include:
 
 The wider SouthPaw302 repository ecosystem is a pattern library, not a runtime dependency graph.
 
-Useful patterns have been normalized into Libertas0 from multiple projects: contract/workflow guards, exact-runtime evidence, Windows validation, browser smoke, workflow sanity, artifact/QC handling, and inspectable evidence concepts.
+The repository-wide scan has already normalized useful ideas from the broader stack into Libertas0: workflow/contract guards, runner runtime proof, Windows validation, browser smoke, workflow sanity, artifact/QC handling, evidence surfacing, and bootstrap/handoff discipline.
 
 Never silently import another project's authority, assumptions, or runtime.
 
+## Operator GUI
+
+Keep the Test Console simple and practical:
+- obvious Deck A/B load/play controls;
+- SYNC and mixer;
+- cue/hotcue/loop/jog;
+- recording/replay;
+- readable status;
+- Fullscreen.
+
+The GUI is an operator surface, never realtime timing authority.
+
 ## Current next action
 
-Use `main` as authority. Keep Libertas0 automated-first and keep the operator GUI plain, practical, and test-focused. Future changes must pass `Libertas0 Full Validation` before any residual physical gate is requested.
+Continue improving **Libertas0 itself**. Use `Libertas0 Full Validation` as the default proof gate. Expand long-duration/randomized bounded torture and evidence visibility where useful while preserving the locked realtime core.
