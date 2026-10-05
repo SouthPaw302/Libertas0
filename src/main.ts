@@ -572,8 +572,10 @@ async function refreshFxTempo(): Promise<{ A: number; B: number; master: number 
     deckA.requestStatus(),
     deckB.requestStatus(),
   ]);
-  const aTempo = effectiveTempoBpm(pendingGrids.get('A')!.bpm, aStatus.playbackRate);
-  const bTempo = effectiveTempoBpm(pendingGrids.get('B')!.bpm, bStatus.playbackRate);
+  const aRate = aStatus.playing ? aStatus.playbackRate : deckA.requestedRate();
+  const bRate = bStatus.playing ? bStatus.playbackRate : deckB.requestedRate();
+  const aTempo = effectiveTempoBpm(pendingGrids.get('A')!.bpm, aRate);
+  const bTempo = effectiveTempoBpm(pendingGrids.get('B')!.bpm, bRate);
   deckFxA.setTempoBpm(aTempo);
   deckFxB.setTempoBpm(bTempo);
   const masterTempo = masterFxTempoSource === 'A' ? aTempo : bTempo;
