@@ -35,7 +35,7 @@ test('SYNC holds for 180 seconds through rate sweeps, UI stalls, and explicit fo
 
   for (let step = 0; step < 18; step += 1) {
     if (step % 3 === 0) {
-      const rate = rates[(step / 3) % rates.length];
+      const rate = rates[(step / 3) % rates.length] ?? 1;
       await page.evaluate((value) => window.__libertasDeckATest.setRate(value), rate);
     }
 
@@ -97,8 +97,8 @@ test('SYNC survives repeated enable-disable cycles and leadership reversal witho
   let successfulEnables = 0;
 
   for (let cycle = 0; cycle < 24; cycle += 1) {
-    const leader = cycle % 2 === 0 ? 'A' : 'B';
-    await page.evaluate((id) => window.__libertasSyncTest.enable(id), leader);
+    const leader: 'A' | 'B' = cycle % 2 === 0 ? 'A' : 'B';
+    await page.evaluate((id: 'A' | 'B') => window.__libertasSyncTest.enable(id), leader);
     await page.waitForTimeout(900);
 
     const status = await page.evaluate(() => window.__libertasSyncTest.status());
