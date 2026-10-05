@@ -5,9 +5,9 @@
   "active_module": "distributed",
   "active_branch": "main",
   "status": "LOCKED",
-  "current_objective": "Phase 11 Distributed Libertas is complete and locked within its proven local/browser scope. Perform the full Libertas0 audit before any surgical upgrade of LibertyDJ/DJtest.",
-  "last_passing_gate": "phase11-automated-runtime-torture",
-  "last_evidence": "evidence/distributed/phase11-automated/RESULT.json",
+  "current_objective": "Libertas0-only post-Phase-11 hardening: use Validation Fabric v2 as the default automated proof path and the plain fullscreen Test Console as the operator surface while preserving every locked realtime authority boundary.",
+  "last_passing_gate": "libertas0-full-validation-v2",
+  "last_evidence": "GitHub Actions Full Validation exact-SHA evidence bundle",
   "blockers": [],
   "known_limitations": [
     "Phase 11 core does not implement production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
@@ -15,6 +15,6 @@
     "WebRTC transport encryption does not by itself define application identity/trust policy.",
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping/browser integration are proven."
   ],
-  "exact_next_action": "Audit all Libertas0 contracts, module boundaries, evidence, regressions, workflow coverage, and known limitations. Then produce a surgical DJtest upgrade map; do not modify DJtest until the audit is complete.",
+  "exact_next_action": "Continue Libertas0 only. Run Full Validation for repeatable proof before creating any local task. Extend automated torture/evidence coverage where useful; reserve manual testing for human listening, physical MIDI/controller behavior, real audio routing, and browser/device facts unavailable to hosted runners.",
   "product_code_authorized": false
 }
