@@ -204,3 +204,49 @@ Build:
 The waveform is a presentation of proven transport/Musical Clock state only. It must never become realtime timing authority.
 
 Current user direction: continue the product module stack. Do not turn validation infrastructure into the main work.
+
+
+## Module 13 — Waveform / Track View
+
+Module 13 is LOCKED on main.
+
+Locked integration commit:
+`6e4fea55d484511d141e89e0a7fecbe288e06874`
+
+Validated product SHA:
+`bb3d615be55fc171137bcf125c4cd4543cbd157e`
+
+Gate run:
+`37285346768`
+
+PASS:
+- System Contract;
+- 59/59 unit tests, including 5 waveform data tests;
+- 4/4 waveform browser tests;
+- 10/10 locked performance-transport + SYNC regressions;
+- 0 new frame discontinuities;
+- waveform rendering did not alter transport seek counts or realtime authority.
+
+Implemented:
+- per-deck full-track overview waveform;
+- per-deck 12-second scrolling/detail waveform;
+- sourceFrame-driven playhead;
+- Musical Clock beat/bar grid;
+- Cue marker;
+- Hot Cue markers;
+- active loop overlay and boundaries;
+- cached PCM min/max envelope generated once at load time before AudioWorklet buffer transfer.
+
+The waveform is presentation only. Canvas, browser layout, and requestAnimationFrame never own transport, Musical Clock, or SYNC timing.
+
+## Next product module
+
+**Module 14 — FX Engine**
+
+Build:
+- deck FX and master FX buses;
+- explicit wet/dry control;
+- beat-aware parameters derived from the proven Musical Clock;
+- deterministic routing that never owns transport or SYNC timing.
+
+Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
