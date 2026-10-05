@@ -1,0 +1,30 @@
+name: Libertas0 Test Console Gate
+
+on:
+  push:
+    branches:
+      - 'ui/**'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  test-console:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: package.json
+      - name: Install
+        run: npm install
+      - name: Typecheck, unit tests, build
+        run: npm run check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Full browser regression
+        run: npm run test:browser

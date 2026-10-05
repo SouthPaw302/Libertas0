@@ -1,0 +1,102 @@
+{
+  "schema": "libertas.validation-registry.v1",
+  "policy": {
+    "objective": "Automate every repeatable proof before requesting physical or human validation.",
+    "authority": "SYSTEM_CONTRACT.json",
+    "no_cross_repo_runtime_dependency": true,
+    "no_docker_requirement": true,
+    "manual_gate_only_for": [
+      "human listening or subjective audio quality",
+      "physical MIDI/controller behavior",
+      "real audio interface/speaker routing",
+      "browser/device-specific behavior not reproducible on hosted runners",
+      "other explicitly physical hardware facts"
+    ]
+  },
+  "profiles": [
+    {
+      "id": "contract-sanity",
+      "purpose": "Validate bootstrap, machine-readable contracts, workflow syntax hygiene, and exact repository state.",
+      "borrowed_patterns": [
+        "AIVideoEdit workflow guards/registry",
+        "antibot workflow sanity",
+        "Libertas0 system contract"
+      ]
+    },
+    {
+      "id": "core-cross-platform",
+      "purpose": "Run typecheck, unit/simulation tests, and production build on Linux and Windows.",
+      "borrowed_patterns": [
+        "LibertasDesktop Windows/native CI separation",
+        "Origo minimal CI",
+        "Aurelia core check"
+      ]
+    },
+    {
+      "id": "browser-runtime",
+      "purpose": "Run the complete Chromium runtime/regression suite and retain traces/reports.",
+      "borrowed_patterns": [
+        "Aurelia browser smoke",
+        "Libertas0 Playwright gates"
+      ]
+    },
+    {
+      "id": "realtime-torture",
+      "purpose": "Repeat the highest-risk SYNC/performance/distributed browser tests and capture continuity evidence.",
+      "borrowed_patterns": [
+        "Argus real-runtime gates",
+        "Libertas0 exact-SHA realtime evidence"
+      ]
+    },
+    {
+      "id": "artifact-evidence",
+      "purpose": "Aggregate exact-SHA manifests, runner fingerprints, reports, traces, and output artifacts into one downloadable evidence bundle.",
+      "borrowed_patterns": [
+        "Argus durable evidence reports",
+        "Fidelis artifact summaries/QC",
+        "Pegasus evidence-surface concept"
+      ]
+    },
+    {
+      "id": "physical-residue",
+      "purpose": "Create a minimal local handoff only for facts hosted runners cannot prove.",
+      "borrowed_patterns": [
+        "LibertasDesktop validation-without-Actions fallback",
+        "Libertas0 local debug bus"
+      ]
+    }
+  ],
+  "source_repo_scan": {
+    "owner": "SouthPaw302",
+    "scanned_on": "2026-10-05",
+    "repositories_scanned": [
+      "QuickFix",
+      "Pegasus-Security",
+      "Pegasus",
+      "suno-api",
+      "Argus",
+      "QuickFiX2.0",
+      "AgeTrack",
+      "AkashicRecords",
+      "LeadGenius",
+      "genius-rabbit",
+      "BradSmith",
+      "BootAI",
+      "Galactic-Terminal",
+      "SolarWindsAPP",
+      "antibot",
+      "NexusMind",
+      "Gamma-Flow",
+      "Aurelia",
+      "LibertasDesktop",
+      "Origo",
+      "GammaFlow-Web",
+      "AIVideoEdit",
+      "LumeAI",
+      "Fidelis",
+      "Alchul",
+      "Libertas0"
+    ],
+    "note": "The active LibertyDJ/DJtest line is intentionally excluded from adoption work by current user direction. Repositories without a useful validation pattern on current main were scanned but not copied merely to force reuse."
+  }
+}
