@@ -275,14 +275,26 @@
     {
       "id": "audio.monitor-cue-bus",
       "class": "audio-routing",
-      "status": "implementing",
+      "status": "proven",
       "provider": "post-channel cue taps + MediaStreamAudioDestinationNode + optional HTMLMediaElement.setSinkId",
       "contract": "docs/contracts/MONITOR_CUE_BUS.md",
-      "proven_scope": [],
+      "proven_scope": [
+        "post-channel pre-crossfader Cue A and Cue B taps",
+        "two-cue normalized summing",
+        "equal-power Cue/Master monitor blend",
+        "monitor output level",
+        "post-master/post-limiter master monitor feed",
+        "MediaStreamAudioDestinationNode monitor output",
+        "optional browser setSinkId output selection surface",
+        "cue path independence from crossfader and master volume",
+        "no transport seeks or frame discontinuities introduced"
+      ],
       "not_yet_proven": [
-        "module gate pending",
-        "physical separate-output selection depends on browser, OS, permissions, and attached hardware"
-      ]
+        "physical separate-headphone output on every browser/OS/device combination",
+        "split-cue left/right",
+        "booth output"
+      ],
+      "evidence": "evidence/monitor-cue-bus/module12-automated/RESULT.json"
     }
   ]
 }

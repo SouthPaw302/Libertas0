@@ -149,7 +149,7 @@
     },
     {
       "id": "monitor-cue-bus",
-      "state": "IMPLEMENTING",
+      "state": "LOCKED",
       "depends_on": [
         "distributed"
       ],

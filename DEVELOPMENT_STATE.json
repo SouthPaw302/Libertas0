@@ -3,11 +3,11 @@
   "project": "Libertas0",
   "phase": "monitor_cue_bus",
   "active_module": "monitor-cue-bus",
-  "active_branch": "module/monitor-cue-bus",
-  "status": "IMPLEMENTING",
-  "current_objective": "Module 12 — Monitor / Cue Bus: per-deck prelisten, equal-power Cue/Master blend, monitor level, and selectable browser audio output without changing the proven master/SYNC timing path.",
-  "last_passing_gate": "step12-closeout-full-validation",
-  "last_evidence": "evidence/verification-fabric/step12-closeout/RESULT.json",
+  "active_branch": "main",
+  "status": "LOCKED",
+  "current_objective": "Module 12 Monitor / Cue Bus is complete and locked: per-deck post-channel cue taps, equal-power Cue/Master blend, monitor level, and optional selectable browser output are integrated without changing realtime transport/SYNC authority.",
+  "last_passing_gate": "module12-monitor-cue-bus",
+  "last_evidence": "evidence/monitor-cue-bus/module12-automated/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping and browser integration are proven.",
@@ -16,6 +16,6 @@
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
     "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
   ],
-  "exact_next_action": "Finish Module 12 implementation and run its bounded unit/integration/runtime gate. If green, record evidence and lock monitor-cue-bus.",
-  "product_code_authorized": true
+  "exact_next_action": "Begin Module 13 — Waveform / Track View. Add overview and scrolling waveform presentation, playhead, beat-grid, cue/hotcue/loop markers as read-only views of the proven transport/musical-clock state. UI rendering must not become realtime authority.",
+  "product_code_authorized": false
 }

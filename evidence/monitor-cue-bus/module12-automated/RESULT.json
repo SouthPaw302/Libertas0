@@ -1,0 +1,42 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "monitor-cue-bus",
+  "gate": "module12-automated",
+  "status": "PASS",
+  "tested_sha": "e6bb463b0c053011f1f4aa81de790e0886a937b2",
+  "system_contract_run": 37281809970,
+  "module_gate_run": 37281809961,
+  "results": {
+    "bootstrap_contract": "PASS",
+    "typecheck_unit_build": "PASS",
+    "monitor_browser_tests": {
+      "passed": 3,
+      "total": 3
+    },
+    "locked_realtime_regressions": {
+      "passed": 16,
+      "total": 16
+    },
+    "cue_independent_of_master_crossfader": "PASS",
+    "cue_master_blend": "PASS",
+    "optional_sink_capability_surface": "PASS",
+    "transport_seek_delta": 0,
+    "frame_discontinuity_delta": 0
+  },
+  "artifact": {
+    "id": 11332857271,
+    "digest": "sha256:fdf71d55d6f0314b893f2a40dd3d2ceecf65a551c74dd963f4eaa093812f372b"
+  },
+  "proven_scope": [
+    "post-channel pre-crossfader cue monitoring",
+    "Cue A / Cue B",
+    "equal-power Cue/Master blend",
+    "monitor level",
+    "master feed after limiter",
+    "MediaStreamAudioDestinationNode output",
+    "optional setSinkId output selection"
+  ],
+  "residuals": [
+    "physical separate headphone routing varies by browser/OS/hardware and is not required by this module contract"
+  ]
+}
