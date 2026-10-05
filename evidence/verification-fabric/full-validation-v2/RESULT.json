@@ -3,8 +3,8 @@
   "module": "verification-fabric",
   "gate": "full-validation-v2",
   "status": "PASS",
-  "tested_sha": "670887b4cc6bb4b139e2dd760c66075591c223f7",
-  "run_id": 37271806628,
+  "tested_sha": "f1a32adc5ba2d57d85a56a8681fa4924e4eb6726",
+  "run_id": 37272284570,
   "results": {
     "system_contract": "PASS",
     "sanity": "PASS",
@@ -13,30 +13,35 @@
     "unit_simulation_tests": 51,
     "browser_runtime_tests": 40,
     "browser_runtime": "PASS",
+    "repeated_realtime_torture_tests": 33,
     "repeated_realtime_torture": "PASS",
     "evidence_aggregation": "PASS"
   },
+  "hardening_notes": [
+    "Deck A browser readiness helper now navigates before waiting for the test API.",
+    "Distributed browser test helper uses a bounded 10-second cold-start condition window; realtime assertions and zero-discontinuity requirements are unchanged."
+  ],
   "artifacts": {
     "aggregate": {
-      "id": 11328224800,
-      "digest": "sha256:9e7d06223d5cd5e71e0ec3c06984af155a504196c83a72ced9d75a61eefd68bd"
+      "id": 11327899791,
+      "digest": "sha256:668f346e27a38d89cd8b06705deb98e329d2d6de29a69e81f9b94dc8726609a5"
     },
     "browser": {
-      "id": 11328930407,
-      "digest": "sha256:08d9385d8463d194c8a9fb7858c70112b72b237c72f853ba9aaeb31f43ea14ca"
+      "id": 11329585005,
+      "digest": "sha256:13928156bea69fecfb6cb939d753f56e0a6b115236d56fe067df9c24f78697bf"
     },
     "torture": {
-      "id": 11328504064,
-      "digest": "sha256:490934f71d7cdf4897966d27b98e005e2f9c4c0ea6c91170d78b57830c2a0eeb"
+      "id": 11328649556,
+      "digest": "sha256:49c97857b5444cf5b85cfadc2a2655ba498072c6e851e8477bf1a0747dfaace3"
     },
     "core_windows": {
-      "id": 11328860526,
-      "digest": "sha256:75ec73cc89cbb6bffa5cc19c313e0ae315039ef84adaaccdeed717a5c4b11051"
+      "id": 11329065327,
+      "digest": "sha256:62dac490d3f99a5cc8691cc63a8173491891fbf7b3a8a08bcb5b9d176629147c"
     },
     "core_linux": {
-      "id": 11328568353,
-      "digest": "sha256:19d981192cb9c5d794e218880ef63c4cdea80664ec00e9e9329cff08ec5a1f97"
+      "id": 11328955938,
+      "digest": "sha256:ee2d411cd81a179695a942bad766af68c9bb99097ca977fa28aaf8000e8c8993"
     }
   },
-  "manual_residue_policy": "Only human listening, physical MIDI/controller, real audio routing, unavailable browser/device-specific behavior, or other genuinely physical facts remain eligible for manual validation."
+  "manual_residue_policy": "Only human listening, physical MIDI/controller behavior, real audio routing, unavailable browser/device-specific behavior, or other genuinely physical facts remain eligible for manual validation."
 }
