@@ -161,7 +161,7 @@
     },
     {
       "id": "waveform-track-view",
-      "state": "IMPLEMENTING",
+      "state": "LOCKED",
       "depends_on": [
         "monitor-cue-bus"
       ],

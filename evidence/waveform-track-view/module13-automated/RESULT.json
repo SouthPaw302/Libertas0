@@ -1,0 +1,41 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "waveform-track-view",
+  "gate": "module13-automated",
+  "status": "PASS",
+  "tested_sha": "bb3d615be55fc171137bcf125c4cd4543cbd157e",
+  "system_contract_run": 37285346756,
+  "module_gate_run": 37285346768,
+  "results": {
+    "system_contract": "PASS",
+    "typecheck_unit_build": "PASS",
+    "unit_tests": {
+      "passed": 59,
+      "total": 59,
+      "waveform_tests": 5
+    },
+    "waveform_browser_tests": {
+      "passed": 4,
+      "total": 4
+    },
+    "locked_transport_sync_regressions": {
+      "passed": 10,
+      "total": 10
+    },
+    "new_frame_discontinuities": 0,
+    "waveform_rendering_changes_transport": false
+  },
+  "artifact": {
+    "id": 11333524322,
+    "digest": "sha256:796a5c47325ef38b6624204b8cf90419427448b4fb1535f639e33b598048ef74"
+  },
+  "proven_scope": [
+    "overview waveform",
+    "scrolling 12-second detail waveform",
+    "source-frame playhead",
+    "beat/bar grid projection",
+    "cue/hotcue markers",
+    "loop overlay",
+    "presentation-only rendering"
+  ]
+}

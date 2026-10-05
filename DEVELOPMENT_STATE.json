@@ -3,11 +3,11 @@
   "project": "Libertas0",
   "phase": "waveform_track_view",
   "active_module": "waveform-track-view",
-  "active_branch": "module/waveform-track-view",
-  "status": "IMPLEMENTING",
-  "current_objective": "Module 13 — Waveform / Track View: add overview and scrolling waveform views with playhead, beat-grid, cue/hotcue, and loop markers as read-only presentation of the proven deck and Musical Clock state.",
-  "last_passing_gate": "module12-monitor-cue-bus",
-  "last_evidence": "evidence/monitor-cue-bus/module12-automated/RESULT.json",
+  "active_branch": "main",
+  "status": "LOCKED",
+  "current_objective": "Module 13 Waveform / Track View is complete and locked: full-track overview, scrolling 12-second detail waveform, source-frame playhead, Musical Clock beat/bar grid, Cue/Hot Cue markers, and loop overlays are integrated as read-only presentation.",
+  "last_passing_gate": "module13-waveform-track-view",
+  "last_evidence": "evidence/waveform-track-view/module13-automated/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping and browser integration are proven.",
@@ -16,6 +16,6 @@
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
     "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
   ],
-  "exact_next_action": "Run the bounded Module 13 unit/integration/runtime gate. If green, record evidence and lock waveform-track-view.",
-  "product_code_authorized": true
+  "exact_next_action": "Begin Module 14 — FX Engine. Add deck/master effects with explicit wet/dry and beat-aware parameters driven from the proven Musical Clock, while preserving the realtime authority boundary.",
+  "product_code_authorized": false
 }
