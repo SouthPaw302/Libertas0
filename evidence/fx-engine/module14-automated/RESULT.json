@@ -1,0 +1,43 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "fx-engine",
+  "gate": "module14-automated",
+  "status": "PASS",
+  "tested_sha": "3cf60ac80bf035a7244dec7068b53d963a8de244",
+  "system_contract_run": 37299823074,
+  "module_gate_run": 37299823133,
+  "results": {
+    "system_contract": "PASS",
+    "typecheck_unit_build": "PASS",
+    "unit_tests": {
+      "passed": 63,
+      "total": 63,
+      "fx_tests": 4
+    },
+    "fx_browser_tests": {
+      "passed": 5,
+      "total": 5
+    },
+    "locked_regressions": {
+      "passed": 21,
+      "total": 21
+    },
+    "blocked_main_thread_ms": 600,
+    "new_deck_discontinuities": 0,
+    "new_mixer_discontinuities": 0,
+    "post_fx_master_recording": "PASS"
+  },
+  "artifact": {
+    "id": 11341185950,
+    "digest": "sha256:a11ff716dfa713d123a8eec263ec119433ffeed27a644c288a6bacafeeec84c7"
+  },
+  "proven_scope": [
+    "deck A/B FX routing",
+    "master FX routing",
+    "equal-power wet/dry",
+    "beat-aware delay timing",
+    "feedback and tone",
+    "effective-tempo tracking",
+    "post-FX recording"
+  ]
+}

@@ -324,13 +324,29 @@
     {
       "id": "audio.fx-engine",
       "class": "audio-dsp-routing",
-      "status": "implementing",
+      "status": "proven",
       "provider": "Web Audio equal-power dry/wet + beat-derived DelayNode + filtered feedback",
       "contract": "docs/contracts/FX_ENGINE.md",
-      "proven_scope": [],
+      "proven_scope": [
+        "Deck A post-channel beat FX bus",
+        "Deck B post-channel beat FX bus",
+        "final Master FX bus after mixer limiter",
+        "equal-power wet/dry",
+        "beat delay fractions from 1/8 through 4 beats",
+        "effective tempo derived from Musical Clock BPM and deck playback rate",
+        "bounded feedback 0..0.85",
+        "feedback tone filtering",
+        "master tempo source selectable from Deck A or B",
+        "master recording taps final Master FX output",
+        "active FX survives a 600 ms main-thread stall without deck/mixer discontinuities"
+      ],
       "not_yet_proven": [
-        "module gate pending"
-      ]
+        "arbitrary multi-slot FX chains",
+        "convolution reverb",
+        "third-party plugin hosting",
+        "native hardware DSP"
+      ],
+      "evidence": "evidence/fx-engine/module14-automated/RESULT.json"
     }
   ]
 }
