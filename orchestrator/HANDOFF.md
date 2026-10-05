@@ -250,3 +250,54 @@ Build:
 - deterministic routing that never owns transport or SYNC timing.
 
 Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
+
+
+## Module 14 — FX Engine
+
+Module 14 is LOCKED on main.
+
+Locked integration commit:
+`b057f2ae5fca0e44ccc3a8cf64c8b540c994cee7`
+
+Validated product SHA:
+`3cf60ac80bf035a7244dec7068b53d963a8de244`
+
+Gate run:
+`37299823133`
+
+PASS:
+- System Contract;
+- 63/63 unit tests, including 4 FX math tests;
+- 5/5 FX browser tests;
+- 21/21 locked mixer/recording/performance/SYNC regressions;
+- active Deck + Master FX survived a 600 ms main-thread stall;
+- 0 new deck/mixer discontinuities;
+- final-master recording remained valid through Master FX.
+
+Implemented:
+- Deck A FX bus;
+- Deck B FX bus;
+- final Master FX bus;
+- equal-power wet/dry;
+- beat fractions from 1/8 through 4 beats;
+- effective tempo = Musical Clock BPM × actual/requested playback rate;
+- bounded feedback;
+- feedback tone filtering;
+- selectable Deck A/B tempo source for Master FX;
+- Master Recording moved to the final Master FX output.
+
+FX never owns transport, Musical Clock phase, SYNC correction, or performance execution timing.
+
+## Next product module
+
+**Module 15 — Sampler / Performance Pads**
+
+Build:
+- one-shot sample slots;
+- loop sample slots;
+- quantized trigger scheduling from the proven Musical Clock;
+- per-pad gain/state;
+- sample-bank loading/persistence;
+- realtime-safe triggering that does not move deck/SYNC authority.
+
+Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
