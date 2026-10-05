@@ -1,5 +1,6 @@
 import { BrowserAudioRuntime } from '../audio/BrowserAudioRuntime';
 import { DecodeAudioDataProvider, type DecodedPcm, type PcmDecoder } from './PcmDecoder';
+import { buildWaveformEnvelope, type WaveformEnvelope } from '../waveform/WaveformData';
 
 export interface DeckProcessorStatus {
   type: 'response';
@@ -74,6 +75,7 @@ export class DeckController {
   private requestSequence = 1;
   private readonly pending = new Map<number, PendingRequest>();
   private readonly decoder: PcmDecoder;
+  private waveformEnvelope: WaveformEnvelope | null = null;
 
   constructor(
     private readonly runtime: BrowserAudioRuntime,
@@ -279,6 +281,10 @@ export class DeckController {
     return this.request('status', {}, [], timeoutMs);
   }
 
+  waveform(): WaveformEnvelope | null {
+    return this.waveformEnvelope;
+  }
+
   measureRms(): number {
     const analyser = this.requireAnalyser();
     const data = new Float32Array(analyser.fftSize);
@@ -298,9 +304,16 @@ export class DeckController {
     this.analyser?.disconnect();
     this.node = null;
     this.analyser = null;
+    this.waveformEnvelope = null;
   }
 
   private async loadDecodedPcm(pcm: DecodedPcm): Promise<DeckStatus> {
+    this.waveformEnvelope = buildWaveformEnvelope(
+      pcm.channels,
+      pcm.frameCount,
+      pcm.sampleRate,
+      2048,
+    );
     const channelBuffers = pcm.channels.map((channel) => channel.buffer as ArrayBuffer);
     return this.request(
       'load',
