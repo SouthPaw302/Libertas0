@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
 async function openDeckA(page: Page): Promise<void> {
-  await openDeckA(page);
+  await page.goto('/');
   await page.waitForFunction(() => Boolean(window.__libertasDeckATest));
 }
 
