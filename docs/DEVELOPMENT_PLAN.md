@@ -13,6 +13,7 @@
 9. Intelligence
 10. Library/MIDI/recording/automation
 11. Distributed system
+12. Monitor / Cue Bus
 
 ## Rule
 Do not move upward because a schedule says so. Move upward only when the current module's evidence gate passes.

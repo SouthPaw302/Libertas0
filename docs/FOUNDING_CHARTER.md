@@ -74,6 +74,7 @@ Flow:
 9. Track intelligence
 10. Library/MIDI/recording/automation
 11. Distributed Libertas
+12. Monitor / Cue Bus
 
 ## Test hierarchy
 T1 unit -> T2 simulation -> T3 integration -> T4 runtime -> T5 physical/local.

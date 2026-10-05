@@ -271,6 +271,18 @@
       "provider": "capability-aware least-inflight worker routing with bounded retry",
       "contract": "docs/contracts/DISTRIBUTED.md",
       "evidence": "evidence/distributed/phase11-automated/RESULT.json"
+    },
+    {
+      "id": "audio.monitor-cue-bus",
+      "class": "audio-routing",
+      "status": "implementing",
+      "provider": "post-channel cue taps + MediaStreamAudioDestinationNode + optional HTMLMediaElement.setSinkId",
+      "contract": "docs/contracts/MONITOR_CUE_BUS.md",
+      "proven_scope": [],
+      "not_yet_proven": [
+        "module gate pending",
+        "physical separate-output selection depends on browser, OS, permissions, and attached hardware"
+      ]
     }
   ]
 }
