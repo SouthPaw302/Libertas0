@@ -153,6 +153,14 @@ export class ChannelStripController {
     };
   }
 
+  connectOutput(target: AudioNode, input = 0): void {
+    this.analyser.connect(target, 0, input);
+  }
+
+  disconnectOutput(target: AudioNode): void {
+    this.analyser.disconnect(target);
+  }
+
   measureRms(): number {
     const data = new Float32Array(this.analyser.fftSize);
     this.analyser.getFloatTimeDomainData(data);
