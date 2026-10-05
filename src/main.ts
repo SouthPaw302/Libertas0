@@ -298,6 +298,27 @@ const pendingGrids = new Map<'A' | 'B', BeatGrid>([
   ['B', { bpm: 120, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 }],
 ]);
 
+const fullscreenToggle = document.querySelector<HTMLButtonElement>('#fullscreen-toggle');
+const fullscreenState = document.querySelector<HTMLSpanElement>('#fullscreen-state');
+
+function renderFullscreenState(): void {
+  const active = document.fullscreenElement != null;
+  if (fullscreenToggle) fullscreenToggle.textContent = active ? 'Exit Fullscreen' : 'Fullscreen';
+  if (fullscreenState) fullscreenState.textContent = active ? 'Fullscreen' : 'Windowed';
+}
+
+fullscreenToggle?.addEventListener('click', () => {
+  void (document.fullscreenElement
+    ? document.exitFullscreen()
+    : document.documentElement.requestFullscreen()
+  ).catch((error: unknown) => {
+    if (fullscreenState) fullscreenState.textContent = `Fullscreen unavailable: ${String(error)}`;
+  });
+});
+
+document.addEventListener('fullscreenchange', renderFullscreenState);
+renderFullscreenState();
+
 const kernelStatusElement = document.querySelector<HTMLPreElement>('#status');
 const activateButton = document.querySelector<HTMLButtonElement>('#activate');
 const stopButton = document.querySelector<HTMLButtonElement>('#stop');
