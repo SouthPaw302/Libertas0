@@ -64,6 +64,7 @@
     "intelligence",
     "library_midi_recording_automation",
     "distributed",
-    "monitor_cue_bus"
+    "monitor_cue_bus",
+    "waveform_track_view"
   ]
 }

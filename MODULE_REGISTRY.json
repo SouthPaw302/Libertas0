@@ -158,6 +158,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "waveform-track-view",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "monitor-cue-bus"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

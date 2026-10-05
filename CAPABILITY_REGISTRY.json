@@ -295,6 +295,17 @@
         "booth output"
       ],
       "evidence": "evidence/monitor-cue-bus/module12-automated/RESULT.json"
+    },
+    {
+      "id": "ui.waveform-track-view",
+      "class": "presentation",
+      "status": "implementing",
+      "provider": "PCM peak envelope + Canvas2D read-only deck/Musical Clock projection",
+      "contract": "docs/contracts/WAVEFORM_TRACK_VIEW.md",
+      "proven_scope": [],
+      "not_yet_proven": [
+        "module gate pending"
+      ]
     }
   ]
 }
