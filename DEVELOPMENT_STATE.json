@@ -3,18 +3,18 @@
   "project": "Libertas0",
   "phase": "distributed",
   "active_module": "distributed",
-  "active_branch": "module/distributed",
-  "status": "AUTOMATED_TEST",
-  "current_objective": "Complete Phase 11 worker/session torture: multi-worker capability routing, failure retry, repeated WebRTC session churn, and locked-core continuity. If green, record final evidence and promote Distributed Libertas within its proven scope.",
-  "last_passing_gate": "phase10-composite-local-closeout",
-  "last_evidence": "evidence/phase10/local/RESULT.json",
+  "active_branch": "main",
+  "status": "LOCKED",
+  "current_objective": "Phase 11 Distributed Libertas is complete and locked within its proven local/browser scope. Perform the full Libertas0 audit before any surgical upgrade of LibertyDJ/DJtest.",
+  "last_passing_gate": "phase11-automated-runtime-torture",
+  "last_evidence": "evidence/distributed/phase11-automated/RESULT.json",
   "blockers": [],
   "known_limitations": [
-    "Phase 11 core does not yet implement production rendezvous/authentication, reconnect/partition recovery, TURN/WAN validation, multi-node worker scheduling, or distributed file replication.",
+    "Phase 11 core does not implement production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
     "Networking is forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or loop/cue execution timing.",
     "WebRTC transport encryption does not by itself define application identity/trust policy.",
-    "Remote render/reconstruction/agent work is protocol-capable but no production provider is claimed until its own worker/backend evidence exists."
+    "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping/browser integration are proven."
   ],
-  "exact_next_action": "Run Slice C unit/runtime gate. If all Phase 11 integration/runtime gates pass, mark distributed capabilities proven, record limitations, lock Phase 11, promote to main, then perform the full Libertas0 audit before any DJtest surgery.",
-  "product_code_authorized": true
+  "exact_next_action": "Audit all Libertas0 contracts, module boundaries, evidence, regressions, workflow coverage, and known limitations. Then produce a surgical DJtest upgrade map; do not modify DJtest until the audit is complete.",
+  "product_code_authorized": false
 }
