@@ -106,6 +106,7 @@
         <a href="#decks">Decks</a>
         <a href="#sync-panel">SYNC</a>
         <a href="#mixer-panel">Mixer</a>
+        <a href="#monitor-panel">Monitor / Cue</a>
         <a href="#recording-panel">Library / Recording</a>
         <a href="#intelligence-panel">Analysis</a>
         <a href="#transport-panel">Cue / Loop / Jog</a>
@@ -332,6 +333,26 @@
       </div>
       <p>Signal path: channel trim → 3-band EQ → bipolar filter → equal-power crossfader → master → sample-peak limiter → safety clamp.</p>
       <pre id="mixer-status">Mixer / DSP ready</pre>
+    </fieldset>
+
+    <fieldset id="monitor-panel">
+      <legend>Monitor / Cue Bus</legend>
+      <p class="section-note">Headphone/prelisten path. Cue taps are post-EQ/filter but pre-crossfader/master. The monitor bus is separate from the master output.</p>
+      <div class="row">
+        <label><input id="monitor-cue-a" type="checkbox" /> Cue A</label>
+        <label><input id="monitor-cue-b" type="checkbox" /> Cue B</label>
+        <label>Cue ←→ Master <input id="monitor-blend" type="range" min="0" max="1" step="0.01" value="0" /></label>
+        <label>Monitor level <input id="monitor-level" type="range" min="0" max="1" step="0.01" value="0.8" /></label>
+      </div>
+      <div class="row">
+        <button id="monitor-enable" type="button">Enable Monitor Output</button>
+        <button id="monitor-disable" type="button">Disable Monitor Output</button>
+        <button id="monitor-refresh-outputs" type="button">Refresh Outputs</button>
+        <select id="monitor-output" aria-label="Monitor output device"></select>
+        <button id="monitor-status-button" type="button">Refresh Monitor Status</button>
+      </div>
+      <p class="section-note">Separate physical output selection uses the browser audio-output API when available. Unsupported browsers still expose the monitor graph and metering.</p>
+      <pre id="monitor-status">Monitor / cue bus ready</pre>
     </fieldset>
 
     <details>

@@ -10,6 +10,7 @@ import type { DeckController, DeckStatus } from './deck/DeckController';
 import { MixerController, type MixerStatus } from './mixer/MixerController';
 import { ChannelStripController, type ChannelStripStatus } from './mixer/ChannelStripController';
 import type { EqBand } from './mixer/MixerDspMath';
+import { MonitorCueController, type MonitorCueStatus, type MonitorOutputDevice } from './monitor/MonitorCueController';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
 import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
@@ -65,6 +66,17 @@ interface LibertasMixerTestApi {
   channelStatus(deck: 'A' | 'B'): ChannelStripStatus;
   channelRms(deck: 'A' | 'B'): number;
   rms(): number;
+}
+
+interface LibertasMonitorCueTestApi {
+  setCue(deck: 'A' | 'B', enabled: boolean): void;
+  setBlend(position: number): void;
+  setLevel(level: number): void;
+  enableOutput(): Promise<MonitorCueStatus>;
+  disableOutput(): MonitorCueStatus;
+  status(): MonitorCueStatus;
+  listOutputs(): Promise<MonitorOutputDevice[]>;
+  setOutputDevice(deviceId: string): Promise<MonitorCueStatus>;
 }
 
 interface MusicalClockSnapshot {
@@ -187,6 +199,7 @@ declare global {
     __libertasDeckATest: LibertasDeckTestApi;
     __libertasDeckBTest: LibertasDeckTestApi;
     __libertasMixerTest: LibertasMixerTestApi;
+    __libertasMonitorCueTest: LibertasMonitorCueTestApi;
     __libertasDualDeckTest: LibertasDualDeckTestApi;
     __libertasMusicalClockTest: LibertasMusicalClockTestApi;
     __libertasSyncTest: LibertasSyncTestApi;
@@ -208,6 +221,10 @@ await mixer.initialize();
 
 const channelA = new ChannelStripController(runtime, 'A', { node: mixer.inputNode, input: 0 });
 const channelB = new ChannelStripController(runtime, 'B', { node: mixer.inputNode, input: 1 });
+const monitor = new MonitorCueController(runtime);
+channelA.connectOutput(monitor.cueAInput);
+channelB.connectOutput(monitor.cueBInput);
+mixer.connectOutput(monitor.masterInput);
 
 const deckA = new DeckAController(runtime, undefined, { node: channelA.inputNode, input: 0 });
 const deckB = new DeckBController(runtime, undefined, { node: channelB.inputNode, input: 0 });
@@ -337,6 +354,16 @@ const mixerBLow = document.querySelector<HTMLInputElement>('#mixer-b-low');
 const mixerBMid = document.querySelector<HTMLInputElement>('#mixer-b-mid');
 const mixerBHigh = document.querySelector<HTMLInputElement>('#mixer-b-high');
 const mixerBFilter = document.querySelector<HTMLInputElement>('#mixer-b-filter');
+const monitorCueA = document.querySelector<HTMLInputElement>('#monitor-cue-a');
+const monitorCueB = document.querySelector<HTMLInputElement>('#monitor-cue-b');
+const monitorBlend = document.querySelector<HTMLInputElement>('#monitor-blend');
+const monitorLevel = document.querySelector<HTMLInputElement>('#monitor-level');
+const monitorEnable = document.querySelector<HTMLButtonElement>('#monitor-enable');
+const monitorDisable = document.querySelector<HTMLButtonElement>('#monitor-disable');
+const monitorRefreshOutputs = document.querySelector<HTMLButtonElement>('#monitor-refresh-outputs');
+const monitorOutput = document.querySelector<HTMLSelectElement>('#monitor-output');
+const monitorStatusButton = document.querySelector<HTMLButtonElement>('#monitor-status-button');
+const monitorStatusElement = document.querySelector<HTMLPreElement>('#monitor-status');
 const clockRefreshButton = document.querySelector<HTMLButtonElement>('#clock-refresh');
 const syncAToBButton = document.querySelector<HTMLButtonElement>('#sync-a-to-b');
 const syncBToAButton = document.querySelector<HTMLButtonElement>('#sync-b-to-a');
@@ -753,6 +780,59 @@ mixerStatusButton?.addEventListener('click', () => {
     .catch((error: unknown) => render(mixerStatusElement, { error: String(error) }));
 });
 
+function renderMonitorStatus(status = monitor.status()): void {
+  render(monitorStatusElement, status);
+}
+
+async function refreshMonitorOutputsUi(): Promise<void> {
+  const outputs = await monitor.listOutputDevices();
+  if (monitorOutput) {
+    const current = monitorOutput.value;
+    monitorOutput.replaceChildren(...outputs.map((device) => {
+      const option = document.createElement('option');
+      option.value = device.deviceId;
+      option.textContent = device.label;
+      return option;
+    }));
+    if (outputs.some((device) => device.deviceId === current)) monitorOutput.value = current;
+  }
+  renderMonitorStatus();
+}
+
+monitorCueA?.addEventListener('change', () => {
+  monitor.setCue('A', monitorCueA.checked);
+  renderMonitorStatus();
+});
+monitorCueB?.addEventListener('change', () => {
+  monitor.setCue('B', monitorCueB.checked);
+  renderMonitorStatus();
+});
+monitorBlend?.addEventListener('input', () => {
+  monitor.setBlend(Number(monitorBlend.value));
+  renderMonitorStatus();
+});
+monitorLevel?.addEventListener('input', () => {
+  monitor.setLevel(Number(monitorLevel.value));
+  renderMonitorStatus();
+});
+monitorEnable?.addEventListener('click', () => {
+  void monitor.enableOutput()
+    .then(renderMonitorStatus)
+    .catch((error: unknown) => render(monitorStatusElement, { error: String(error) }));
+});
+monitorDisable?.addEventListener('click', () => renderMonitorStatus(monitor.disableOutput()));
+monitorRefreshOutputs?.addEventListener('click', () => {
+  void refreshMonitorOutputsUi()
+    .catch((error: unknown) => render(monitorStatusElement, { error: String(error) }));
+});
+monitorOutput?.addEventListener('change', () => {
+  if (!monitorOutput.value) return;
+  void monitor.setOutputDevice(monitorOutput.value)
+    .then(renderMonitorStatus)
+    .catch((error: unknown) => render(monitorStatusElement, { error: String(error) }));
+});
+monitorStatusButton?.addEventListener('click', () => renderMonitorStatus());
+
 async function refreshLibraryUi(): Promise<void> {
   const tracks = await library.list();
   if (librarySelect) {
@@ -899,6 +979,7 @@ window.__libertasKernelTest = {
   status: () => kernel.requestStatus(),
   close: async () => {
     await kernel.close();
+    monitor.close();
     await deckA.close();
     await deckB.close();
     channelA.close();
@@ -928,6 +1009,17 @@ window.__libertasMixerTest = {
   channelStatus: (deck) => channelStrip(deck).status(),
   channelRms: (deck) => channelStrip(deck).measureRms(),
   rms: () => mixer.measureRms(),
+};
+
+window.__libertasMonitorCueTest = {
+  setCue: (deck, enabled) => monitor.setCue(deck, enabled),
+  setBlend: (position) => monitor.setBlend(position),
+  setLevel: (level) => monitor.setLevel(level),
+  enableOutput: () => monitor.enableOutput(),
+  disableOutput: () => monitor.disableOutput(),
+  status: () => monitor.status(),
+  listOutputs: () => monitor.listOutputDevices(),
+  setOutputDevice: (deviceId) => monitor.setOutputDevice(deviceId),
 };
 
 window.__libertasMusicalClockTest = {
@@ -1102,6 +1194,7 @@ render(mixerStatusElement, {
   phase: 'Mixer / DSP',
   state: 'channel strips + equal-power crossfader + sample-peak limiter ready',
 });
+renderMonitorStatus();
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
 
 function waitForCondition(predicate: () => boolean, timeoutMs = 20_000): Promise<void> {
