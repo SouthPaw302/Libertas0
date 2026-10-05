@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "post_lock_hardening",
-  "active_module": "validation-fabric-v2",
+  "phase": "distributed",
+  "active_module": "distributed",
   "active_branch": "main",
   "status": "LOCKED",
-  "current_objective": "Operate and evolve Libertas0 from the locked Phase 0-11 baseline using the automated-first validation fabric and the simple operator test console.",
+  "current_objective": "All planned Phase 0-11 modules remain locked. Operate and evolve Libertas0 using the automated-first validation fabric and the simple operator test console.",
   "last_passing_gate": "full-validation-v2",
   "last_evidence": "evidence/verification-fabric/full-validation-v2/RESULT.json",
   "blockers": [],
@@ -15,6 +15,6 @@
     "Phase 11 does not claim production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing."
   ],
-  "exact_next_action": "Use main as authority. For any future Libertas0 change, run Libertas0 Full Validation first and reserve local/manual testing only for the residual facts automation cannot prove. Keep the operator GUI simple and test-focused.",
+  "exact_next_action": "Use main as authority. For future Libertas0 changes, exhaust Full Validation before requesting only the residual human/physical facts automation cannot prove. Keep the operator GUI simple and test-focused.",
   "product_code_authorized": false
 }
