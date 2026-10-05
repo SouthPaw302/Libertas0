@@ -12,6 +12,8 @@ import { ChannelStripController, type ChannelStripStatus } from './mixer/Channel
 import type { EqBand } from './mixer/MixerDspMath';
 import { MonitorCueController, type MonitorCueStatus, type MonitorOutputDevice } from './monitor/MonitorCueController';
 import { WaveformTrackView, type WaveformRenderSnapshot } from './waveform/WaveformTrackView';
+import { FxUnitController, type FxUnitStatus } from './fx/FxUnitController';
+import { effectiveTempoBpm } from './fx/FxMath';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
 import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
@@ -223,16 +225,26 @@ declare global {
 }
 
 const runtime = new BrowserAudioRuntime();
+await runtime.initialize();
 const kernel = new BrowserAudioKernel(runtime);
-const mixer = new MixerController(runtime);
+
+const masterFx = new FxUnitController(runtime, 'master');
+masterFx.connectOutput(runtime.context.destination);
+
+const mixer = new MixerController(runtime, { node: masterFx.inputNode, input: 0 });
 await mixer.initialize();
 
-const channelA = new ChannelStripController(runtime, 'A', { node: mixer.inputNode, input: 0 });
-const channelB = new ChannelStripController(runtime, 'B', { node: mixer.inputNode, input: 1 });
+const deckFxA = new FxUnitController(runtime, 'deck-a');
+const deckFxB = new FxUnitController(runtime, 'deck-b');
+deckFxA.connectOutput(mixer.inputNode, 0);
+deckFxB.connectOutput(mixer.inputNode, 1);
+
+const channelA = new ChannelStripController(runtime, 'A', { node: deckFxA.inputNode, input: 0 });
+const channelB = new ChannelStripController(runtime, 'B', { node: deckFxB.inputNode, input: 0 });
 const monitor = new MonitorCueController(runtime);
 channelA.connectOutput(monitor.cueAInput);
 channelB.connectOutput(monitor.cueBInput);
-mixer.connectOutput(monitor.masterInput);
+masterFx.connectOutput(monitor.masterInput);
 
 const deckA = new DeckAController(runtime, undefined, { node: channelA.inputNode, input: 0 });
 const deckB = new DeckBController(runtime, undefined, { node: channelB.inputNode, input: 0 });
@@ -242,7 +254,7 @@ const performanceB = new PerformanceTransportController(deckB);
 const intelligence = new TrackIntelligenceController(runtime);
 const library = new TrackLibrary();
 const midiEngine = new MidiMappingEngine();
-const recording = new MasterRecordingController(runtime, mixer);
+const recording = new MasterRecordingController(runtime, masterFx);
 const automation = new AutomationController(runtime.context);
 
 function applyMidiAction(action: MidiAction): void {

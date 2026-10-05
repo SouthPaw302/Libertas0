@@ -29,6 +29,11 @@ export interface MixerProcessorStatus {
   maxLimiterGainReductionDb: number;
 }
 
+export interface MixerOutputTarget {
+  node: AudioNode;
+  input?: number;
+}
+
 export interface MixerStatus extends MixerProcessorStatus {
   contextState: AudioContextState;
   baseLatency: number | null;
@@ -47,7 +52,10 @@ export class MixerController {
   private requestSequence = 1;
   private readonly pending = new Map<number, PendingRequest>();
 
-  constructor(private readonly runtime: BrowserAudioRuntime) {}
+  constructor(
+    private readonly runtime: BrowserAudioRuntime,
+    private readonly outputTarget?: MixerOutputTarget,
+  ) {}
 
   async initialize(): Promise<void> {
     if (this.node) return;
@@ -84,7 +92,11 @@ export class MixerController {
     };
 
     node.connect(analyser);
-    analyser.connect(context.destination);
+    if (this.outputTarget) {
+      analyser.connect(this.outputTarget.node, 0, this.outputTarget.input ?? 0);
+    } else {
+      analyser.connect(context.destination);
+    }
     this.node = node;
     this.analyser = analyser;
   }

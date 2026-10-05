@@ -1,5 +1,5 @@
 import { BrowserAudioRuntime } from '../audio/BrowserAudioRuntime';
-import { MixerController } from '../mixer/MixerController';
+import type { AudioOutputConnector } from '../fx/FxUnitController';
 
 export interface RecordingStatus {
   supported: boolean;
@@ -22,7 +22,7 @@ export class MasterRecordingController {
 
   constructor(
     private readonly runtime: BrowserAudioRuntime,
-    private readonly mixer: MixerController,
+    private readonly source: AudioOutputConnector,
   ) {}
 
   supported(): boolean {
@@ -38,7 +38,7 @@ export class MasterRecordingController {
     const context = this.runtime.context;
     if (!this.destination) {
       this.destination = context.createMediaStreamDestination();
-      this.mixer.connectOutput(this.destination);
+      this.source.connectOutput(this.destination);
     }
 
     const mimeType = this.chooseMimeType();
@@ -102,7 +102,7 @@ export class MasterRecordingController {
 
   close(): void {
     if (this.recorder?.state === 'recording') this.recorder.stop();
-    if (this.destination) this.mixer.disconnectOutput(this.destination);
+    if (this.destination) this.source.disconnectOutput(this.destination);
     this.destination?.disconnect();
     this.destination = null;
     this.recorder = null;
