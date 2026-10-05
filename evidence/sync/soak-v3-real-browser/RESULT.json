@@ -1,0 +1,73 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "sync",
+  "gate": "sync-soak-v3-real-browser",
+  "status": "PASS",
+  "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
+  "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8",
+  "local_report_commit": "aea8a2e21776ddd6429b94d8861aa3ad240bd3ec",
+  "hosted_soak": {
+    "run_id": 37273234870,
+    "status": "PASS",
+    "hold_seconds": 180,
+    "max_phase_error_beats": 0.000942996918723793,
+    "hidden_seek_delta": 0,
+    "discontinuity_delta": 0,
+    "performance_jump_delta": 3,
+    "leadership_cycles": 24
+  },
+  "real_browser": {
+    "browser": "Playwright Chromium real-browser harness",
+    "hold_seconds": 620,
+    "telemetry_samples": 36,
+    "source_A": {
+      "name": "Midnight Tribal Pulse (Remastered).wav",
+      "sha256": "742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F",
+      "bpm": 125.0294190650229,
+      "first_beat_frame": 195072
+    },
+    "source_B": {
+      "name": "Tribal House  (Remastered).wav",
+      "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D",
+      "bpm": 125.84789589523987,
+      "first_beat_frame": 512
+    },
+    "events": [
+      "leader rates 0.97, 1.03, 0.95, 1.05",
+      "follower B Hot Cue",
+      "follower B +50 ms jog",
+      "four-beat follower loop",
+      "leadership reversal A->B",
+      "new leader B rate 1.02",
+      "reversed follower A -50 ms jog"
+    ],
+    "hidden_seek_delta_A": 0,
+    "hidden_seek_delta_B": 0,
+    "frame_discontinuity_delta_A": 0,
+    "frame_discontinuity_delta_B": 0,
+    "final_leader": "B",
+    "final_follower": "A",
+    "final_locked": true,
+    "final_tracking": true,
+    "final_phase_error_beats": 0.0009409247661267273,
+    "console_errors": 0
+  },
+  "recording": {
+    "drive_id": "13_TtmO0wnsg91hD6orl6ftpQPl3rSCAQ",
+    "sha256": "45F26F28D62204A28124E0166EC42D108D5F2AF0F10B89AE887177F00FE92EF9",
+    "bytes": 10033238,
+    "mime_type": "audio/webm;codecs=opus",
+    "sample_rate_hz": 48000,
+    "channels": 2,
+    "controller_stop_duration_seconds": 622.52,
+    "encoded_packet_span_seconds": 620.457,
+    "mean_volume_db": -17.5,
+    "max_volume_db": -2.9,
+    "integrated_loudness_lufs": -16.5,
+    "loudness_range_lu": 1.9,
+    "silence_check": "PASS — no >=100 ms events below -50 dBFS"
+  },
+  "audible_assessment": "NOT_EVALUATED — headless/automated harness; no physical-speaker claim",
+  "closeout": "TECHNICAL PASS. Human audible judgment remains an explicit optional residual and is not converted into machine evidence.",
+  "followup_fix": "Recording ready-state duration was observed to keep aging after stop. Step 12 closeout includes a narrow fix that freezes completed duration plus a regression test."
+}

@@ -17,6 +17,7 @@ export class MasterRecordingController {
   private chunks: Blob[] = [];
   private state: RecordingState = 'idle';
   private startedAt = 0;
+  private completedDurationSeconds = 0;
   private lastBlob: Blob | null = null;
 
   constructor(
@@ -42,6 +43,7 @@ export class MasterRecordingController {
 
     const mimeType = this.chooseMimeType();
     this.chunks = [];
+    this.completedDurationSeconds = 0;
     this.lastBlob = null;
     this.recorder = mimeType
       ? new MediaRecorder(this.destination.stream, { mimeType })
@@ -62,6 +64,7 @@ export class MasterRecordingController {
     }
 
     const recorder = this.recorder;
+    const context = this.runtime.context;
     this.state = 'stopping';
     return new Promise((resolve, reject) => {
       recorder.onerror = () => reject(new Error('MediaRecorder failed'));
@@ -70,6 +73,7 @@ export class MasterRecordingController {
           type: recorder.mimeType || this.chunks[0]?.type || 'audio/webm',
         });
         this.lastBlob = blob;
+        this.completedDurationSeconds = Math.max(0, context.currentTime - this.startedAt);
         this.state = 'ready';
         resolve({ status: this.status(), blob });
       };
@@ -84,7 +88,11 @@ export class MasterRecordingController {
       mimeType: this.recorder?.mimeType || this.lastBlob?.type || null,
       bytes: this.lastBlob?.size ?? this.chunks.reduce((sum, chunk) => sum + chunk.size, 0),
       durationSeconds:
-        this.startedAt > 0 ? Math.max(0, this.runtime.context.currentTime - this.startedAt) : 0,
+        this.state === 'ready'
+          ? this.completedDurationSeconds
+          : this.startedAt > 0
+            ? Math.max(0, this.runtime.context.currentTime - this.startedAt)
+            : 0,
     };
   }
 
@@ -99,6 +107,7 @@ export class MasterRecordingController {
     this.destination = null;
     this.recorder = null;
     this.chunks = [];
+    this.completedDurationSeconds = 0;
     this.lastBlob = null;
     this.state = 'idle';
   }

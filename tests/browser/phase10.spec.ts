@@ -69,6 +69,12 @@ test('master recording captures post-mixer audio into a non-empty blob', async (
   expect(result.size).toBeGreaterThan(1_000);
   expect(result.type).toContain('audio');
 
+  const frozenDuration = result.status.durationSeconds;
+  await page.waitForTimeout(500);
+  const laterRecordingStatus = await page.evaluate(() => window.__libertasRecordingTest.status());
+  expect(laterRecordingStatus.state).toBe('ready');
+  expect(laterRecordingStatus.durationSeconds).toBeCloseTo(frozenDuration, 6);
+
   const status = await page.evaluate(() => window.__libertasDualDeckTest.status());
   expect(status.a.frameDiscontinuities).toBe(0);
   expect(status.b.frameDiscontinuities).toBe(0);

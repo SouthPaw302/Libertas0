@@ -3,11 +3,11 @@
   "project": "Libertas0",
   "phase": "distributed",
   "active_module": "distributed",
-  "active_branch": "main",
+  "active_branch": "system/step12-sync-closeout",
   "status": "LOCKED",
-  "current_objective": "All planned Phase 0-11 modules remain locked. Operate and evolve Libertas0 using the automated-first validation fabric and the simple operator test console.",
-  "last_passing_gate": "full-validation-v2",
-  "last_evidence": "evidence/verification-fabric/full-validation-v2/RESULT.json",
+  "current_objective": "Step 12 SYNC Soak v3 is technically PASS. Integrate the proven soak/evidence and the recording-duration telemetry fix, then improve operator visibility without changing locked realtime authority.",
+  "last_passing_gate": "sync-soak-v3-real-browser",
+  "last_evidence": "evidence/sync/soak-v3-real-browser/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping and browser integration are proven.",
@@ -15,6 +15,6 @@
     "Phase 11 does not claim production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing."
   ],
-  "exact_next_action": "Use main as authority. For future Libertas0 changes, exhaust Full Validation before requesting only the residual human/physical facts automation cannot prove. Keep the operator GUI simple and test-focused.",
+  "exact_next_action": "Validate this combined Step 12 closeout with Libertas0 Full Validation. If green, promote to main. Next bounded step: add an Evidence/Status panel to the simple Test Console showing current SHA, latest validation result, agent/local gate state, and residual human-only checks.",
   "product_code_authorized": false
 }

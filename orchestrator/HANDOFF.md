@@ -98,3 +98,21 @@ The GUI is an operator surface, never realtime timing authority.
 ## Current next action
 
 Continue improving **Libertas0 itself**. Use `Libertas0 Full Validation` as the default proof gate. Expand long-duration/randomized bounded torture and evidence visibility where useful while preserving the locked realtime core.
+
+
+## Step 12 SYNC Soak v3
+
+Step 12 machine-verifiable SYNC validation is **PASS**.
+
+Reference evidence:
+- `evidence/sync/soak-v3-real-browser/RESULT.json`
+- `docs/STEP12_SYNC_SOAK_V3.md`
+- local report commit `aea8a2e21776ddd6429b94d8861aa3ad240bd3ec`
+
+The 620-second real-WAV run finished with 0 hidden seeks and 0 A/B frame discontinuities after rate changes, explicit follower actions, loop exercise, and leadership reversal.
+
+Audible assessment remains `NOT_EVALUATED`; do not rewrite that as human listening evidence.
+
+The run also exposed an unrelated recording-status duration bug. The completed-duration telemetry is now frozen after MediaRecorder stop and covered by a browser regression test.
+
+Next bounded work after Full Validation: expose validation/evidence state in the simple operator Test Console.
