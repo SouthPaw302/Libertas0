@@ -1104,7 +1104,7 @@ render(mixerStatusElement, {
 });
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
 
-function waitForCondition(predicate: () => boolean, timeoutMs = 5_000): Promise<void> {
+function waitForCondition(predicate: () => boolean, timeoutMs = 10_000): Promise<void> {
   const started = performance.now();
   return new Promise((resolve, reject) => {
     const poll = () => {
