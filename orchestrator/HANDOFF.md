@@ -155,3 +155,52 @@ Add a compact informational panel to the existing simple Test Console showing:
 - remaining human-only checks.
 
 The panel is read-only operator visibility. It must never become realtime timing authority.
+
+
+## Module 12 — Monitor / Cue Bus
+
+Module 12 is LOCKED on main.
+
+Locked integration commit:
+`c48917fdc20f116e06cc50259f4c95d88b5b17c0`
+
+Validated product SHA:
+`e6bb463b0c053011f1f4aa81de790e0886a937b2`
+
+Gate run:
+`37281809961`
+
+PASS:
+- typecheck/unit/build;
+- 3/3 Monitor/Cue browser tests;
+- 16/16 locked mixer/SYNC/performance regressions;
+- cue path remains independent of crossfader/master;
+- Cue/Master blend works;
+- no new transport seeks or frame discontinuities.
+
+Implemented:
+- Cue A / Cue B;
+- post-channel, pre-crossfader cue taps;
+- normalized two-deck cue sum;
+- equal-power Cue ↔ Master blend;
+- monitor level;
+- post-master/post-limiter master monitor feed;
+- MediaStreamAudioDestinationNode monitor output;
+- optional browser setSinkId output selector.
+
+Physical separate-headphone-device routing remains environment-dependent and is not a blocker for the locked software-routing contract.
+
+## Next product module
+
+**Module 13 — Waveform / Track View**
+
+Build:
+- overview waveform;
+- scrolling/detail waveform;
+- transport playhead;
+- beat-grid display;
+- cue/hotcue/loop markers.
+
+The waveform is a presentation of proven transport/Musical Clock state only. It must never become realtime timing authority.
+
+Current user direction: continue the product module stack. Do not turn validation infrastructure into the main work.
