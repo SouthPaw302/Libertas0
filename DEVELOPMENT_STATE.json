@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "post_phase_hardening",
-  "active_module": "validation-fabric-v2",
+  "phase": "distributed",
+  "active_module": "distributed",
   "active_branch": "system/libertas0-baseline-v2",
-  "status": "VALIDATING",
-  "current_objective": "Harden Libertas0 itself after locked Phase 11: automate repeatable validation across Linux/Windows/Chromium, retain exact-SHA evidence, and provide a simple operator-friendly test console with fullscreen.",
+  "status": "LOCKED",
+  "current_objective": "Post-Phase-11 Libertas0 hardening: validate the cross-repo-derived automated proof fabric and the plain operator-friendly fullscreen test console without changing locked realtime authority.",
   "last_passing_gate": "phase11-automated-runtime-torture",
   "last_evidence": "evidence/distributed/phase11-automated/RESULT.json",
   "blockers": [],
@@ -15,6 +15,6 @@
     "WebRTC transport encryption does not by itself define application identity/trust policy.",
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping/browser integration are proven."
   ],
-  "exact_next_action": "Validate the combined Libertas0 Validation Fabric v2 + test-console baseline. If green, promote it to main. Keep scope on Libertas0 only; physical/manual testing should cover only facts hosted automation cannot prove.",
+  "exact_next_action": "Run the combined exact-SHA System Contract and Libertas0 Full Validation gates. If green, promote this Libertas0-only baseline to main. Manual testing should contain only human/physical facts hosted automation cannot prove.",
   "product_code_authorized": false
 }
