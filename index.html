@@ -115,6 +115,7 @@
         <a href="#sync-panel">SYNC</a>
         <a href="#mixer-panel">Mixer</a>
         <a href="#monitor-panel">Monitor / Cue</a>
+        <a href="#fx-panel">FX</a>
         <a href="#recording-panel">Library / Recording</a>
         <a href="#intelligence-panel">Analysis</a>
         <a href="#transport-panel">Cue / Loop / Jog</a>
@@ -371,6 +372,75 @@
       </div>
       <p class="section-note">Separate physical output selection uses the browser audio-output API when available. Unsupported browsers still expose the monitor graph and metering.</p>
       <pre id="monitor-status">Monitor / cue bus ready</pre>
+    </fieldset>
+
+    <fieldset id="fx-panel">
+      <legend>FX Engine</legend>
+      <p class="section-note">Beat-synced echo buses. Wet/dry is equal-power; delay time follows the deck's Musical Clock BPM × actual playback rate. Cue monitoring remains pre-FX.</p>
+      <div class="decks">
+        <div>
+          <strong>Deck A FX</strong>
+          <div class="row">
+            <label>Wet <input id="fx-a-wet" type="range" min="0" max="1" step="0.01" value="0" /></label>
+            <label>Beats
+              <select id="fx-a-beats">
+                <option value="0.125">1/8</option>
+                <option value="0.25">1/4</option>
+                <option value="0.5" selected>1/2</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="4">4</option>
+              </select>
+            </label>
+            <label>Feedback <input id="fx-a-feedback" type="range" min="0" max="0.85" step="0.01" value="0.35" /></label>
+            <label>Tone <input id="fx-a-tone" type="range" min="0" max="1" step="0.01" value="0.72" /></label>
+          </div>
+        </div>
+        <div>
+          <strong>Deck B FX</strong>
+          <div class="row">
+            <label>Wet <input id="fx-b-wet" type="range" min="0" max="1" step="0.01" value="0" /></label>
+            <label>Beats
+              <select id="fx-b-beats">
+                <option value="0.125">1/8</option>
+                <option value="0.25">1/4</option>
+                <option value="0.5" selected>1/2</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="4">4</option>
+              </select>
+            </label>
+            <label>Feedback <input id="fx-b-feedback" type="range" min="0" max="0.85" step="0.01" value="0.35" /></label>
+            <label>Tone <input id="fx-b-tone" type="range" min="0" max="1" step="0.01" value="0.72" /></label>
+          </div>
+        </div>
+      </div>
+      <hr />
+      <strong>Master FX</strong>
+      <div class="row">
+        <label>Wet <input id="fx-master-wet" type="range" min="0" max="1" step="0.01" value="0" /></label>
+        <label>Beats
+          <select id="fx-master-beats">
+            <option value="0.125">1/8</option>
+            <option value="0.25">1/4</option>
+            <option value="0.5" selected>1/2</option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="4">4</option>
+          </select>
+        </label>
+        <label>Feedback <input id="fx-master-feedback" type="range" min="0" max="0.85" step="0.01" value="0.35" /></label>
+        <label>Tone <input id="fx-master-tone" type="range" min="0" max="1" step="0.01" value="0.72" /></label>
+        <label>Tempo source
+          <select id="fx-master-tempo-source">
+            <option value="A" selected>Deck A</option>
+            <option value="B">Deck B</option>
+          </select>
+        </label>
+        <button id="fx-status-button" type="button">Refresh FX Status</button>
+      </div>
+      <p class="section-note">Signal path: channel strip → deck FX → mixer/limiter → master FX → speakers/recording/master monitor. FX parameter updates never own transport or SYNC timing.</p>
+      <pre id="fx-status">FX engine ready</pre>
     </fieldset>
 
     <details>

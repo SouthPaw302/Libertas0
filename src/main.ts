@@ -71,6 +71,18 @@ interface LibertasMixerTestApi {
   rms(): number;
 }
 
+type FxScope = 'A' | 'B' | 'master';
+
+interface LibertasFxTestApi {
+  setWet(scope: FxScope, wet: number): void;
+  setBeatFraction(scope: FxScope, beats: number): void;
+  setFeedback(scope: FxScope, feedback: number): void;
+  setTone(scope: FxScope, tone: number): void;
+  setMasterTempoSource(deck: 'A' | 'B'): void;
+  refreshTempo(): Promise<{ A: number; B: number; master: number }>;
+  status(scope: FxScope): FxUnitStatus;
+}
+
 interface LibertasWaveformTestApi {
   refresh(deck: 'A' | 'B'): Promise<WaveformRenderSnapshot>;
   snapshot(deck: 'A' | 'B'): WaveformRenderSnapshot;
@@ -210,6 +222,7 @@ declare global {
     __libertasMixerTest: LibertasMixerTestApi;
     __libertasMonitorCueTest: LibertasMonitorCueTestApi;
     __libertasWaveformTest: LibertasWaveformTestApi;
+    __libertasFxTest: LibertasFxTestApi;
     __libertasDualDeckTest: LibertasDualDeckTestApi;
     __libertasMusicalClockTest: LibertasMusicalClockTestApi;
     __libertasSyncTest: LibertasSyncTestApi;
@@ -438,6 +451,21 @@ const waveformAOverview = document.querySelector<HTMLCanvasElement>('#waveform-a
 const waveformADetail = document.querySelector<HTMLCanvasElement>('#waveform-a-detail');
 const waveformBOverview = document.querySelector<HTMLCanvasElement>('#waveform-b-overview');
 const waveformBDetail = document.querySelector<HTMLCanvasElement>('#waveform-b-detail');
+const fxAWet = document.querySelector<HTMLInputElement>('#fx-a-wet');
+const fxABeats = document.querySelector<HTMLSelectElement>('#fx-a-beats');
+const fxAFeedback = document.querySelector<HTMLInputElement>('#fx-a-feedback');
+const fxATone = document.querySelector<HTMLInputElement>('#fx-a-tone');
+const fxBWet = document.querySelector<HTMLInputElement>('#fx-b-wet');
+const fxBBeats = document.querySelector<HTMLSelectElement>('#fx-b-beats');
+const fxBFeedback = document.querySelector<HTMLInputElement>('#fx-b-feedback');
+const fxBTone = document.querySelector<HTMLInputElement>('#fx-b-tone');
+const fxMasterWet = document.querySelector<HTMLInputElement>('#fx-master-wet');
+const fxMasterBeats = document.querySelector<HTMLSelectElement>('#fx-master-beats');
+const fxMasterFeedback = document.querySelector<HTMLInputElement>('#fx-master-feedback');
+const fxMasterTone = document.querySelector<HTMLInputElement>('#fx-master-tone');
+const fxMasterTempoSourceSelect = document.querySelector<HTMLSelectElement>('#fx-master-tempo-source');
+const fxStatusButton = document.querySelector<HTMLButtonElement>('#fx-status-button');
+const fxStatusElement = document.querySelector<HTMLPreElement>('#fx-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -531,6 +559,83 @@ function getDeck(deck: 'A' | 'B'): DeckController {
   return deck === 'A' ? deckA : deckB;
 }
 
+let masterFxTempoSource: 'A' | 'B' = 'A';
+
+function getFx(scope: FxScope): FxUnitController {
+  if (scope === 'A') return deckFxA;
+  if (scope === 'B') return deckFxB;
+  return masterFx;
+}
+
+async function refreshFxTempo(): Promise<{ A: number; B: number; master: number }> {
+  const [aStatus, bStatus] = await Promise.all([
+    deckA.requestStatus(),
+    deckB.requestStatus(),
+  ]);
+  const aTempo = effectiveTempoBpm(pendingGrids.get('A')!.bpm, aStatus.playbackRate);
+  const bTempo = effectiveTempoBpm(pendingGrids.get('B')!.bpm, bStatus.playbackRate);
+  deckFxA.setTempoBpm(aTempo);
+  deckFxB.setTempoBpm(bTempo);
+  const masterTempo = masterFxTempoSource === 'A' ? aTempo : bTempo;
+  masterFx.setTempoBpm(masterTempo);
+  return { A: aTempo, B: bTempo, master: masterTempo };
+}
+
+function fxStatusSnapshot(): Record<string, FxUnitStatus | string> {
+  return {
+    deckA: deckFxA.status(),
+    deckB: deckFxB.status(),
+    master: masterFx.status(),
+    masterTempoSource: masterFxTempoSource,
+  };
+}
+
+function renderFxStatus(): void {
+  render(fxStatusElement, fxStatusSnapshot());
+}
+
+function bindFxControls(
+  scope: FxScope,
+  wet: HTMLInputElement | null,
+  beats: HTMLSelectElement | null,
+  feedback: HTMLInputElement | null,
+  tone: HTMLInputElement | null,
+): void {
+  wet?.addEventListener('input', () => {
+    getFx(scope).setWet(Number(wet.value));
+    renderFxStatus();
+  });
+  beats?.addEventListener('change', () => {
+    getFx(scope).setBeatFraction(Number(beats.value));
+    renderFxStatus();
+  });
+  feedback?.addEventListener('input', () => {
+    getFx(scope).setFeedback(Number(feedback.value));
+    renderFxStatus();
+  });
+  tone?.addEventListener('input', () => {
+    getFx(scope).setTone(Number(tone.value));
+    renderFxStatus();
+  });
+}
+
+bindFxControls('A', fxAWet, fxABeats, fxAFeedback, fxATone);
+bindFxControls('B', fxBWet, fxBBeats, fxBFeedback, fxBTone);
+bindFxControls('master', fxMasterWet, fxMasterBeats, fxMasterFeedback, fxMasterTone);
+
+fxMasterTempoSourceSelect?.addEventListener('change', () => {
+  masterFxTempoSource = fxMasterTempoSourceSelect.value === 'B' ? 'B' : 'A';
+  void refreshFxTempo().then(() => renderFxStatus()).catch((error: unknown) => render(fxStatusElement, { error: String(error) }));
+});
+
+fxStatusButton?.addEventListener('click', () => {
+  void refreshFxTempo().then(() => renderFxStatus()).catch((error: unknown) => render(fxStatusElement, { error: String(error) }));
+});
+
+const fxTempoInterval = window.setInterval(() => {
+  void refreshFxTempo().catch(() => {});
+}, 250);
+
 const waveformViews = new Map<'A' | 'B', WaveformTrackView>();
 if (waveformAOverview && waveformADetail) waveformViews.set('A', new WaveformTrackView(waveformAOverview, waveformADetail));
 if (waveformBOverview && waveformBDetail) waveformViews.set('B', new WaveformTrackView(waveformBOverview, waveformBDetail));
@@ -580,6 +685,7 @@ function setMusicalGrid(deck: 'A' | 'B', grid: BeatGrid): void {
   pendingGrids.set(deck, { ...grid });
   const clock = musicalClocks.get(deck);
   if (clock) clock.setGrid(grid);
+  void refreshFxTempo().catch(() => {});
 }
 
 function bindClockControls(deck: 'A' | 'B', prefix: 'a' | 'b'): void {
@@ -1089,6 +1195,18 @@ window.__libertasWaveformTest = {
   },
 };
 
+window.__libertasFxTest = {
+  setWet: (scope, wet) => getFx(scope).setWet(wet),
+  setBeatFraction: (scope, beats) => getFx(scope).setBeatFraction(beats),
+  setFeedback: (scope, feedback) => getFx(scope).setFeedback(feedback),
+  setTone: (scope, tone) => getFx(scope).setTone(tone),
+  setMasterTempoSource(deck) {
+    masterFxTempoSource = deck;
+  },
+  refreshTempo: () => refreshFxTempo(),
+  status: (scope) => getFx(scope).status(),
+};
+
 window.__libertasMusicalClockTest = {
   setGrid: setMusicalGrid,
   snapshot: musicalSnapshot,
@@ -1262,6 +1380,7 @@ render(mixerStatusElement, {
   state: 'channel strips + equal-power crossfader + sample-peak limiter ready',
 });
 renderMonitorStatus();
+renderFxStatus();
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
 
 function waitForCondition(predicate: () => boolean, timeoutMs = 20_000): Promise<void> {
