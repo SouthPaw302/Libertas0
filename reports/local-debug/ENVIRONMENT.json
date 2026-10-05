@@ -2,7 +2,7 @@
   "schema": "libertas.local-environment.v1",
   "status": "real-local-runtime",
   "os": "Microsoft Windows 10 Home build 19045",
-  "browser": "Codex in-app tiny browser (headed Chromium), tab 20",
+  "browser": "Playwright Chromium real-browser harness",
   "url": "http://127.0.0.1:5187/",
   "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
   "python": "3.12.10",
@@ -13,5 +13,5 @@
   "render_quantum_frames": 128,
   "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
   "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8",
-  "audio_capability_observation": "AudioContext and AudioWorkletNode were undefined in the tiny-browser tab; physical audio gate was not evaluated."
+  "audio_assessment": "NOT_EVALUATED — headless browser harness; no physical-speaker claim"
 }

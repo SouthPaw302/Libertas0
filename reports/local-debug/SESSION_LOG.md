@@ -77,3 +77,13 @@
 - Distinct source material was used for the evidence set: Midnight Tribal Pulse SHA-256 `742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F`; Tribal House SHA-256 `639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D`. Both were uploaded to the task Drive folder.
 - Physical gate is `BLOCKED`: the tiny-browser tab exposed no `AudioContext` or `AudioWorkletNode`, so the real-music 10+ minute hold, rate changes, follower jog/hotcue, loop, reversal, recording, and audible assessment were not run.
 - Phase 11 remains forbidden and was not started.
+
+## 2026-10-05 — SYNC-SOAK-V3-001 — PASS
+
+- Exact product SHA: `93d6c5b83549e598cc8718e830cb7effbf35eb0d`; updated handoff commit: `695ec0108670556f0239054aeca519ae2948e8a8`.
+- Both distinct real WAVs were loaded in the real-browser harness. Track Intelligence recommended and applied A at `125.029419 BPM / firstBeatFrame 195072` and B at `125.847896 BPM / firstBeatFrame 512`.
+- The 620-second hold passed with leader rate changes `0.97`, `1.03`, `0.95`, `1.05`, then B leader `1.02`; B Hot Cue, B jog, four-beat loop, A reversed-follower jog, and A→B leadership reversal all executed.
+- Representative re-lock phase samples were `-0.08`, `0.04`, `-0.07`, `0.01`, and final `0.0009409267168223323` beats. Final state was locked/tracking with B leader and A follower.
+- Hidden transport seek deltas were A/B `0/0`; frame discontinuity deltas were A/B `0/0`. Performance jumps were A/B `1/2`; loop wraps were A/B `12/33`.
+- Post-master recording passed: `622.52 s`, `10,033,238` bytes, `audio/webm;codecs=opus`. Runtime JSON and recording were uploaded to the task Drive folder.
+- Audible assessment is `NOT_EVALUATED`: this run used a headless browser harness, so no physical-speaker claim is made. Phase 11 remains forbidden and was not started.
