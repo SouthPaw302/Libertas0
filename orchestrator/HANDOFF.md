@@ -354,3 +354,60 @@ Build:
 - deterministic mapping with the existing realtime authority boundaries preserved.
 
 Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
+
+
+## Module 16 — Advanced MIDI / Controller Layer
+
+Module 16 is LOCKED on main.
+
+Locked integration commit:
+`0ba5e55857a335c217324b2298d2f3a49a8b318d`
+
+Validated product SHA:
+`156cd8c53eeccbeaecef97f8ae51af4da9cf605d`
+
+Gate run:
+`37668541286`
+
+PASS:
+- System Contract;
+- 71/71 unit tests, including 4 advanced MIDI tests;
+- 10/10 Advanced MIDI + legacy Phase 10 browser tests;
+- 26/26 locked sampler/FX/mixer/transport/SYNC regressions;
+- device-specific multi-controller binding isolation;
+- source-device MIDI learn;
+- controller profile persistence and activation;
+- richer FX/sampler target control;
+- LED/output feedback generation;
+- legacy deterministic MIDI behavior preserved;
+- 0 new deck/mixer discontinuities.
+
+Implemented:
+- multiple simultaneous MIDI inputs;
+- per-binding input-device identity;
+- learn from any input, selected input, or next source device;
+- named persistent controller profiles;
+- profile activation/replacement;
+- MIDI output enumeration;
+- scaled CC feedback;
+- binary/pulse note/CC LED feedback;
+- richer target catalog for mixer, decks, performance transport, SYNC, FX, sampler, and monitor cue.
+
+MIDI remains control-plane only and never owns transport, Musical Clock phase, SYNC correction, or render timing.
+
+Physical hardware input/output/LED behavior remains NOT_EVALUATED and device-dependent; it is an optional compatibility check, not a Module 16 software blocker.
+
+## Next product module
+
+**Module 17 — Advanced Library / Preparation**
+
+Build:
+- fast search/filter;
+- crates/playlists;
+- persisted track metadata;
+- saved analysis/grid data;
+- saved cues/hotcues/loops;
+- track preparation workflow;
+- preparation state that can be loaded into Deck A/B without moving realtime authority into the library.
+
+Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
