@@ -17,6 +17,7 @@ export interface MidiBinding {
   mode: 'absolute' | 'trigger';
   min?: number;
   max?: number;
+  inputId?: string;
 }
 
 export interface MidiAction {
@@ -25,6 +26,15 @@ export interface MidiAction {
   value: number;
   trigger: boolean;
   message: DecodedMidiMessage;
+  sourceInputId?: string;
+}
+
+interface MidiLearnTarget {
+  target: string;
+  mode: 'absolute' | 'trigger';
+  min?: number;
+  max?: number;
+  inputId?: string | 'source';
 }
 
 export function decodeMidiMessage(data: ArrayLike<number>): DecodedMidiMessage | null {
@@ -46,35 +56,70 @@ export function decodeMidiMessage(data: ArrayLike<number>): DecodedMidiMessage |
 
 export class MidiMappingEngine {
   private readonly bindings = new Map<string, MidiBinding>();
-  private learnTarget: { target: string; mode: 'absolute' | 'trigger'; min?: number; max?: number } | null = null;
+  private learnTarget: MidiLearnTarget | null = null;
 
   addBinding(binding: MidiBinding): void {
     if (binding.channel < 1 || binding.channel > 16) throw new RangeError('MIDI channel must be 1..16');
     if (binding.number < 0 || binding.number > 127) throw new RangeError('MIDI number must be 0..127');
+    if (!binding.id.trim()) throw new Error('MIDI binding id is required');
+    if (!binding.target.trim()) throw new Error('MIDI binding target is required');
     this.bindings.set(binding.id, { ...binding });
+  }
+
+  replaceBindings(bindings: MidiBinding[]): void {
+    this.bindings.clear();
+    for (const binding of bindings) this.addBinding(binding);
+  }
+
+  clearBindings(): void {
+    this.bindings.clear();
   }
 
   removeBinding(id: string): void {
     this.bindings.delete(id);
   }
 
-  startLearn(target: string, mode: 'absolute' | 'trigger', min?: number, max?: number): void {
+  startLearn(
+    target: string,
+    mode: 'absolute' | 'trigger',
+    min?: number,
+    max?: number,
+    inputId?: string | 'source',
+  ): void {
     this.learnTarget = {
       target,
       mode,
       ...(min === undefined ? {} : { min }),
       ...(max === undefined ? {} : { max }),
+      ...(inputId === undefined ? {} : { inputId }),
     };
   }
 
-  process(data: ArrayLike<number>): { actions: MidiAction[]; learned?: MidiBinding } {
+  cancelLearn(): void {
+    this.learnTarget = null;
+  }
+
+  process(
+    data: ArrayLike<number>,
+    sourceInputId?: string,
+  ): { actions: MidiAction[]; learned?: MidiBinding } {
     const message = decodeMidiMessage(data);
     if (!message) return { actions: [] };
 
     let learned: MidiBinding | undefined;
     if (this.learnTarget) {
+      const learnedInputId = this.learnTarget.inputId === 'source'
+        ? sourceInputId
+        : this.learnTarget.inputId;
       learned = {
-        id: `${message.kind}:${message.channel}:${message.number}->${this.learnTarget.target}`,
+        id: [
+          learnedInputId ? `input:${learnedInputId}` : 'input:any',
+          message.kind,
+          message.channel,
+          message.number,
+          '->',
+          this.learnTarget.target,
+        ].join(':'),
         kind: message.kind,
         channel: message.channel,
         number: message.number,
@@ -82,6 +127,7 @@ export class MidiMappingEngine {
         mode: this.learnTarget.mode,
         ...(this.learnTarget.min === undefined ? {} : { min: this.learnTarget.min }),
         ...(this.learnTarget.max === undefined ? {} : { max: this.learnTarget.max }),
+        ...(learnedInputId === undefined ? {} : { inputId: learnedInputId }),
       };
       this.addBinding(learned);
       this.learnTarget = null;
@@ -92,7 +138,8 @@ export class MidiMappingEngine {
       if (
         binding.kind !== message.kind ||
         binding.channel !== message.channel ||
-        binding.number !== message.number
+        binding.number !== message.number ||
+        (binding.inputId !== undefined && binding.inputId !== sourceInputId)
       ) continue;
 
       if (binding.mode === 'trigger') {
@@ -102,6 +149,7 @@ export class MidiMappingEngine {
           value: 1,
           trigger: true,
           message,
+          ...(sourceInputId === undefined ? {} : { sourceInputId }),
         });
         continue;
       }
@@ -114,6 +162,7 @@ export class MidiMappingEngine {
         value: min + message.normalized * (max - min),
         trigger: false,
         message,
+        ...(sourceInputId === undefined ? {} : { sourceInputId }),
       });
     }
     return { actions, ...(learned ? { learned } : {}) };
