@@ -301,3 +301,56 @@ Build:
 - realtime-safe triggering that does not move deck/SYNC authority.
 
 Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
+
+
+## Module 15 — Sampler / Performance Pads
+
+Module 15 is LOCKED on main.
+
+Locked integration commit:
+`3577f00c0b3849f78549598b4dab79562676d69a`
+
+Validated product SHA:
+`d7e4ddceb334795b1eee2a6d8476260f9e4c527e`
+
+Gate run:
+`37619933906`
+
+PASS:
+- System Contract;
+- 67/67 unit tests, including 4 sampler timing tests;
+- 5/5 sampler/performance-pad browser tests;
+- 26/26 locked FX/mixer/recording/transport/SYNC regressions;
+- persisted sample-bank restore;
+- one-shot routing through mixer input 3;
+- quantized trigger survived a 600 ms blocked main thread;
+- loop start/stop;
+- 0 new deck discontinuities;
+- 0 new mixer discontinuities.
+
+Implemented:
+- eight performance pads;
+- persisted IndexedDB sample bank;
+- one-shot and loop modes;
+- per-pad gain;
+- quantize Off / 1/4 / 1/2 / 1 / 2 / 4 beats;
+- per-pad Deck A/B Musical Clock source;
+- AudioContext-timeline quantized starts derived from deck sourceFrame/outputCurrentFrame;
+- dedicated third mixer input under master volume/limiter;
+- final Master FX and recording chain preserved.
+
+The sampler may read deck/Musical Clock state but never owns deck transport, Musical Clock phase, or SYNC correction.
+
+## Next product module
+
+**Module 16 — Advanced MIDI / Controller Layer**
+
+Build:
+- controller profiles;
+- multiple simultaneous MIDI devices;
+- richer pad/deck/mixer/FX bindings;
+- MIDI output/LED feedback;
+- profile persistence;
+- deterministic mapping with the existing realtime authority boundaries preserved.
+
+Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
