@@ -1,0 +1,47 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "advanced-midi-controller",
+  "gate": "module16-automated",
+  "status": "PASS",
+  "tested_sha": "156cd8c53eeccbeaecef97f8ae51af4da9cf605d",
+  "system_contract_run": 37668541465,
+  "module_gate_run": 37668541286,
+  "results": {
+    "system_contract": "PASS",
+    "typecheck_unit_build": "PASS",
+    "unit_tests": {
+      "passed": 71,
+      "total": 71,
+      "advanced_midi_tests": 4
+    },
+    "advanced_midi_and_phase10_browser_tests": {
+      "passed": 10,
+      "total": 10
+    },
+    "locked_regressions": {
+      "passed": 26,
+      "total": 26
+    },
+    "device_specific_binding_isolation": "PASS",
+    "profile_persistence_activation": "PASS",
+    "richer_fx_sampler_targets": "PASS",
+    "led_feedback_generation": "PASS",
+    "legacy_phase10_midi": "PASS",
+    "new_deck_discontinuities": 0,
+    "new_mixer_discontinuities": 0
+  },
+  "artifact": {
+    "id": 11502974754,
+    "digest": "sha256:bd6677c5fde29c2f924fe877ee081568b6cc0c36c1a2c2758173f7d8f3d46be4"
+  },
+  "residuals": [
+    "Physical MIDI hardware input/output/LED verification remains NOT_EVALUATED and device-dependent."
+  ],
+  "proven_scope": [
+    "device-aware multi-controller mapping",
+    "persistent controller profiles",
+    "richer DJ target catalog",
+    "MIDI output/LED feedback generation",
+    "legacy MIDI compatibility"
+  ]
+}

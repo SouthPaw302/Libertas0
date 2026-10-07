@@ -197,7 +197,7 @@
     },
     {
       "id": "advanced-midi-controller",
-      "state": "IMPLEMENTING",
+      "state": "LOCKED",
       "depends_on": [
         "sampler-performance-pads"
       ],

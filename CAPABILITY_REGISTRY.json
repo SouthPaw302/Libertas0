@@ -378,14 +378,28 @@
     {
       "id": "control.advanced-midi-controller",
       "class": "control-surface",
-      "status": "implementing",
+      "status": "proven",
       "provider": "Web MIDI multi-input/output + persistent profiles + deterministic mapping/feedback",
       "contract": "docs/contracts/ADVANCED_MIDI_CONTROLLER.md",
-      "proven_scope": [],
+      "proven_scope": [
+        "multiple simultaneous MIDI inputs",
+        "device-specific binding isolation",
+        "source-device MIDI learn",
+        "persistent named controller profiles",
+        "profile activation/replacement",
+        "MIDI output enumeration",
+        "scaled CC feedback",
+        "binary/pulse note/CC LED feedback",
+        "mixer/deck/performance/SYNC/FX/sampler/monitor target catalog",
+        "backward-compatible Phase 10 MIDI learn",
+        "MIDI actions do not introduce deck or mixer timing authority"
+      ],
       "not_yet_proven": [
-        "module gate pending",
-        "physical MIDI hardware/LED verification remains environment-dependent"
-      ]
+        "physical controller input compatibility across specific hardware",
+        "physical LED/output behavior across specific controller firmware",
+        "vendor-specific high-resolution MIDI protocols"
+      ],
+      "evidence": "evidence/advanced-midi-controller/module16-automated/RESULT.json"
     }
   ]
 }
