@@ -374,6 +374,18 @@
         "stem sampling"
       ],
       "evidence": "evidence/sampler-performance-pads/module15-automated/RESULT.json"
+    },
+    {
+      "id": "control.advanced-midi-controller",
+      "class": "control-surface",
+      "status": "implementing",
+      "provider": "Web MIDI multi-input/output + persistent profiles + deterministic mapping/feedback",
+      "contract": "docs/contracts/ADVANCED_MIDI_CONTROLLER.md",
+      "proven_scope": [],
+      "not_yet_proven": [
+        "module gate pending",
+        "physical MIDI hardware/LED verification remains environment-dependent"
+      ]
     }
   ]
 }

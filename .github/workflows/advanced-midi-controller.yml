@@ -1,0 +1,56 @@
+name: Advanced MIDI Controller Gate
+
+on:
+  push:
+    branches:
+      - 'module/advanced-midi-controller'
+    paths:
+      - 'src/midi/**'
+      - 'src/main.ts'
+      - 'index.html'
+      - 'tests/browser/advanced-midi-controller.spec.ts'
+      - 'docs/contracts/ADVANCED_MIDI_CONTROLLER.md'
+      - 'MODULE_REGISTRY.json'
+      - 'DEVELOPMENT_STATE.json'
+      - 'SYSTEM_CONTRACT.json'
+      - 'CAPABILITY_REGISTRY.json'
+      - '.github/workflows/advanced-midi-controller.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: advanced-midi-controller-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  midi:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install
+        run: npm install
+      - name: Bootstrap / contract
+        run: python bootstrap.py && python scripts/validate_system.py
+      - name: Typecheck, unit tests, build
+        run: npm run check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Advanced MIDI browser gate
+        run: npx playwright test tests/browser/advanced-midi-controller.spec.ts tests/browser/phase10.spec.ts
+      - name: Locked sampler, FX, mixer, transport and SYNC regressions
+        run: npx playwright test tests/browser/sampler-performance-pads.spec.ts tests/browser/fx-engine.spec.ts tests/browser/mixer-dsp.spec.ts tests/browser/performance-transport.spec.ts tests/browser/sync.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: advanced-midi-controller-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30

@@ -194,6 +194,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "advanced-midi-controller",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "sampler-performance-pads"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "sampler_performance_pads",
-  "active_module": "sampler-performance-pads",
-  "active_branch": "main",
-  "status": "LOCKED",
-  "current_objective": "Module 15 Sampler / Performance Pads is complete and locked: eight persisted one-shot/loop pads, per-pad gain, Deck A/B Musical Clock quantization, AudioContext-scheduled starts, and a dedicated third mixer input under master volume/limiter.",
+  "phase": "advanced_midi_controller",
+  "active_module": "advanced-midi-controller",
+  "active_branch": "module/advanced-midi-controller",
+  "status": "IMPLEMENTING",
+  "current_objective": "Module 16 — Advanced MIDI / Controller Layer: device-aware multi-controller bindings, persistent named profiles, richer deck/mixer/SYNC/FX/sampler/monitor targets, and MIDI output/LED feedback without moving realtime timing authority into MIDI.",
   "last_passing_gate": "module15-sampler-performance-pads",
   "last_evidence": "evidence/sampler-performance-pads/module15-automated/RESULT.json",
   "blockers": [],
@@ -16,6 +16,6 @@
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
     "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
   ],
-  "exact_next_action": "Begin Module 16 — Advanced MIDI / Controller Layer. Add controller profiles, multi-device mappings, LED/output feedback, and richer performance bindings while preserving existing deterministic MIDI mapping behavior.",
-  "product_code_authorized": false
+  "exact_next_action": "Run the bounded Module 16 unit/integration/runtime gate. If green, record evidence and lock advanced-midi-controller.",
+  "product_code_authorized": true
 }
