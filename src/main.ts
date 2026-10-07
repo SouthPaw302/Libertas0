@@ -14,6 +14,15 @@ import { MonitorCueController, type MonitorCueStatus, type MonitorOutputDevice }
 import { WaveformTrackView, type WaveformRenderSnapshot } from './waveform/WaveformTrackView';
 import { FxUnitController, type FxUnitStatus } from './fx/FxUnitController';
 import { effectiveTempoBpm } from './fx/FxMath';
+import {
+  SamplerController,
+  type SamplerPadConfig,
+  type SamplerPadStatus,
+  type SamplerStatus,
+  type SamplerTriggerReceipt,
+} from './sampler/SamplerController';
+import { SamplerBank, type SamplerBankPad } from './sampler/SamplerBank';
+import { quantizedSamplerStart } from './sampler/SamplerTiming';
 import { createClickTrackWav, createSineWav } from './testing/wavFixture';
 import { SyncController, type DeckId, type SyncSessionStatus } from './sync/SyncController';
 import { DEFAULT_SYNC_OPTIONS, type SyncControlOptions } from './sync/SyncMath';
@@ -81,6 +90,30 @@ interface LibertasFxTestApi {
   setMasterTempoSource(deck: 'A' | 'B'): void;
   refreshTempo(): Promise<{ A: number; B: number; master: number }>;
   status(scope: FxScope): FxUnitStatus;
+}
+
+interface SamplerTriggerResult {
+  receipt: SamplerTriggerReceipt;
+  targetSourceFrame: number | null;
+  sourceDeck: 'A' | 'B' | null;
+  quantizeBeats: number;
+}
+
+interface LibertasSamplerTestApi {
+  clear(): Promise<void>;
+  loadGenerated(
+    slot: number,
+    durationSeconds?: number,
+    frequencyHz?: number,
+    config?: Partial<SamplerPadConfig>,
+  ): Promise<SamplerPadStatus>;
+  configure(slot: number, config: Partial<SamplerPadConfig>): Promise<SamplerPadStatus>;
+  trigger(slot: number, options?: { quantizeBeats?: number; sourceDeck?: 'A' | 'B' }): Promise<SamplerTriggerResult>;
+  stop(slot: number): SamplerPadStatus;
+  status(): SamplerStatus;
+  listBank(): Promise<SamplerBankPad[]>;
+  unloadRuntime(slot: number): void;
+  restore(): Promise<SamplerStatus>;
 }
 
 interface LibertasWaveformTestApi {
@@ -223,6 +256,7 @@ declare global {
     __libertasMonitorCueTest: LibertasMonitorCueTestApi;
     __libertasWaveformTest: LibertasWaveformTestApi;
     __libertasFxTest: LibertasFxTestApi;
+    __libertasSamplerTest: LibertasSamplerTestApi;
     __libertasDualDeckTest: LibertasDualDeckTestApi;
     __libertasMusicalClockTest: LibertasMusicalClockTestApi;
     __libertasSyncTest: LibertasSyncTestApi;
@@ -246,6 +280,9 @@ masterFx.connectOutput(runtime.context.destination);
 
 const mixer = new MixerController(runtime, { node: masterFx.inputNode, input: 0 });
 await mixer.initialize();
+
+const sampler = new SamplerController(runtime, { node: mixer.inputNode, input: 2 });
+const samplerBank = new SamplerBank();
 
 const deckFxA = new FxUnitController(runtime, 'deck-a');
 const deckFxB = new FxUnitController(runtime, 'deck-b');
@@ -466,6 +503,11 @@ const fxMasterTone = document.querySelector<HTMLInputElement>('#fx-master-tone')
 const fxMasterTempoSourceSelect = document.querySelector<HTMLSelectElement>('#fx-master-tempo-source');
 const fxStatusButton = document.querySelector<HTMLButtonElement>('#fx-status-button');
 const fxStatusElement = document.querySelector<HTMLPreElement>('#fx-status');
+const samplerPadsElement = document.querySelector<HTMLDivElement>('#sampler-pads');
+const samplerRestoreButton = document.querySelector<HTMLButtonElement>('#sampler-restore');
+const samplerClearButton = document.querySelector<HTMLButtonElement>('#sampler-clear');
+const samplerStatusButton = document.querySelector<HTMLButtonElement>('#sampler-status-button');
+const samplerStatusElement = document.querySelector<HTMLPreElement>('#sampler-status');
 
 function render(element: HTMLElement | null, value: unknown): void {
   if (element) element.textContent = JSON.stringify(value, null, 2);
@@ -558,6 +600,226 @@ document.querySelector<HTMLInputElement>('#deck-b-file')?.addEventListener('chan
 function getDeck(deck: 'A' | 'B'): DeckController {
   return deck === 'A' ? deckA : deckB;
 }
+
+function samplerPadControls(slot: number): {
+  file: HTMLInputElement | null;
+  trigger: HTMLButtonElement | null;
+  stop: HTMLButtonElement | null;
+  load: HTMLButtonElement | null;
+  mode: HTMLSelectElement | null;
+  gain: HTMLInputElement | null;
+  quantize: HTMLSelectElement | null;
+  sourceDeck: HTMLSelectElement | null;
+  label: HTMLElement | null;
+} {
+  return {
+    file: document.querySelector<HTMLInputElement>(`#sampler-${slot}-file`),
+    trigger: document.querySelector<HTMLButtonElement>(`#sampler-${slot}-trigger`),
+    stop: document.querySelector<HTMLButtonElement>(`#sampler-${slot}-stop`),
+    load: document.querySelector<HTMLButtonElement>(`#sampler-${slot}-load`),
+    mode: document.querySelector<HTMLSelectElement>(`#sampler-${slot}-mode`),
+    gain: document.querySelector<HTMLInputElement>(`#sampler-${slot}-gain`),
+    quantize: document.querySelector<HTMLSelectElement>(`#sampler-${slot}-quantize`),
+    sourceDeck: document.querySelector<HTMLSelectElement>(`#sampler-${slot}-source`),
+    label: document.querySelector<HTMLElement>(`#sampler-${slot}-label`),
+  };
+}
+
+function buildSamplerUi(): void {
+  if (!samplerPadsElement) return;
+  samplerPadsElement.innerHTML = Array.from({ length: 8 }, (_, index) => {
+    const slot = index + 1;
+    return `
+      <div class="sampler-pad-card" data-slot="${slot}">
+        <button id="sampler-${slot}-trigger" class="sampler-pad-trigger" type="button">
+          <strong>PAD ${slot}</strong>
+          <span id="sampler-${slot}-label">Empty</span>
+        </button>
+        <div class="row">
+          <input id="sampler-${slot}-file" type="file" accept="audio/*" />
+          <button id="sampler-${slot}-load" type="button">Load</button>
+          <button id="sampler-${slot}-stop" type="button">Stop</button>
+        </div>
+        <div class="row">
+          <label>Mode
+            <select id="sampler-${slot}-mode">
+              <option value="one-shot" selected>One-shot</option>
+              <option value="loop">Loop</option>
+            </select>
+          </label>
+          <label>Gain <input id="sampler-${slot}-gain" type="range" min="0" max="1" step="0.01" value="0.8" /></label>
+        </div>
+        <div class="row">
+          <label>Quantize
+            <select id="sampler-${slot}-quantize">
+              <option value="0" selected>Off</option>
+              <option value="0.25">1/4 beat</option>
+              <option value="0.5">1/2 beat</option>
+              <option value="1">1 beat</option>
+              <option value="2">2 beats</option>
+              <option value="4">4 beats</option>
+            </select>
+          </label>
+          <label>Clock
+            <select id="sampler-${slot}-source">
+              <option value="A" selected>Deck A</option>
+              <option value="B">Deck B</option>
+            </select>
+          </label>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+buildSamplerUi();
+
+function configFromSamplerUi(slot: number): SamplerPadConfig {
+  const controls = samplerPadControls(slot);
+  return {
+    mode: controls.mode?.value === 'loop' ? 'loop' : 'one-shot',
+    gain: Number(controls.gain?.value ?? 0.8),
+    quantizeBeats: Number(controls.quantize?.value ?? 0),
+    sourceDeck: controls.sourceDeck?.value === 'B' ? 'B' : 'A',
+  };
+}
+
+function syncSamplerUi(status: SamplerStatus): void {
+  for (const pad of status.pads) {
+    const controls = samplerPadControls(pad.slot);
+    if (controls.label) controls.label.textContent = pad.loaded ? (pad.name ?? `Pad ${pad.slot}`) : 'Empty';
+    if (controls.mode) controls.mode.value = pad.mode;
+    if (controls.gain) controls.gain.value = String(pad.gain);
+    if (controls.quantize) controls.quantize.value = String(pad.quantizeBeats);
+    if (controls.sourceDeck) controls.sourceDeck.value = pad.sourceDeck;
+    controls.trigger?.classList.toggle('active', pad.activeVoices > 0);
+  }
+}
+
+async function renderSamplerStatus(): Promise<void> {
+  const bank = await samplerBank.list();
+  const status = sampler.status();
+  syncSamplerUi(status);
+  render(samplerStatusElement, { runtime: status, persisted: bank });
+}
+
+async function configureSamplerPad(slot: number, config: Partial<SamplerPadConfig>): Promise<SamplerPadStatus> {
+  const status = sampler.configure(slot, config);
+  const stored = await samplerBank.get(slot);
+  if (stored) await samplerBank.updateConfig(slot, config);
+  await renderSamplerStatus();
+  return status;
+}
+
+async function loadSamplerFile(slot: number): Promise<SamplerPadStatus> {
+  const controls = samplerPadControls(slot);
+  const file = controls.file?.files?.[0];
+  if (!file) throw new Error(`Choose an audio file for Pad ${slot}`);
+  const config = configFromSamplerUi(slot);
+  const encoded = await file.arrayBuffer();
+  const status = await sampler.loadEncoded(slot, encoded, file.name, config);
+  await samplerBank.saveFile(slot, file, config);
+  await renderSamplerStatus();
+  return status;
+}
+
+async function restoreSamplerBank(): Promise<SamplerStatus> {
+  const records = await samplerBank.list();
+  for (const record of records) {
+    const encoded = await samplerBank.getAudio(record.slot);
+    await sampler.loadEncoded(record.slot, encoded, record.name, {
+      mode: record.mode,
+      gain: record.gain,
+      quantizeBeats: record.quantizeBeats,
+      sourceDeck: record.sourceDeck,
+    });
+  }
+  const status = sampler.status();
+  syncSamplerUi(status);
+  return status;
+}
+
+async function triggerSamplerPad(
+  slot: number,
+  overrides: { quantizeBeats?: number; sourceDeck?: 'A' | 'B' } = {},
+): Promise<SamplerTriggerResult> {
+  const pad = sampler.padStatus(slot);
+  const quantizeBeats = overrides.quantizeBeats ?? pad.quantizeBeats;
+  const sourceDeck = overrides.sourceDeck ?? pad.sourceDeck;
+
+  if (quantizeBeats <= 0) {
+    return {
+      receipt: sampler.trigger(slot, runtime.context.currentTime + 0.005),
+      targetSourceFrame: null,
+      sourceDeck: null,
+      quantizeBeats: 0,
+    };
+  }
+
+  const deck = getDeck(sourceDeck);
+  const deckStatus = await deck.requestStatus();
+  const scheduled = quantizedSamplerStart({
+    sourceFrame: deckStatus.sourceFrame,
+    outputCurrentFrame: deckStatus.outputCurrentFrame,
+    sampleRate: deckStatus.sampleRate,
+    sourceSampleRate: deckStatus.sourceSampleRate,
+    playbackRate: deckStatus.playbackRate,
+    playing: deckStatus.playing,
+  }, pendingGrids.get(sourceDeck)!, quantizeBeats, runtime.context.currentTime);
+
+  return {
+    receipt: sampler.trigger(slot, scheduled.scheduledContextTime),
+    targetSourceFrame: scheduled.targetSourceFrame,
+    sourceDeck,
+    quantizeBeats,
+  };
+}
+
+for (let slot = 1; slot <= 8; slot += 1) {
+  const controls = samplerPadControls(slot);
+  controls.load?.addEventListener('click', () => {
+    void loadSamplerFile(slot).catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
+  });
+  controls.trigger?.addEventListener('click', () => {
+    void configureSamplerPad(slot, configFromSamplerUi(slot))
+      .then(() => triggerSamplerPad(slot))
+      .then(() => renderSamplerStatus())
+      .catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
+  });
+  controls.stop?.addEventListener('click', () => {
+    sampler.stop(slot);
+    void renderSamplerStatus();
+  });
+  const updateConfig = () => {
+    void configureSamplerPad(slot, configFromSamplerUi(slot))
+      .catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
+  };
+  controls.mode?.addEventListener('change', updateConfig);
+  controls.gain?.addEventListener('input', updateConfig);
+  controls.quantize?.addEventListener('change', updateConfig);
+  controls.sourceDeck?.addEventListener('change', updateConfig);
+}
+
+samplerRestoreButton?.addEventListener('click', () => {
+  void restoreSamplerBank()
+    .then(() => renderSamplerStatus())
+    .catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
+});
+samplerClearButton?.addEventListener('click', () => {
+  void samplerBank.clear()
+    .then(() => {
+      for (let slot = 1; slot <= 8; slot += 1) sampler.unload(slot);
+      return renderSamplerStatus();
+    })
+    .catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
+});
+samplerStatusButton?.addEventListener('click', () => {
+  void renderSamplerStatus().catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
+});
+
+void restoreSamplerBank()
+  .then(() => renderSamplerStatus())
+  .catch((error: unknown) => render(samplerStatusElement, { error: String(error) }));
 
 let masterFxTempoSource: 'A' | 'B' = 'A';
 
@@ -1209,6 +1471,44 @@ window.__libertasFxTest = {
   status: (scope) => getFx(scope).status(),
 };
 
+window.__libertasSamplerTest = {
+  async clear() {
+    await samplerBank.clear();
+    for (let slot = 1; slot <= 8; slot += 1) sampler.unload(slot);
+    return renderSamplerStatus();
+  },
+  async loadGenerated(slot, durationSeconds = 2, frequencyHz = 880, config = {}) {
+    const encoded = createSineWav({
+      durationSeconds,
+      sampleRate: 48_000,
+      frequencyHz,
+      amplitude: 0.25,
+      channels: 2,
+    });
+    const nextConfig: SamplerPadConfig = {
+      mode: config.mode ?? 'one-shot',
+      gain: config.gain ?? 0.8,
+      quantizeBeats: config.quantizeBeats ?? 0,
+      sourceDeck: config.sourceDeck ?? 'A',
+    };
+    const status = await sampler.loadEncoded(slot, encoded, `generated-pad-${slot}.wav`, nextConfig);
+    await samplerBank.saveBlob(
+      slot,
+      `generated-pad-${slot}.wav`,
+      new Blob([encoded], { type: 'audio/wav' }),
+      nextConfig,
+    );
+    return status;
+  },
+  configure: (slot, config) => configureSamplerPad(slot, config),
+  trigger: (slot, options = {}) => triggerSamplerPad(slot, options),
+  stop: (slot) => sampler.stop(slot),
+  status: () => sampler.status(),
+  listBank: () => samplerBank.list(),
+  unloadRuntime: (slot) => sampler.unload(slot),
+  restore: () => restoreSamplerBank(),
+};
+
 window.__libertasMusicalClockTest = {
   setGrid: setMusicalGrid,
   snapshot: musicalSnapshot,
@@ -1383,6 +1683,7 @@ render(mixerStatusElement, {
 });
 renderMonitorStatus();
 renderFxStatus();
+void renderSamplerStatus().catch(() => {});
 render(syncStatusElement, { phase: 'SYNC', state: 'disabled' });
 
 function waitForCondition(predicate: () => boolean, timeoutMs = 20_000): Promise<void> {

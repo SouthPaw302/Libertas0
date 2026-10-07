@@ -65,6 +65,17 @@
     .waveform-overview { height: 72px; }
     .waveform-detail { height: 132px; }
     .waveform-caption { color: #8f99a8; font-size: .78rem; display: flex; justify-content: space-between; gap: 1rem; }
+    .sampler-pad-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: .75rem; }
+    .sampler-pad-card { border: 1px solid #353b45; border-radius: 10px; padding: .7rem; background: #0f1217; }
+    .sampler-pad-trigger {
+      width: 100%; min-height: 78px; display: flex; flex-direction: column; align-items: center;
+      justify-content: center; gap: .2rem; font-size: 1rem;
+    }
+    .sampler-pad-trigger span { color: #aeb6c2; font-size: .78rem; max-width: 100%; overflow: hidden; text-overflow: ellipsis; }
+    .sampler-pad-trigger.active { box-shadow: inset 0 0 0 2px #8ea7cf; background: #343a44; }
+    .sampler-pad-card input[type="file"] { width: min(100%, 210px); font-size: .72rem; }
+    @media (max-width: 900px) { .sampler-pad-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (max-width: 520px) { .sampler-pad-grid { grid-template-columns: 1fr; } }
     pre {
       white-space: pre-wrap; overflow-wrap: anywhere; background: #080a0d; color: #dce2eb;
       border: 1px solid #282d35; border-radius: 8px; padding: .75rem; max-height: 260px; overflow: auto;
@@ -116,6 +127,7 @@
         <a href="#mixer-panel">Mixer</a>
         <a href="#monitor-panel">Monitor / Cue</a>
         <a href="#fx-panel">FX</a>
+        <a href="#sampler-panel">Sampler</a>
         <a href="#recording-panel">Library / Recording</a>
         <a href="#intelligence-panel">Analysis</a>
         <a href="#transport-panel">Cue / Loop / Jog</a>
@@ -441,6 +453,19 @@
       </div>
       <p class="section-note">Signal path: channel strip → deck FX → mixer/limiter → master FX → speakers/recording/master monitor. FX parameter updates never own transport or SYNC timing.</p>
       <pre id="fx-status">FX engine ready</pre>
+    </fieldset>
+
+    <fieldset id="sampler-panel">
+      <legend>Sampler / Performance Pads</legend>
+      <p class="section-note">Eight persisted pads. One-shots may overlap; loop pads run until stopped. Quantized starts schedule directly on the AudioContext timeline from Deck A or B's Musical Clock.</p>
+      <div id="sampler-pads" class="sampler-pad-grid"></div>
+      <div class="row">
+        <button id="sampler-restore" type="button">Restore Sample Bank</button>
+        <button id="sampler-clear" type="button">Clear Sample Bank</button>
+        <button id="sampler-status-button" type="button">Refresh Sampler Status</button>
+      </div>
+      <p class="section-note">Signal path: pad voices → sampler bus → mixer input 3 → master volume/limiter → Master FX → speakers/recording. Sampler scheduling never moves deck sourceFrame or SYNC state.</p>
+      <pre id="sampler-status">Sampler bank initializing</pre>
     </fieldset>
 
     <details>
