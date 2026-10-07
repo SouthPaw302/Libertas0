@@ -432,13 +432,13 @@ function applyMidiAction(action: MidiAction): void {
       return;
     case 'sync.a-to-b':
       if (action.trigger) {
-        void sync.enable('A');
+        void sync.enable('A', pendingGrids.get('A')!, pendingGrids.get('B')!);
         finish();
       }
       return;
     case 'sync.b-to-a':
       if (action.trigger) {
-        void sync.enable('B');
+        void sync.enable('B', pendingGrids.get('B')!, pendingGrids.get('A')!);
         finish();
       }
       return;
