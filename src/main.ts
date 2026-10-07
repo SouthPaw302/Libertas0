@@ -33,6 +33,20 @@ import type { TrackAnalysisResult } from './intelligence/TrackAnalysisCore';
 import { TrackLibrary, type LibraryTrack } from './library/TrackLibrary';
 import { MidiMappingEngine, type MidiAction, type MidiBinding } from './midi/MidiMappingEngine';
 import { WebMidiController, type MidiRuntimeStatus } from './midi/WebMidiController';
+import {
+  MidiProfileStore,
+  type MidiControllerProfile,
+  type MidiFeedbackBinding,
+} from './midi/MidiProfileStore';
+import {
+  MidiFeedbackRouter,
+  type MidiFeedbackMessage,
+} from './midi/MidiFeedbackRouter';
+import {
+  MIDI_TARGETS,
+  midiTarget,
+  type MidiTargetDescriptor,
+} from './midi/MidiTargetCatalog';
 import { MasterRecordingController, type RecordingStatus } from './recording/MasterRecordingController';
 import { AutomationController } from './automation/AutomationController';
 import type { AutomationLane, ScheduledAutomation } from './automation/AutomationTypes';
@@ -195,10 +209,29 @@ interface LibertasLibraryTestApi {
 
 interface LibertasMidiTestApi {
   apiAvailable(): boolean;
+  connect(): Promise<MidiRuntimeStatus>;
   addBinding(binding: MidiBinding): void;
-  learn(target: string, mode: 'absolute' | 'trigger', min?: number, max?: number): void;
-  dispatch(data: number[]): unknown;
+  clearBindings(): void;
+  learn(
+    target: string,
+    mode: 'absolute' | 'trigger',
+    min?: number,
+    max?: number,
+    inputId?: string | 'source',
+  ): void;
+  dispatch(data: number[], sourceInputId?: string): unknown;
   status(): MidiRuntimeStatus;
+  targets(): MidiTargetDescriptor[];
+  profiles(): MidiControllerProfile[];
+  activeProfile(): MidiControllerProfile | null;
+  saveProfile(name: string, id?: string): MidiControllerProfile;
+  activateProfile(id: string | null): MidiControllerProfile | null;
+  removeProfile(id: string): void;
+  replaceFeedback(bindings: MidiFeedbackBinding[]): void;
+  feedbackBindings(): MidiFeedbackBinding[];
+  publishFeedback(target: string, value: number): MidiFeedbackMessage[];
+  pulseFeedback(target: string): MidiFeedbackMessage[];
+  feedbackLog(): MidiFeedbackMessage[];
 }
 
 interface LibertasRecordingTestApi {
@@ -304,47 +337,168 @@ const performanceB = new PerformanceTransportController(deckB);
 const intelligence = new TrackIntelligenceController(runtime);
 const library = new TrackLibrary();
 const midiEngine = new MidiMappingEngine();
+const midiProfiles = new MidiProfileStore();
+const midiFeedbackLog: MidiFeedbackMessage[] = [];
+let webMidi!: WebMidiController;
+const midiFeedback = new MidiFeedbackRouter((message) => {
+  midiFeedbackLog.push(message);
+  if (midiFeedbackLog.length > 128) midiFeedbackLog.splice(0, midiFeedbackLog.length - 128);
+  try {
+    if (message.outputId) webMidi.send(message.outputId, [...message.data], message.timestamp);
+    else webMidi.sendAll([...message.data], message.timestamp);
+  } catch {
+    // Feedback remains best-effort when a physical MIDI output is absent/disconnected.
+  }
+});
 const recording = new MasterRecordingController(runtime, masterFx);
 const automation = new AutomationController(runtime.context);
 
+function publishMidiActionFeedback(action: MidiAction): void {
+  if (action.trigger) midiFeedback.pulse(action.target);
+  else midiFeedback.publish(action.target, action.value);
+}
+
 function applyMidiAction(action: MidiAction): void {
+  const finish = (): void => publishMidiActionFeedback(action);
+
   switch (action.target) {
     case 'mixer.crossfader':
       mixer.setCrossfader(action.value);
+      finish();
       return;
     case 'mixer.master':
       mixer.setMasterVolume(action.value);
+      finish();
       return;
     case 'channelA.trim':
       channelA.setTrimDb(action.value);
+      finish();
       return;
     case 'channelB.trim':
       channelB.setTrimDb(action.value);
+      finish();
       return;
     case 'channelA.filter':
       channelA.setFilter(action.value);
+      finish();
       return;
     case 'channelB.filter':
       channelB.setFilter(action.value);
+      finish();
       return;
     case 'deckA.volume':
       deckA.setVolume(action.value);
+      finish();
       return;
     case 'deckB.volume':
       deckB.setVolume(action.value);
+      finish();
+      return;
+    case 'deckA.playPause':
+      if (action.trigger) {
+        void deckA.requestStatus().then((status) => status.playing ? deckA.pause() : deckA.play());
+        finish();
+      }
+      return;
+    case 'deckB.playPause':
+      if (action.trigger) {
+        void deckB.requestStatus().then((status) => status.playing ? deckB.pause() : deckB.play());
+        finish();
+      }
+      return;
+    case 'deckA.cue':
+      if (action.trigger) {
+        void performanceA.triggerCue();
+        finish();
+      }
+      return;
+    case 'deckB.cue':
+      if (action.trigger) {
+        void performanceB.triggerCue();
+        finish();
+      }
       return;
     case 'deckA.hotcue1':
-      if (action.trigger) void performanceA.triggerHotCue(1);
+      if (action.trigger) {
+        void performanceA.triggerHotCue(1);
+        finish();
+      }
       return;
     case 'deckB.hotcue1':
-      if (action.trigger) void performanceB.triggerHotCue(1);
+      if (action.trigger) {
+        void performanceB.triggerHotCue(1);
+        finish();
+      }
       return;
-    default:
+    case 'sync.a-to-b':
+      if (action.trigger) {
+        void sync.enable('A');
+        finish();
+      }
+      return;
+    case 'sync.b-to-a':
+      if (action.trigger) {
+        void sync.enable('B');
+        finish();
+      }
+      return;
+    case 'sync.disable':
+      if (action.trigger) {
+        void sync.disable();
+        finish();
+      }
+      return;
+    case 'fx.A.wet':
+      deckFxA.setWet(action.value);
+      finish();
+      return;
+    case 'fx.B.wet':
+      deckFxB.setWet(action.value);
+      finish();
+      return;
+    case 'fx.master.wet':
+      masterFx.setWet(action.value);
+      finish();
+      return;
+    case 'monitor.cueA':
+      if (action.trigger) {
+        monitor.setCue('A', !monitor.status().cueA);
+        finish();
+      }
+      return;
+    case 'monitor.cueB':
+      if (action.trigger) {
+        monitor.setCue('B', !monitor.status().cueB);
+        finish();
+      }
+      return;
+    default: {
+      const samplerTrigger = /^sampler\.pad([1-8])\.trigger$/.exec(action.target);
+      if (samplerTrigger && action.trigger) {
+        void triggerSamplerPad(Number(samplerTrigger[1]));
+        finish();
+        return;
+      }
+      const samplerGain = /^sampler\.pad([1-8])\.gain$/.exec(action.target);
+      if (samplerGain) {
+        void configureSamplerPad(Number(samplerGain[1]), { gain: action.value });
+        finish();
+        return;
+      }
       throw new Error(`Unmapped MIDI target: ${action.target}`);
+    }
   }
 }
 
-const webMidi = new WebMidiController(midiEngine, applyMidiAction);
+webMidi = new WebMidiController(midiEngine, applyMidiAction);
+
+function applyMidiProfile(profile: MidiControllerProfile | null): MidiControllerProfile | null {
+  midiEngine.replaceBindings(profile?.bindings ?? []);
+  midiFeedback.replaceBindings(profile?.feedback ?? []);
+  return profile;
+}
+
+applyMidiProfile(midiProfiles.active());
 
 automation.register('mixer.master', {
   min: 0, max: 1,
@@ -475,6 +629,19 @@ const libraryStatus = document.querySelector<HTMLPreElement>('#library-status');
 const midiConnect = document.querySelector<HTMLButtonElement>('#midi-connect');
 const midiLearnCrossfader = document.querySelector<HTMLButtonElement>('#midi-learn-crossfader');
 const midiLearnMaster = document.querySelector<HTMLButtonElement>('#midi-learn-master');
+const midiTargetSelect = document.querySelector<HTMLSelectElement>('#midi-target-select');
+const midiInputSelect = document.querySelector<HTMLSelectElement>('#midi-input-select');
+const midiLearnSelected = document.querySelector<HTMLButtonElement>('#midi-learn-selected');
+const midiProfileName = document.querySelector<HTMLInputElement>('#midi-profile-name');
+const midiProfileSelect = document.querySelector<HTMLSelectElement>('#midi-profile-select');
+const midiProfileSave = document.querySelector<HTMLButtonElement>('#midi-profile-save');
+const midiProfileActivate = document.querySelector<HTMLButtonElement>('#midi-profile-activate');
+const midiProfileDelete = document.querySelector<HTMLButtonElement>('#midi-profile-delete');
+const midiOutputSelect = document.querySelector<HTMLSelectElement>('#midi-output-select');
+const midiFeedbackKind = document.querySelector<HTMLSelectElement>('#midi-feedback-kind');
+const midiFeedbackChannel = document.querySelector<HTMLInputElement>('#midi-feedback-channel');
+const midiFeedbackNumber = document.querySelector<HTMLInputElement>('#midi-feedback-number');
+const midiFeedbackAdd = document.querySelector<HTMLButtonElement>('#midi-feedback-add');
 const midiStatus = document.querySelector<HTMLPreElement>('#midi-status');
 const recordingStart = document.querySelector<HTMLButtonElement>('#recording-start');
 const recordingStop = document.querySelector<HTMLButtonElement>('#recording-stop');
@@ -1305,17 +1472,169 @@ libraryRemove?.addEventListener('click', () => {
   })().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
 });
 
+function refreshMidiUi(): void {
+  const status = webMidi.status();
+  if (midiTargetSelect) {
+    const current = midiTargetSelect.value;
+    midiTargetSelect.replaceChildren(...MIDI_TARGETS.map((descriptor) => {
+      const option = document.createElement('option');
+      option.value = descriptor.target;
+      option.textContent = descriptor.label;
+      return option;
+    }));
+    if (MIDI_TARGETS.some((descriptor) => descriptor.target === current)) midiTargetSelect.value = current;
+  }
+
+  if (midiInputSelect) {
+    const current = midiInputSelect.value;
+    const any = document.createElement('option');
+    any.value = '';
+    any.textContent = 'Any input';
+    const source = document.createElement('option');
+    source.value = '__source__';
+    source.textContent = 'Learn source device';
+    const inputs = status.inputs.map((input) => {
+      const option = document.createElement('option');
+      option.value = input.id;
+      option.textContent = input.name || input.id;
+      return option;
+    });
+    midiInputSelect.replaceChildren(any, source, ...inputs);
+    if ([...midiInputSelect.options].some((option) => option.value === current)) midiInputSelect.value = current;
+  }
+
+  if (midiOutputSelect) {
+    const current = midiOutputSelect.value;
+    const all = document.createElement('option');
+    all.value = '';
+    all.textContent = 'All MIDI outputs';
+    const outputs = status.outputs.map((output) => {
+      const option = document.createElement('option');
+      option.value = output.id;
+      option.textContent = output.name || output.id;
+      return option;
+    });
+    midiOutputSelect.replaceChildren(all, ...outputs);
+    if ([...midiOutputSelect.options].some((option) => option.value === current)) midiOutputSelect.value = current;
+  }
+
+  if (midiProfileSelect) {
+    const activeId = midiProfiles.active()?.id ?? '';
+    const current = midiProfileSelect.value || activeId;
+    const none = document.createElement('option');
+    none.value = '';
+    none.textContent = 'No active profile';
+    const profiles = midiProfiles.list().map((profile) => {
+      const option = document.createElement('option');
+      option.value = profile.id;
+      option.textContent = profile.name;
+      return option;
+    });
+    midiProfileSelect.replaceChildren(none, ...profiles);
+    midiProfileSelect.value = [...midiProfileSelect.options].some((option) => option.value === current) ? current : '';
+  }
+
+  render(midiStatus, {
+    ...status,
+    activeProfile: midiProfiles.active(),
+    feedback: midiFeedback.listBindings(),
+    recentFeedback: midiFeedbackLog.slice(-12),
+  });
+}
+
 midiConnect?.addEventListener('click', () => {
-  void webMidi.connect().then((status) => render(midiStatus, status))
+  void webMidi.connect()
+    .then(() => refreshMidiUi())
     .catch((error: unknown) => render(midiStatus, { error: String(error), status: webMidi.status() }));
 });
+
 midiLearnCrossfader?.addEventListener('click', () => {
   midiEngine.startLearn('mixer.crossfader', 'absolute', -1, 1);
-  render(midiStatus, { ...webMidi.status(), learning: 'mixer.crossfader' });
+  refreshMidiUi();
 });
 midiLearnMaster?.addEventListener('click', () => {
   midiEngine.startLearn('mixer.master', 'absolute', 0, 1);
-  render(midiStatus, { ...webMidi.status(), learning: 'mixer.master' });
+  refreshMidiUi();
+});
+
+midiLearnSelected?.addEventListener('click', () => {
+  const descriptor = midiTarget(midiTargetSelect?.value ?? '');
+  if (!descriptor) {
+    render(midiStatus, { error: 'Choose a MIDI target' });
+    return;
+  }
+  const selectedInput = midiInputSelect?.value ?? '';
+  const inputId = selectedInput === '__source__'
+    ? 'source'
+    : selectedInput || undefined;
+  midiEngine.startLearn(descriptor.target, descriptor.mode, descriptor.min, descriptor.max, inputId);
+  render(midiStatus, {
+    ...webMidi.status(),
+    learning: descriptor,
+    input: inputId ?? 'any',
+  });
+});
+
+midiProfileSave?.addEventListener('click', () => {
+  try {
+    const selected = midiProfileSelect?.value || undefined;
+    const profile = midiProfiles.save({
+      ...(selected ? { id: selected } : {}),
+      name: midiProfileName?.value || midiProfiles.get(selected ?? '')?.name || 'Controller Profile',
+      bindings: midiEngine.listBindings(),
+      feedback: midiFeedback.listBindings(),
+    });
+    midiProfiles.activate(profile.id);
+    refreshMidiUi();
+  } catch (error) {
+    render(midiStatus, { error: String(error) });
+  }
+});
+
+midiProfileActivate?.addEventListener('click', () => {
+  try {
+    const id = midiProfileSelect?.value || null;
+    applyMidiProfile(midiProfiles.activate(id));
+    refreshMidiUi();
+  } catch (error) {
+    render(midiStatus, { error: String(error) });
+  }
+});
+
+midiProfileDelete?.addEventListener('click', () => {
+  const id = midiProfileSelect?.value;
+  if (!id) return;
+  midiProfiles.remove(id);
+  applyMidiProfile(midiProfiles.active());
+  refreshMidiUi();
+});
+
+midiFeedbackAdd?.addEventListener('click', () => {
+  const descriptor = midiTarget(midiTargetSelect?.value ?? '');
+  if (!descriptor) {
+    render(midiStatus, { error: 'Choose a target before adding feedback' });
+    return;
+  }
+  try {
+    const channel = Number(midiFeedbackChannel?.value ?? 1);
+    const number = Number(midiFeedbackNumber?.value ?? 0);
+    const outputId = midiOutputSelect?.value || undefined;
+    const binding: MidiFeedbackBinding = {
+      id: `feedback:${descriptor.target}:${channel}:${number}:${Date.now()}`,
+      target: descriptor.target,
+      kind: midiFeedbackKind?.value === 'cc' ? 'cc' : 'note',
+      channel,
+      number,
+      mode: descriptor.mode === 'trigger' ? 'pulse' : 'scaled',
+      ...(descriptor.min === undefined ? {} : { min: descriptor.min }),
+      ...(descriptor.max === undefined ? {} : { max: descriptor.max }),
+      ...(outputId === undefined ? {} : { outputId }),
+    };
+    midiFeedback.replaceBindings([...midiFeedback.listBindings(), binding]);
+    refreshMidiUi();
+  } catch (error) {
+    render(midiStatus, { error: String(error) });
+  }
 });
 
 recordingStart?.addEventListener('click', () => {
@@ -1361,7 +1680,7 @@ automationDemo?.addEventListener('click', () => {
 });
 
 void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
-render(midiStatus, webMidi.status());
+refreshMidiUi();
 render(recordingStatus, recording.status());
 render(automationStatus, { targets: automation.targetsList(), state: 'idle' });
 
@@ -1613,10 +1932,39 @@ window.__libertasLibraryTest = {
 
 window.__libertasMidiTest = {
   apiAvailable: () => webMidi.apiAvailable(),
+  connect: () => webMidi.connect(),
   addBinding: (binding) => midiEngine.addBinding(binding),
-  learn: (target, mode, min, max) => midiEngine.startLearn(target, mode, min, max),
-  dispatch: (data) => webMidi.dispatchSynthetic(data),
+  clearBindings: () => midiEngine.clearBindings(),
+  learn: (target, mode, min, max, inputId) => midiEngine.startLearn(target, mode, min, max, inputId),
+  dispatch: (data, sourceInputId) => webMidi.dispatchSynthetic(data, sourceInputId),
   status: () => webMidi.status(),
+  targets: () => MIDI_TARGETS.map((descriptor) => ({ ...descriptor })),
+  profiles: () => midiProfiles.list(),
+  activeProfile: () => midiProfiles.active(),
+  saveProfile(name, id) {
+    const profile = midiProfiles.save({
+      ...(id === undefined ? {} : { id }),
+      name,
+      bindings: midiEngine.listBindings(),
+      feedback: midiFeedback.listBindings(),
+    });
+    midiProfiles.activate(profile.id);
+    return profile;
+  },
+  activateProfile(id) {
+    return applyMidiProfile(midiProfiles.activate(id));
+  },
+  removeProfile(id) {
+    midiProfiles.remove(id);
+    applyMidiProfile(midiProfiles.active());
+  },
+  replaceFeedback(bindings) {
+    midiFeedback.replaceBindings(bindings);
+  },
+  feedbackBindings: () => midiFeedback.listBindings(),
+  publishFeedback: (target, value) => midiFeedback.publish(target, value),
+  pulseFeedback: (target) => midiFeedback.pulse(target),
+  feedbackLog: () => midiFeedbackLog.map((message) => ({ ...message, data: [...message.data] as [number, number, number] })),
 };
 
 window.__libertasRecordingTest = {

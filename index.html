@@ -204,12 +204,37 @@
           <pre id="library-status">Library initializing</pre>
         </div>
         <div>
-          <strong>MIDI</strong>
+          <strong>Advanced MIDI / Controllers</strong>
           <div class="row">
             <button id="midi-connect" type="button">Connect Web MIDI</button>
-            <button id="midi-learn-crossfader" type="button">Learn Crossfader</button>
-            <button id="midi-learn-master" type="button">Learn Master</button>
+            <button id="midi-learn-crossfader" type="button">Quick Learn Crossfader</button>
+            <button id="midi-learn-master" type="button">Quick Learn Master</button>
           </div>
+          <div class="row">
+            <label>Target <select id="midi-target-select"></select></label>
+            <label>Input <select id="midi-input-select"></select></label>
+            <button id="midi-learn-selected" type="button">Learn Selected Target</button>
+          </div>
+          <div class="row">
+            <label>Profile name <input id="midi-profile-name" type="text" value="Controller Profile" /></label>
+            <select id="midi-profile-select"></select>
+            <button id="midi-profile-save" type="button">Save Profile</button>
+            <button id="midi-profile-activate" type="button">Activate</button>
+            <button id="midi-profile-delete" type="button">Delete</button>
+          </div>
+          <div class="row">
+            <label>LED/output <select id="midi-output-select"></select></label>
+            <label>Feedback
+              <select id="midi-feedback-kind">
+                <option value="note" selected>Note LED</option>
+                <option value="cc">CC ring/value</option>
+              </select>
+            </label>
+            <label>Ch <input id="midi-feedback-channel" type="number" min="1" max="16" step="1" value="1" /></label>
+            <label>No. <input id="midi-feedback-number" type="number" min="0" max="127" step="1" value="1" /></label>
+            <button id="midi-feedback-add" type="button">Add Feedback</button>
+          </div>
+          <p class="section-note">Mappings may be global or bound to one physical input. Profiles persist mappings + LED feedback. MIDI controls the existing modules; it never becomes transport/SYNC timing authority.</p>
           <pre id="midi-status">MIDI initializing</pre>
         </div>
       </div>
