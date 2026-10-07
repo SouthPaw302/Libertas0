@@ -38,6 +38,7 @@ class LibertasMixerProcessor extends AudioWorkletProcessor {
     this.crossfaderGainB = Math.SQRT1_2;
     this.inputAPeak = 0;
     this.inputBPeak = 0;
+    this.samplerInputPeak = 0;
     this.summedPeakBeforeClamp = 0;
     this.outputPeak = 0;
     this.clippedSamples = 0;
@@ -74,6 +75,7 @@ class LibertasMixerProcessor extends AudioWorkletProcessor {
       crossfaderGainB: this.crossfaderGainB,
       inputAPeak: this.inputAPeak,
       inputBPeak: this.inputBPeak,
+      samplerInputPeak: this.samplerInputPeak,
       summedPeakBeforeClamp: this.summedPeakBeforeClamp,
       outputPeak: this.outputPeak,
       clippedSamples: this.clippedSamples,
@@ -97,6 +99,7 @@ class LibertasMixerProcessor extends AudioWorkletProcessor {
 
     const inputA = inputs[0] || [];
     const inputB = inputs[1] || [];
+    const inputSampler = inputs[2] || [];
     const masterVolumes = parameters.masterVolume || [1];
     const crossfaders = parameters.crossfader || [0];
     const limiterThresholds = parameters.limiterThreshold || [0.98];
@@ -104,6 +107,7 @@ class LibertasMixerProcessor extends AudioWorkletProcessor {
 
     let inputAPeak = 0;
     let inputBPeak = 0;
+    let samplerInputPeak = 0;
     let summedPeak = 0;
     let outputPeak = 0;
 
@@ -124,12 +128,15 @@ class LibertasMixerProcessor extends AudioWorkletProcessor {
       for (let channel = 0; channel < output.length; channel += 1) {
         const aChannel = inputA[channel] || inputA[0];
         const bChannel = inputB[channel] || inputB[0];
+        const samplerChannel = inputSampler[channel] || inputSampler[0];
         const a = aChannel ? aChannel[i] || 0 : 0;
         const b = bChannel ? bChannel[i] || 0 : 0;
-        const summed = (a * gainA + b * gainB) * master;
+        const sampler = samplerChannel ? samplerChannel[i] || 0 : 0;
+        const summed = (a * gainA + b * gainB + sampler) * master;
 
         inputAPeak = Math.max(inputAPeak, Math.abs(a));
         inputBPeak = Math.max(inputBPeak, Math.abs(b));
+        samplerInputPeak = Math.max(samplerInputPeak, Math.abs(sampler));
         summedPeak = Math.max(summedPeak, Math.abs(summed));
 
         if (Math.abs(summed) > 1) this.clippedSamples += 1;
@@ -162,6 +169,7 @@ class LibertasMixerProcessor extends AudioWorkletProcessor {
     );
     this.inputAPeak = inputAPeak;
     this.inputBPeak = inputBPeak;
+    this.samplerInputPeak = samplerInputPeak;
     this.summedPeakBeforeClamp = summedPeak;
     this.outputPeak = outputPeak;
     this.processCalls += 1;

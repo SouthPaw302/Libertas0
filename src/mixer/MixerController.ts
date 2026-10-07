@@ -18,6 +18,7 @@ export interface MixerProcessorStatus {
   crossfaderGainB: number;
   inputAPeak: number;
   inputBPeak: number;
+  samplerInputPeak: number;
   summedPeakBeforeClamp: number;
   outputPeak: number;
   clippedSamples: number;
@@ -63,7 +64,7 @@ export class MixerController {
     await this.runtime.ensureWorkletModule('/audio/libertas-mixer.worklet.js');
     const context = this.runtime.context;
     const node = new AudioWorkletNode(context, 'libertas-mixer', {
-      numberOfInputs: 2,
+      numberOfInputs: 3,
       numberOfOutputs: 1,
       outputChannelCount: [2],
       parameterData: {
