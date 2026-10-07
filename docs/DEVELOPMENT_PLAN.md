@@ -16,6 +16,7 @@
 12. Monitor / Cue Bus
 13. Waveform / Track View
 14. FX Engine
+15. Sampler / Performance Pads
 
 ## Rule
 Do not move upward because a schedule says so. Move upward only when the current module's evidence gate passes.

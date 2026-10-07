@@ -182,6 +182,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "sampler-performance-pads",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "fx-engine"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

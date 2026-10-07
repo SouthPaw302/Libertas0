@@ -347,6 +347,17 @@
         "native hardware DSP"
       ],
       "evidence": "evidence/fx-engine/module14-automated/RESULT.json"
+    },
+    {
+      "id": "audio.sampler-performance-pads",
+      "class": "audio-performance",
+      "status": "implementing",
+      "provider": "AudioBufferSourceNode scheduling + IndexedDB sample bank + third realtime mixer input",
+      "contract": "docs/contracts/SAMPLER_PERFORMANCE_PADS.md",
+      "proven_scope": [],
+      "not_yet_proven": [
+        "module gate pending"
+      ]
     }
   ]
 }

@@ -1,0 +1,58 @@
+name: Sampler Performance Pads Gate
+
+on:
+  push:
+    branches:
+      - 'module/sampler-performance-pads'
+    paths:
+      - 'src/sampler/**'
+      - 'src/mixer/MixerController.ts'
+      - 'public/audio/libertas-mixer.worklet.js'
+      - 'src/main.ts'
+      - 'index.html'
+      - 'tests/browser/sampler-performance-pads.spec.ts'
+      - 'docs/contracts/SAMPLER_PERFORMANCE_PADS.md'
+      - 'MODULE_REGISTRY.json'
+      - 'DEVELOPMENT_STATE.json'
+      - 'SYSTEM_CONTRACT.json'
+      - 'CAPABILITY_REGISTRY.json'
+      - '.github/workflows/sampler-performance-pads.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sampler-performance-pads-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  sampler:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install
+        run: npm install
+      - name: Bootstrap / contract
+        run: python bootstrap.py && python scripts/validate_system.py
+      - name: Typecheck, unit tests, build
+        run: npm run check
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+      - name: Sampler / performance-pad browser gate
+        run: npx playwright test tests/browser/sampler-performance-pads.spec.ts
+      - name: Locked FX, mixer, recording, transport and SYNC regressions
+        run: npx playwright test tests/browser/fx-engine.spec.ts tests/browser/mixer-dsp.spec.ts tests/browser/phase10.spec.ts tests/browser/performance-transport.spec.ts tests/browser/sync.spec.ts
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: sampler-performance-pads-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30

@@ -66,6 +66,7 @@
     "distributed",
     "monitor_cue_bus",
     "waveform_track_view",
-    "fx_engine"
+    "fx_engine",
+    "sampler_performance_pads"
   ]
 }
