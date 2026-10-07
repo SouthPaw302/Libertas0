@@ -20,6 +20,10 @@ test.beforeEach(async ({ page }) => {
 });
 
 test('device-specific bindings isolate identical controls from two controllers', async ({ page }) => {
+  await page.evaluate(() => window.__libertasDualDeckTest.loadGenerated(5, 330, 550, 0.12));
+  await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
+  await page.waitForTimeout(80);
+
   await page.evaluate(() => {
     window.__libertasMidiTest.addBinding({
       id: 'controller-a-xf',
@@ -54,6 +58,8 @@ test('device-specific bindings isolate identical controls from two controllers',
 
   await page.evaluate(() => window.__libertasMidiTest.dispatch([0xb0, 10, 127], 'controller-b'));
   expect((await page.evaluate(() => window.__libertasFxTest.status('A'))).wet).toBeCloseTo(1, 6);
+
+  await page.evaluate(() => window.__libertasDualDeckTest.close());
 });
 
 test('controller profile persists mappings and restores them after activation', async ({ page }) => {
