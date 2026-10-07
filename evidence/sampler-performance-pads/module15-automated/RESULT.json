@@ -1,0 +1,45 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "sampler-performance-pads",
+  "gate": "module15-automated",
+  "status": "PASS",
+  "tested_sha": "d7e4ddceb334795b1eee2a6d8476260f9e4c527e",
+  "system_contract_run": 37619933753,
+  "module_gate_run": 37619933906,
+  "results": {
+    "system_contract": "PASS",
+    "typecheck_unit_build": "PASS",
+    "unit_tests": {
+      "passed": 67,
+      "total": 67,
+      "sampler_timing_tests": 4
+    },
+    "sampler_browser_tests": {
+      "passed": 5,
+      "total": 5
+    },
+    "locked_regressions": {
+      "passed": 26,
+      "total": 26
+    },
+    "persisted_bank_restore": "PASS",
+    "one_shot_mixer_input_three": "PASS",
+    "quantized_trigger_600ms_stall": "PASS",
+    "loop_start_stop": "PASS",
+    "new_deck_discontinuities": 0,
+    "new_mixer_discontinuities": 0
+  },
+  "artifact": {
+    "id": 11481816388,
+    "digest": "sha256:bc69d26e7af3c9d6704c59b2eca4902a0f37e617e1db51fb2e43d4e8945e47b1"
+  },
+  "proven_scope": [
+    "8-pad sample bank",
+    "IndexedDB persistence",
+    "one-shot and loop pads",
+    "per-pad gain",
+    "Deck A/B quantization source",
+    "AudioContext scheduled quantized triggering",
+    "mixer input 3 routing under master limiter"
+  ]
+}

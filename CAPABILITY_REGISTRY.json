@@ -351,13 +351,29 @@
     {
       "id": "audio.sampler-performance-pads",
       "class": "audio-performance",
-      "status": "implementing",
+      "status": "proven",
       "provider": "AudioBufferSourceNode scheduling + IndexedDB sample bank + third realtime mixer input",
       "contract": "docs/contracts/SAMPLER_PERFORMANCE_PADS.md",
-      "proven_scope": [],
+      "proven_scope": [
+        "eight persisted performance pads",
+        "one-shot polyphonic retriggering",
+        "single active loop voice per loop pad",
+        "per-pad gain",
+        "per-pad Deck A/B clock source",
+        "quantize Off / 1/4 / 1/2 / 1 / 2 / 4 beats",
+        "sourceFrame/outputCurrentFrame-derived AudioContext scheduling",
+        "quantized trigger survives 600 ms main-thread stall",
+        "dedicated third mixer input before master volume/limiter",
+        "IndexedDB sample-bank restore",
+        "zero deck/SYNC transport authority"
+      ],
       "not_yet_proven": [
-        "module gate pending"
-      ]
+        "sample time-stretch or pitch-lock",
+        "velocity-sensitive hardware triggering",
+        "sequencer/chopper",
+        "stem sampling"
+      ],
+      "evidence": "evidence/sampler-performance-pads/module15-automated/RESULT.json"
     }
   ]
 }

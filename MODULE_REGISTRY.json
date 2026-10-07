@@ -185,7 +185,7 @@
     },
     {
       "id": "sampler-performance-pads",
-      "state": "IMPLEMENTING",
+      "state": "LOCKED",
       "depends_on": [
         "fx-engine"
       ],
