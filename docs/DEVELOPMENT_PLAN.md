@@ -33,3 +33,8 @@ Do not move upward because a schedule says so. Move upward only when the current
 
 ## Commit discipline
 Prefer meaningful checkpoints. Avoid micro-push loops. A commit should represent a coherent state another developer can understand and test.
+
+18. AutoMix / Transition Intelligence — LOCKED; opt-in phrase/grid-aware plan and supervised transition with SYNC guard and manual override.
+
+## Post-stack adoption boundary
+After all 18 modules are locked and validated, audit DJtest's existing architecture and prepare a narrowly scoped surgical upgrade plan. Keep DJtest unchanged until explicit integration scope, interface compatibility, and browser regression gates are established. Existing LibertasDJ features are not to be replaced blindly.

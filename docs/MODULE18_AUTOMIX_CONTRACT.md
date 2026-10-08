@@ -1,39 +1,25 @@
-# Module 18 — AutoMix / Transition Intelligence (Contract Draft)
+# Module 18 — AutoMix / Transition Intelligence (LOCKED)
 
-Status: CONTRACT DRAFT; product code NOT AUTHORIZED until mandatory bootstrap, state/registry update, and contract review.
-Base SHA: `734c275e792252e5ccdd9e4440d5aa5f8eaaa37f`
-Branch: `module18-automix-transition`
+## Exact proof
+- Proven product SHA: `800413053151cd7ba8a4eb98a5734db7079bfb4e`
+- Final GitHub Actions run: `37716733491` — all seven jobs PASS; Linux and Windows each 81 unit; focused Chromium 20/20; complete Chromium 74/74; realtime repeated torture 33/33.
+- Local physical task: `AUTOMIX-T5-001` via handoff `a02c818cffc1fd55297a8e851a89b057d76739da`, report `a629725dec3f4cabdd5ed333219f2c737ac30829`. Installed headed Edge; 2 A→B and 2 B→A actual audible transitions, manual override/refusal PASS, zero unexpected hidden transport seeks, zero A/B/mixer discontinuities, 64.33-second post-master recording on Drive.
+- Durable closeout report: `evidence/automix/module18-closeout/RESULT.json`.
 
-## Mission
-Create explainable, deterministic transition planning and assisted execution for Deck A/B using Module 17 preparation, Track Intelligence, Musical Clock, SYNC, mixer and FX. Never replace the realtime audio kernel.
+## Runtime scope
+Module 18 is an *opt-in assisted crossfader transition* subsystem. The deterministic planner proposes a phrase-bar boundary based on **trusted existing beat grids** and confirms tempo/meter and sufficient track length. The operator loads and starts both tracks, engages the proven SYNC engine and stages the crossfader on the outgoing deck. AutoMix checks identities and lock state, then schedules existing mixer AudioParam crossfader automation on the AudioContext timeline, not JavaScript wall-clock timers. Manual deck/performance/crossfader actions cancel the plan or fade, retaining operator authority. Untrusted grids, mismatched sources, incompatible tempo/meter or unstaged crossfader must refuse, never guess.
 
-## Authority and safety
-- Audio engine/Musical Clock own sample-accurate scheduling and phase; AutoMix proposes intents, not a JS timer clock.
-- Automation may not secretly seek, overwrite manually set cues, silently switch SYNC master, or mutate prepared-library data.
-- Human deck, mixer, FX, MIDI actions override automation immediately; cancellation is bounded, observable and audible-safe.
-- Unsupported/incompatible/low-confidence grids yield explicit NO_PLAN or MANUAL_REQUIRED, not an invented alignment.
-- Initial scope: offline/deterministic planner plus opt-in assisted transition; no autonomous playlist mixing or ML dependency.
+## Authority and invariants
+- Deck AudioWorklets, Musical Clock and SYNC exclusively own realtime source-frame and phase/correction authority.
+- No hidden seek, unannounced performance jump, change of SYNC master, or implicit library preparation modification.
+- Cancellation and manual override remain immediate and observable; no delayed re-arm of an aborted plan.
+- Realtime regressions continue to require zero new A/B/mixer discontinuities and zero hidden maintenance seeks.
+- The locked Module 17 library and every previous proven module must remain unchanged.
 
-## Planned contract
-Input: current/next deck IDs, loaded source identities, prepared cues/grid, BPM and grid confidence, Musical Clock snapshots, phrase length/target, user-selected transition length (bars), available mixer/FX capability.
-Output: immutable TransitionPlan containing plan ID, source identities, assumption/confidence diagnostics, downbeat/beat target, bounded tempo compatibility, suggested entry/exit cues, duration in beats, gain/EQ/crossfader curve envelopes, requested engine actions, explicit refusal reasons.
-Execution: compare observed track identities and Musical Clock state to plan assumptions before arm/execute; hand plan to existing audio-timeline/automation engine; observe execution telemetry. No setTimeout/requestAnimationFrame driven beat scheduling.
-State machine: IDLE -> PLANNED -> ARMED -> EXECUTING -> COMPLETED; ABORTED or REFUSED on mismatch/manual override/stale plan; no automatic retry.
-Phase-aware behavior: prefer prepared phrase/cue boundaries when available; state fallback precisely if musical phrase evidence is unavailable.
-Transitions: equal-power crossfade as baseline; constrained EQ/gain and optional existing FX automation, zero surprise effects.
+## Proven acceptance
+Hosted exact-SHA build, unit, Chromium runtime/real-time torture; installed-headed-Edge local real-WAV audible transitions in both directions, refusal and manual cancellation, source analysis, post-master recording, Drive-backed runtime JSON, validated bridge report. This is the scope of Module 18's proof, not a broad claim about autonomous DJ capabilities.
 
-## Acceptance gate (all evidence exact product SHA)
-1. Bootstrap: `python bootstrap.py` prints `LIBERTAS BOOT: PASS`.
-2. Contract/system validation and Linux + Windows typecheck/unit/build.
-3. Planner unit cases: aligned and incompatible BPM; confident and missing/stale grids; saved cues; bar boundaries; track replacement; deterministic replay; refusal paths.
-4. Browser: arm, transition on two real decoded tracks, manual override, cancellation, no broken controls; verify timing via audio-engine counters, not only UI.
-5. Regression: SYNC hold, deck jog/loops, mixer/FX/recording, prepared-library restoration; zero new hidden seeks and frame discontinuities.
-6. Evidence bundle: exact SHA, runner details, plan/execution trace, observations and PASS/FAIL. Human listening only for any remaining subjective physical gate.
-7. No promotion to main until required gate PASS; preserve locked Module 17 exactly.
+## Non-goals / future upgrade
+Fully autonomous playlist AutoMix, EQ/FX/gain automation choreography, semantic musical phrase/energy/harmonic inference, automatic loading or start-of-track playback, warp/time-stretch and multi-device physical compatibility remain outside the locked scope.
 
-## Working sequence
-A. Runner/bootstrap and register Module 18 contract.
-B. Pure planner + deterministic unit suite.
-C. Audio-timeline execution adapter and manual override.
-D. Browser integration and bounded torture.
-E. Single end-of-module Full Validation, evidence and promotion.
+DJtest integration is a later **surgical compatibility project**: compare old web architecture to these validated modules, preserve features already working, and perform a bounded tested replacement of deficient components. Do not touch DJtest during Module 18 closeout.

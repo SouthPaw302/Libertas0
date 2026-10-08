@@ -34,7 +34,7 @@ jobs:
           m=json.load(open('MODULE_REGISTRY.json'))
           assert s['active_module']=='automix-transition-intelligence'
           assert any(x['id']==s['active_module'] and x['state']==s['status'] for x in m['modules'])
-          assert s['status'] in ['CONTRACTED','IMPLEMENTING','AUTOMATED_TEST','RUNTIME_TEST','PROVEN']
+          assert s['status'] in ['CONTRACTED','IMPLEMENTING','AUTOMATED_TEST','RUNTIME_TEST','PROVEN','LOCKED']
           print('MODULE 18 CONTRACT: PASS')
           PY
       - uses: actions/upload-artifact@v4

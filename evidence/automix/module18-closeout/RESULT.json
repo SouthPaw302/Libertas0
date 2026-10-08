@@ -1,0 +1,79 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "automix-transition-intelligence",
+  "gate": "module18-hosted-and-physical",
+  "status": "PASS",
+  "tested_sha": "800413053151cd7ba8a4eb98a5734db7079bfb4e",
+  "hosted": {
+    "run_id": 37716733491,
+    "status": "PASS",
+    "results": {
+      "system_contract": "PASS",
+      "linux_core": "PASS",
+      "windows_core": "PASS",
+      "unit_tests": 81,
+      "focused_chromium": 20,
+      "full_chromium": 74,
+      "repeated_realtime_torture": 33,
+      "artifact_evidence": "PASS"
+    },
+    "artifacts": [
+      {
+        "id": 11524630506,
+        "role": "evidence",
+        "digest": "sha256:cc788977a3a886de328db62f68ebb5963ef3bf1a6cc8b3e2affc27b277933bb1"
+      },
+      {
+        "id": 11524425813,
+        "role": "focused_browser",
+        "digest": "sha256:a1f80a8bda27d0c8ebe505ad2092fc211032ef609e37acc4b1f2521dbf15cd81"
+      },
+      {
+        "id": 11524222722,
+        "role": "full_browser",
+        "digest": "sha256:a4aba4ff2d9a61788d197288528ec0697af7b9b1138f5cd358696b12dc483bcd"
+      },
+      {
+        "id": 11523684021,
+        "role": "torture",
+        "digest": "sha256:2d5c73ab8fb192c254bfcdbe6f13cf822d5cac88ca4878583fa85b5560a7a496"
+      }
+    ]
+  },
+  "local_debug": {
+    "task_id": "AUTOMIX-T5-001",
+    "status": "PASS",
+    "handoff_sha": "a02c818cffc1fd55297a8e851a89b057d76739da",
+    "report_sha": "a629725dec3f4cabdd5ed333219f2c737ac30829",
+    "relay_workflow_run_id": 37718400378,
+    "environment": "Windows 10 Home / installed headed Microsoft Edge / Realtek output / 48 kHz",
+    "results": {
+      "audible_transitions": 4,
+      "a_to_b": 2,
+      "b_to_a": 2,
+      "manual_override": "PASS",
+      "stage_refusal": "PASS",
+      "hidden_sync_maintenance_seeks_a": 0,
+      "hidden_sync_maintenance_seeks_b": 0,
+      "frame_discontinuities_a": 0,
+      "frame_discontinuities_b": 0,
+      "frame_discontinuities_mixer": 0,
+      "recording_seconds": 64.33333333333333,
+      "recording_bytes": 1039018,
+      "recording_mime": "audio/webm;codecs=opus",
+      "audible_confirmation": "PASS (reported by local operator)"
+    },
+    "drive": {
+      "recording": "https://drive.google.com/file/d/1ub5xTR9-GqK2XMfLxznZWHGTmNdQShpd/view?usp=drivesdk",
+      "runtime_json": "https://drive.google.com/file/d/1CfE7svSlWb0E3dHJNSSSdoGtXiX-gZLS/view?usp=drivesdk",
+      "source_a": "https://drive.google.com/file/d/1gIkxs2LuTpFqXiVbjBa62gH8se3o7jot/view?usp=drivesdk",
+      "source_b": "https://drive.google.com/file/d/1wdO4XY63OVoL8bQHkgFFVK5a_6gaEX0i/view?usp=drivesdk"
+    }
+  },
+  "limitations": [
+    "No autonomous track loading or arbitrary phrase/energy analysis",
+    "Automated EQ/FX beyond crossfader are not part of this proof",
+    "Physical MIDI compatibility not evaluated"
+  ],
+  "promotion_policy": "Lock Module 18 only. DJtest remains unmodified pending separate surgical compatibility plan."
+}

@@ -4,18 +4,21 @@
   "phase": "automix_transition_intelligence",
   "active_module": "automix-transition-intelligence",
   "active_branch": "module18-automix-transition",
-  "status": "IMPLEMENTING",
-  "current_objective": "Module 18 implementation: deterministic phrase-aware planner, active SYNC/track guard, AudioContext crossfader scheduling, manual override, browser controls, and regression proof.",
-  "last_passing_gate": "module17-advanced-library-preparation",
-  "last_evidence": "evidence/advanced-library-preparation/module17-automated/RESULT.json",
+  "status": "LOCKED",
+  "current_objective": "Module 18 AutoMix / Transition Intelligence is complete and locked after final hosted exact-SHA seven-job PASS and independently validated local headed-Edge audible physical PASS.",
+  "last_passing_gate": "module18-automix-hosted-and-physical",
+  "last_evidence": "evidence/automix/module18-closeout/RESULT.json",
   "blockers": [],
   "known_limitations": [
     "Physical MIDI hardware remains NOT_EVALUATED; deterministic mapping and browser integration are proven.",
     "Human listening, physical audio routing, and browser/device-specific behavior unavailable on hosted runners remain residual physical gates when relevant.",
     "Phase 11 does not claim production rendezvous/authentication, TURN/WAN validation, distributed file replication, or production remote render/reconstruction/agent providers.",
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
-    "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
+    "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract.",
+    "Module 18 proves opt-in assisted transitions with both decks already playing, trusted grids, active locked SYNC, and staged crossfader; it does not prove autonomous playback or playlist mixing.",
+    "AutoMix Module 18 crossfader transitions do not claim automatic EQ/FX choreography, semantic musical phrase detection, or automatic cue/start transport.",
+    "Module 18 physical test covers installed headed Microsoft Edge/Realtek on Windows 10; hardware MIDI remains NOT_EVALUATED."
   ],
-  "exact_next_action": "Run Linux/Windows core and Chromium Module 18 gate, address failures before Full Validation and promotion.",
-  "product_code_authorized": true
+  "exact_next_action": "With Modules 1-18 locked, prepare a surgical DJtest adoption audit: compare runtime contracts and map Libertas0 modules into legacy DJtest without replacing working components; keep DJtest untouched until an explicit bounded integration plan and tests are approved.",
+  "product_code_authorized": false
 }
