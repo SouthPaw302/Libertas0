@@ -1,0 +1,47 @@
+{
+  "task_id": "GUI19-LOCAL-001",
+  "requested_sha": "ba64f77bb2d5a6022c4fa8dfc1a4aa11e9d30e45",
+  "branch": "module19-usable-gui",
+  "module": "usable-performance-gui",
+  "objective": "Run the existing Libertas0 Module 19 performance-first DJ GUI LOCALLY on the Windows workstation using an installed headed browser and actual music playback. Prove it can be used, preserve full Advanced test tools and catalog, and investigate real SYNC frame continuity. Vercel is NOT deployed; browser URL is localhost only. This is a bounded test/report handoff, not product or DJtest development.",
+  "scope": [
+    "Only repository SouthPaw302/Libertas0, product commit ba64f77bb2d5a6022c4fa8dfc1a4aa11e9d30e45. Handoff branch contains instruction-only commit and MUST NOT be mistaken for tested product SHA.",
+    "Use existing local machine agent/GitHub issue #1 and the validation/local-debug evidence-only relay workflow. No Vercel or external deployment is required.",
+    "Test local Vite build and reachable localhost http://127.0.0.1:5173/ on real Chrome or Edge (fallback Brave/Opera if needed) with AudioContext and AudioWorkletNode, physical audio speakers/headphones.",
+    "Cover Performance tab, A/B waveform/deck loading, sound, Play/Pause/Seek/volume/crossfader, SYNC phase/seek counters, cue/loop/jog, AutoMix, library, FX, monitor and recording.",
+    "Cover Advanced tab, all 19 module entries, original kernel regression harness, all 20 browser suite source references, real diagnostics capture and export, and ease of switching views/sizing.",
+    "Check 2026-10-08 browser CI run 37720664196 attempt 2: 75 PASS and 1 failing sync-soak.spec.ts frameDiscontinuities assertion after a previous attempt failed a distributed/browser timeout; independently investigate whether GUI introduces a realtime problem before declaring physical PASS."
+  ],
+  "steps": [
+    "From GitHub issue #1 fetch handoff/module19-gui-local-001 task file orchestrator/tasks/GUI19-LOCAL-001.json. Check out EXACT product SHA ba64f77bb2d5a6022c4fa8dfc1a4aa11e9d30e45 in a clean isolated worktree, not instruction-only branch. Never touch LibertyDJ or DJtest.",
+    "Run python bootstrap.py and require literal LIBERTAS BOOT: PASS; read SOUL.md, AGENTS.md, DEVELOPMENT_STATE.json and docs/MODULE19_USABLE_GUI_CONTRACT.md. Record git rev-parse HEAD, dirty state, OS, browser version and available audio output.",
+    "Run npm install (or npm ci if lockfile permits), npm run check, and launch npm run dev -- --host 127.0.0.1 --port 5173. Keep dev server running during local test. Record localhost http://127.0.0.1:5173/ as LOCAL-ONLY URL; Vercel deploy is NOT present.",
+    "Open in a REAL installed headed audio-capable Edge/Chrome browser. Confirm initial Performance tab visible, both deck file inputs and waveforms, Play/Pause, SYNC B to A and A to B, mixer crossfader, AutoMix plan/arm, navigation and touch/keyboard usability. Confirm every button tested actually acts on underlying module (not just visually clickable). Record screenshots at normal desktop, narrower tablet and phone widths; report any clipping/hidden controls or accidental scroll traps.",
+    "Load two distinct real audio files (e.g. existing Midnight Tribal Pulse (Remastered).wav and Tribal House (Remastered).wav). Note filenames/hashes and what is physically audible. Play/pause both, adjust independent volume/seek, sweep crossfader and mixer/EQ/filter, engage SYNC with trustworthy grid, and confirm zero NEW hidden SYNC seeks and zero NEW A/B/mixer frame discontinuities. Include before/after exact counters, physical listening observation from human only if actually heard.",
+    "Exercise cue, 4-beat loop, jog while both decks operate; ensure performance controls do not break SYNC. Recreate/research the existing sync-soak.spec.ts frameDiscontinuities assertion failure from hosted run 37720664196 attempt 2; do not report PASS merely because separate ad-hoc test passed. Run this focused test locally and, where possible, repeat at least twice. Record test commands and verbatim test results. If reproduced, report FAIL with trace; do not weaken check.",
+    "With both tracks playing, trusted grids, SYNC locked and crossfader staged, operate Module 18 assisted AutoMix A-to-B, then manual override. Require visible status and correct manual control. No unsupported fully autonomous mix promises.",
+    "Use library import/search/prepared load, analysis and Apply grid, monitor cue output if supported, FX/master FX, recording start/stop/download/playback. Clearly label any unsupported physical MIDI and unavailable speaker headphone routing NOT_EVALUATED, not PASS.",
+    "Select Advanced. Verify exactly 19 module status entries and actual gates; test 20 links to saved browser suites (including workstation-gui.spec.ts) and identify broken links; capture real diagnostic snapshot and export JSON; expand audio-kernel regression harness; return to Performance and check playback state/controls still work. Ensure Advanced tools remain available, not deleted.",
+    "Check browser console errors, memory/resource behavior during load, no unexpected error overlays, full UI responsive at common desktop/tablet/mobile widths. Save screenshot images (including Advanced), short screen recording if supported, local session log, browser/audio telemetry and optional post-master audio sample. Do not fake evidence.",
+    "Write orchestrator/RESULT_SCHEMA.json-compatible reports/local-debug/LATEST.json with task_id GUI19-LOCAL-001, exact tested SHA, status PASS/FAIL/BLOCKED, environment, measurements, artifacts, logs, reproduction, notes, completed_at; also ENVIRONMENT.json and SESSION_LOG.md; put screenshots/logs under reports/local-debug/artifacts/GUI19-LOCAL-001/ where feasible. On validation/local-debug push ONLY paths reports/local-debug/**, preserving evidence-only rule and exposing result to GitHub local-debug-bus.yml which relays Issue #1. If latest report from another task exists, intentionally replace LATEST.json with new report while preserving older artifacts.",
+    "Include the resulting validation/local-debug report SHA, GitHub Actions bridge run ID and links to screenshots/audio. Do not merge PR #3, lock/promote Module 19, change product code/main, or modify DJtest. Any defect should be reported in reproducible detail for master developer repair on GUI branch."
+  ],
+  "evidence_required": [
+    "Exact tested product SHA, optional handoff SHA, local machine OS/browser version, bootstrap PASS, local dev server URL and run commands.",
+    "Real audio capability and human listening verdict/NOT_EVALUATED, track IDs/names and hashes, sourceFrame and transportSeekCount, frameDiscontinuities A/B/mixer before/after.",
+    "Functioning UI evidence for both decks, SYNC, AutoMix, advanced mode, library, FX, recording, and responsive layout with desktop/tablet/phone screenshots.",
+    "Actual count/status of 19 module catalog entries and 20 source browser suite links (record every failed link), kernel harness existence, diagnostics JSON export.",
+    "Exact retry outcome of failing sync-soak.spec.ts frameDiscontinuities test from CI run 37720664196 attempt 2; repeat logs and trace for any reproduction.",
+    "Final RESULT_SCHEMA-compliant local-debug report SHA and bridge Actions ID; links to physical evidence/screenshot artifacts, and explicit partial NOT_EVALUATED hardware cases."
+  ],
+  "stop_conditions": [
+    "Wrong repository/branch/product SHA, dirty/unreproducible worktree, or bootstrap not PASS.",
+    "Local installed browser has no AudioContext/AudioWorkletNode or true audio output for requested audible claim.",
+    "Any unexpected hidden seek, audio discontinuity or unsafe takeover of human control.",
+    "Browser suite or local reproduction of sync-soak reports frame discontinuity; declare FAIL and preserve report, never suppress failing tests.",
+    "Advanced tab has inert/broken controls or missing module test inventory; report FAIL or BLOCKED, preserve exact evidence.",
+    "No ability to generate evidence or prove real human sound; mark unavailable subtest NOT_EVALUATED instead of inventing results."
+  ],
+  "requested_by": "master-developer",
+  "created_at": "2026-10-08T03:31:36.206Z"
+}
