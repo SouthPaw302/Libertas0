@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - module18-automix-transition
-  pull_request:
-    branches: [main]
   workflow_dispatch:
 
 permissions:
