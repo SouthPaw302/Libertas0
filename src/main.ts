@@ -381,6 +381,16 @@ const autoMix = new AutoMixController({
   context: runtime.context, deckA, deckB, mixer, sync,
   getGrid: (deck) => pendingGrids.get(deck)!,
 });
+// Human performance interaction always cancels a pending mix before the UI command.
+document.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const id = target.closest('button')?.id ?? '';
+  if (!/^(deck-[ab]-(play|pause|load|seek)|perf-[ab]-|sync-(a-to-b|b-to-a|disable)|automation-demo)$/.test(id)) return;
+  if (['PLANNED', 'ARMED', 'EXECUTING'].includes(autoMix.status().state)) {
+    autoMix.cancel('MANUAL_PERFORMANCE');
+  }
+}, true);
 
 function publishMidiActionFeedback(action: MidiAction): void {
   if (action.trigger) midiFeedback.pulse(action.target);
@@ -388,6 +398,10 @@ function publishMidiActionFeedback(action: MidiAction): void {
 }
 
 function applyMidiAction(action: MidiAction): void {
+  if (action.trigger && /^(deck[AB]\.|sync\.)/.test(action.target) &&
+    ['PLANNED', 'ARMED', 'EXECUTING'].includes(autoMix.status().state)) {
+    autoMix.cancel('MIDI_PERFORMANCE');
+  }
   const finish = (): void => publishMidiActionFeedback(action);
 
   switch (action.target) {

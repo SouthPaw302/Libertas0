@@ -13,6 +13,9 @@ async function lockedPair(page: Page): Promise<void> {
     const status = await window.__libertasSyncTest.status();
     return Boolean(status.followerDeck?.syncTracking && status.followerDeck.syncLocked);
   }), { timeout: 10000 }).toBe(true);
+  await page.evaluate(() => window.__libertasMixerTest.setCrossfader(-1));
+  await expect.poll(() => page.evaluate(async () => (await window.__libertasMixerTest.status()).crossfader),
+    { timeout: 5000 }).toBeLessThan(-0.92);
 }
 
 test('AutoMix plans, schedules and completes an AudioContext fade with no new seeks', async ({ page }) => {
@@ -80,4 +83,29 @@ test('Manual control cancels a planned but unarmed mix', async ({ page }) => {
   expect(override.state).toBe('ABORTED');
   expect(override.reason).toBe('MANUAL_OVERRIDE');
   await expect(page.evaluate(() => window.__libertasAutoMixTest.arm())).rejects.toThrow('AUTOMIX_NO_PLAN');
+});
+
+test('Arming refuses an unstaged crossfader and manual pause cancels automation', async ({ page }) => {
+  await ready(page);
+  await lockedPair(page);
+  const left = await page.evaluate(() => window.__libertasAutoMixTest.plan('A', 1, 1));
+  expect(left.ok).toBe(true);
+  await page.evaluate(() => window.__libertasMixerTest.setCrossfader(0));
+  await expect.poll(() => page.evaluate(async () => (await window.__libertasMixerTest.status()).crossfader),
+    { timeout: 5000 }).toBeGreaterThan(-0.1);
+  const refused = await page.evaluate(() => window.__libertasAutoMixTest.arm());
+  expect(refused.state).toBe('REFUSED');
+  expect(refused.reason).toBe('CROSSFADER_NOT_STAGED');
+
+  await page.evaluate(() => window.__libertasMixerTest.setCrossfader(-1));
+  await expect.poll(() => page.evaluate(async () => (await window.__libertasMixerTest.status()).crossfader),
+    { timeout: 5000 }).toBeLessThan(-0.92);
+  const plan = await page.evaluate(() => window.__libertasAutoMixTest.plan('A', 1, 1));
+  expect(plan.ok).toBe(true);
+  const armed = await page.evaluate(() => window.__libertasAutoMixTest.arm());
+  expect(armed.state).toBe('ARMED');
+  await page.locator('#deck-a-pause').click();
+  const stopped = await page.evaluate(() => window.__libertasAutoMixTest.status());
+  expect(stopped.state).toBe('ABORTED');
+  expect(stopped.reason).toBe('MANUAL_PERFORMANCE');
 });

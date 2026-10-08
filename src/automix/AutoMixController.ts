@@ -89,9 +89,9 @@ export class AutoMixController {
   async arm(): Promise<AutoMixStatus> {
     const plan = this.selected;
     if (!plan || this.state !== 'PLANNED') throw new Error('AUTOMIX_NO_PLAN');
-    const [from, to, sync] = await Promise.all([
+    const [from, to, sync, mixer] = await Promise.all([
       this.deck(plan.outgoing).requestStatus(), this.deck(plan.incoming).requestStatus(),
-      this.deps.sync.status(),
+      this.deps.sync.status(), this.deps.mixer.requestStatus(),
     ]);
     const sameSources =
       this.identities.get(plan.outgoing) === plan.outgoingSourceId &&
@@ -109,6 +109,10 @@ export class AutoMixController {
     if (!sync.enabled || sync.leader !== plan.outgoing || sync.follower !== plan.incoming ||
       !sync.followerDeck?.syncTracking || !sync.followerDeck.syncLocked) {
       return this.refuse('SYNC_NOT_LOCKED');
+    }
+    const outgoingPosition = plan.outgoing === 'A' ? -1 : 1;
+    if (Math.abs(mixer.crossfader - outgoingPosition) > 0.08) {
+      return this.refuse('CROSSFADER_NOT_STAGED');
     }
     const currentGrid = this.deps.getGrid(plan.outgoing);
     if (JSON.stringify(currentGrid) !== JSON.stringify(plan.outgoingGrid) ||
