@@ -1,60 +1,14 @@
 {
-  "task_id": "SYNC-SOAK-V3-001",
-  "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
+  "task_id": "AUTOMIX-T5-001",
+  "tested_sha": "800413053151cd7ba8a4eb98a5734db7079bfb4e",
   "status": "PASS",
-  "result": "PASS — real-WAV browser telemetry and recording; audible assessment NOT_EVALUATED",
-  "environment": {
-    "schema": "libertas.local-environment.v1",
-    "status": "real-local-runtime",
-    "os": "Microsoft Windows 10 Home build 19045",
-    "browser": "Playwright Chromium real-browser harness",
-    "url": "http://127.0.0.1:5187/",
-    "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
-    "sample_rate_hz": 48000,
-    "render_quantum_frames": 128,
-    "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
-    "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8"
-  },
-  "measurements": {
-    "exact_sha_bound": true,
-    "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8",
-    "product_files_changed": false,
-    "bootstrap": "PASS",
-    "typecheck": "PASS",
-    "unit_tests": "PASS (51 tests)",
-    "build": "PASS",
-    "real_wav_hold": "PASS — 620 seconds",
-    "track_intelligence": "PASS — A 125.029419 BPM / first frame 195072; B 125.847896 BPM / first frame 512; both recommended and applied",
-    "rate_changes": "PASS — 0.97, 1.03, 0.95, 1.05, then reversed B leader 1.02",
-    "follower_actions": "PASS — B Hot Cue, B +50 ms jog, four-beat loop, reversed A -50 ms jog",
-    "leadership_reversal": "PASS — A→B re-locked and stayed tracking",
-    "hidden_transport_seeks": "PASS — A 0, B 0",
-    "frame_discontinuities": "PASS — A 0, B 0",
-    "recording": "PASS — 622.52 seconds, 10,033,238 bytes, audio/webm;codecs=opus",
-    "audible_assessment": "NOT_EVALUATED — headless browser harness; no physical-speaker claim",
-    "console_runtime_errors": "PASS — none"
-  },
-  "artifacts": [
-    "reports/local-debug/artifacts/SYNC-SOAK-V3-001-real-browser-runtime.json",
-    "reports/local-debug/artifacts/SYNC-SOAK-V3-001-runtime.json"
-  ],
-  "drive_artifacts": {
-    "runtime_json": "https://drive.google.com/file/d/1h_ejFf3W6159t0BdchwTJ4_RAYmqXVtm/view?usp=drivesdk",
-    "recording": "https://drive.google.com/file/d/13_TtmO0wnsg91hD6orl6ftpQPl3rSCAQ/view?usp=drivesdk",
-    "test_song": "https://drive.google.com/file/d/1gIkxs2LuTpFqXiVbjBa62gH8se3o7jot/view?usp=drivesdk",
-    "scan_song": "https://drive.google.com/file/d/1wdO4XY63OVoL8bQHkgFFVK5a_6gaEX0i/view?usp=drivesdk"
-  },
-  "logs": [
-    "Fetched updated handoff before validation; exact product SHA remained unchanged",
-    "The earlier tiny-browser capability block is preserved in the session history; this PASS is the completed real-WAV browser telemetry/recording run",
-    "No product files were changed",
-    "Phase 11 is forbidden and was not started"
-  ],
-  "reproduction": [
-    "Use product SHA 93d6c5b83549e598cc8718e830cb7effbf35eb0d and updated handoff commit 695ec0108670556f0239054aeca519ae2948e8a8.",
-    "Run the exact local browser at http://127.0.0.1:5187/ with the two Drive-referenced WAVs and review the uploaded runtime JSON and recording.",
-    "Review reports/local-debug/artifacts/SYNC-SOAK-V3-001-real-browser-runtime.json for the summarized telemetry; the full runtime JSON is linked in drive_artifacts."
-  ],
-  "notes": "All required machine-verifiable soak gates passed. Audible assessment is explicitly NOT_EVALUATED because this run used a headless browser harness.",
-  "completed_at": "2026-10-05T07:30:00Z"
+  "result": "PASS — physical headed Edge AutoMix transitions, audible confirmation, recording, and continuity gates",
+  "environment": {"schema": "libertas.local-environment.v1", "status": "real-local-runtime", "os": "Microsoft Windows 10 Home build 19045", "browser": "Microsoft Edge installed headed channel", "url": "http://127.0.0.1:5188/", "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"], "sample_rate_hz": 48000, "render_quantum_frames": 128, "tested_sha": "800413053151cd7ba8a4eb98a5734db7079bfb4e", "handoff_commit": "a02c818cffc1fd55297a8e851a89b057d76739da"},
+  "measurements": {"exact_sha_bound": true, "product_files_changed": false, "bootstrap": "PASS", "typecheck": "PASS", "unit_tests": "PASS (81 tests)", "build": "PASS", "track_intelligence": "PASS — distinct A/B WAVs analyzed and recommended grids applied", "audible_transitions": "PASS — 4 completed: 2 A→B and 2 B→A", "manual_override": "PASS — armed transition aborted with MANUAL_OVERRIDE", "safe_cancellation": "PASS — un-staged crossfader refused with CROSSFADER_NOT_STAGED", "hidden_transport_seeks": "PASS — A 0, B 0 after explicit first-beat setup seeks", "frame_discontinuities": "PASS — A 0, B 0, mixer 0", "final_sync": "PASS — leader B, locked and tracking", "recording": "PASS — 64.333 seconds, 1,039,018 bytes, audio/webm;codecs=opus", "audible_assessment": "PASS — user confirmed playback was audible and controllable", "console_runtime_errors": "PASS — only favicon 404 requests; no application/worklet/audio errors"},
+  "artifacts": ["reports/local-debug/artifacts/AUTOMIX-T5-001-physical-runtime.json"],
+  "drive_artifacts": {"runtime_json": "https://drive.google.com/file/d/1CfE7svSlWb0E3dHJNSSSdoGtXiX-gZLS/view?usp=drivesdk", "recording": "https://drive.google.com/file/d/1ub5xTR9-GqK2XMfLxznZWHGTmNdQShpd/view?usp=drivesdk", "test_song": "https://drive.google.com/file/d/1gIkxs2LuTpFqXiVbjBa62gH8se3o7jot/view?usp=drivesdk", "scan_song": "https://drive.google.com/file/d/1wdO4XY63OVoL8bQHkgFFVK5a_6gaEX0i/view?usp=drivesdk"},
+  "logs": ["Exact handoff and product SHA were fetched and validated before the physical run", "Installed headed Microsoft Edge was used; the Codex tiny browser was not used for this gate", "No product files were changed", "Phase 11 is forbidden and was not started"],
+  "reproduction": ["Use product SHA 800413053151cd7ba8a4eb98a5734db7079bfb4e and handoff commit a02c818cffc1fd55297a8e851a89b057d76739da.", "Run the installed headed Edge session at http://127.0.0.1:5188/ with the two distinct Drive-referenced WAVs.", "Review the uploaded runtime JSON and recording for the four transitions, override/refusal paths, recording, and continuity telemetry."],
+  "notes": "All required Module 18 physical gates passed. The two initial deck seeks were explicit first-beat setup actions; hidden SYNC maintenance seek deltas were zero.",
+  "completed_at": "2026-10-07T00:00:00Z"
 }

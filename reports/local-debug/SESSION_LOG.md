@@ -87,3 +87,12 @@
 - Hidden transport seek deltas were A/B `0/0`; frame discontinuity deltas were A/B `0/0`. Performance jumps were A/B `1/2`; loop wraps were A/B `12/33`.
 - Post-master recording passed: `622.52 s`, `10,033,238` bytes, `audio/webm;codecs=opus`. Runtime JSON and recording were uploaded to the task Drive folder.
 - Audible assessment is `NOT_EVALUATED`: this run used a headless browser harness, so no physical-speaker claim is made. Phase 11 remains forbidden and was not started.
+
+## 2026-10-07 — AUTOMIX-T5-001 — PASS
+
+- Exact product SHA `800413053151cd7ba8a4eb98a5734db7079bfb4e` was tested from handoff commit `a02c818cffc1fd55297a8e851a89b057d76739da`; bootstrap, typecheck, 81 unit tests, and build passed.
+- Two distinct real WAVs were used: Midnight Tribal Pulse for A (`742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F`) and Tribal House for B (`639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D`). Both recommended Track Intelligence grids were applied.
+- Installed headed Microsoft Edge provided AudioContext/AudioWorkletNode. User confirmed: “It played I hear it and you are able to control it.” Four audible transitions completed: two A→B and two B→A.
+- Manual override during an armed transition produced `ABORTED / MANUAL_OVERRIDE`; an un-staged crossfader produced `REFUSED / CROSSFADER_NOT_STAGED`.
+- After explicit first-beat setup seeks, hidden SYNC maintenance seek deltas were A/B `0/0`; A/B/mixer discontinuities were `0/0/0`; final SYNC was locked/tracking with B leader.
+- Post-master recording passed: 64.333333 seconds, 1,039,018 bytes, `audio/webm;codecs=opus`. Runtime JSON and recording were uploaded to the Module 18 Drive folder. Phase 11 remains forbidden and was not started.

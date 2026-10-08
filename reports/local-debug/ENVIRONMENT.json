@@ -2,8 +2,8 @@
   "schema": "libertas.local-environment.v1",
   "status": "real-local-runtime",
   "os": "Microsoft Windows 10 Home build 19045",
-  "browser": "Playwright Chromium real-browser harness",
-  "url": "http://127.0.0.1:5187/",
+  "browser": "Microsoft Edge installed headed channel",
+  "url": "http://127.0.0.1:5188/",
   "physical_audio_endpoints": ["Speakers / Headphones (Realtek Audio)", "Microphone (Realtek Audio)"],
   "python": "3.12.10",
   "node": "v24.18.0",
@@ -11,7 +11,7 @@
   "git": "2.55.0.windows.2",
   "sample_rate_hz": 48000,
   "render_quantum_frames": 128,
-  "tested_sha": "93d6c5b83549e598cc8718e830cb7effbf35eb0d",
-  "handoff_commit": "695ec0108670556f0239054aeca519ae2948e8a8",
-  "audio_assessment": "NOT_EVALUATED — headless browser harness; no physical-speaker claim"
+  "tested_sha": "800413053151cd7ba8a4eb98a5734db7079bfb4e",
+  "handoff_commit": "a02c818cffc1fd55297a8e851a89b057d76739da",
+  "audio_assessment": "PASS — user confirmed playback was audible and controllable"
 }

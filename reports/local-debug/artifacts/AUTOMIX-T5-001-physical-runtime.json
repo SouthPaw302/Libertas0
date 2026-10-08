@@ -1,0 +1,20 @@
+{
+  "schema": "libertas.local-artifact.v1",
+  "task_id": "AUTOMIX-T5-001",
+  "tested_sha": "800413053151cd7ba8a4eb98a5734db7079bfb4e",
+  "handoff_commit": "a02c818cffc1fd55297a8e851a89b057d76739da",
+  "status": "PASS",
+  "browser": "Microsoft Edge installed headed channel",
+  "url": "http://127.0.0.1:5188/",
+  "sources": {
+    "A": {"name": "Midnight Tribal Pulse (Remastered).wav", "sha256": "742CBE8E1B9740AA29856D5D503E5D8436285DEECAB2803FCCE3274BF199635F", "drive_url": "https://drive.google.com/file/d/1gIkxs2LuTpFqXiVbjBa62gH8se3o7jot/view?usp=drivesdk", "bpm": 125.0294190650229, "first_beat_frame": 195072, "grid_recommended": true, "grid_applied": true},
+    "B": {"name": "Tribal House  (Remastered).wav", "sha256": "639634136FE1630941F391B7667C7CD5CD0855D95651BF1ED77971618854FE1D", "drive_url": "https://drive.google.com/file/d/1wdO4XY63OVoL8bQHkgFFVK5a_6gaEX0i/view?usp=drivesdk", "bpm": 125.84789589523987, "first_beat_frame": 512, "grid_recommended": true, "grid_applied": true}
+  },
+  "transitions": {"planned": 4, "completed": 4, "a_to_b_completed": 2, "b_to_a_completed": 2, "manual_override": {"outcome": "ABORTED", "reason": "MANUAL_OVERRIDE"}, "safe_refusal": {"outcome": "REFUSED", "reason": "CROSSFADER_NOT_STAGED"}},
+  "continuity": {"explicit_setup_seek_count_A": 1, "explicit_setup_seek_count_B": 1, "hidden_sync_seek_delta_A": 0, "hidden_sync_seek_delta_B": 0, "frame_discontinuities_A": 0, "frame_discontinuities_B": 0, "mixer_frame_discontinuities": 0, "final_sync_locked": true, "final_sync_tracking": true, "final_leader": "B", "final_follower_phase_error": -0.00025224857674288614},
+  "recording": {"duration_seconds": 64.33333333333333, "bytes": 1039018, "mime_type": "audio/webm;codecs=opus", "drive_url": "https://drive.google.com/file/d/1ub5xTR9-GqK2XMfLxznZWHGTmNdQShpd/view?usp=drivesdk"},
+  "runtime_json_drive_url": "https://drive.google.com/file/d/1CfE7svSlWb0E3dHJNSSSdoGtXiX-gZLS/view?usp=drivesdk",
+  "audio_capability": "AudioContext and AudioWorkletNode available",
+  "audible_assessment": "PASS — user confirmed it played, was audible, and the agent-controlled headed Edge run responded to controls",
+  "console_error_note": "Two 404 console entries were favicon requests; the application, worklet, audio graph, transitions, and recording completed successfully."
+}
