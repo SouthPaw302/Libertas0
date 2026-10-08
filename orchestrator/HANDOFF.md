@@ -411,3 +411,54 @@ Build:
 - preparation state that can be loaded into Deck A/B without moving realtime authority into the library.
 
 Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
+
+
+## Module 17 — Advanced Library / Preparation
+
+Module 17 is LOCKED on main.
+
+Locked integration commit:
+`eb6578a3ff201889d93ce266c1dd147e7b29de2c`
+
+Validated product SHA:
+`d690d301e391a456ee856a5d7e54e7b6da3f6833`
+
+Gate run:
+`37706914127`
+
+PASS:
+- System Contract;
+- 74/74 unit tests, including 3 library-preparation tests;
+- 5/5 advanced-library browser tests;
+- original Phase 10 library dedup/load compatibility;
+- 6/6 locked performance-transport regressions.
+
+Implemented:
+- IndexedDB v2 migration retaining the existing content-addressed audio store;
+- crates;
+- title/artist/album/genre/key/comment metadata;
+- ratings and normalized tags;
+- text/crate/rating/tag/prepared/BPM filtering;
+- persisted Musical Clock grid;
+- persisted Cue / eight Hot Cues / loop state;
+- explicit Capture Prep from Deck A/B;
+- prepared-load restoration through existing Musical Clock and Performance Transport APIs;
+- stale crate membership cleanup when tracks are removed.
+
+Library/preparation remains persistence/control-plane state and never owns realtime transport, Musical Clock phase, or SYNC correction.
+
+## Next product module
+
+**Module 18 — AutoMix / Transition Intelligence**
+
+Build transition planning and assisted execution using:
+- prepared-library metadata;
+- Track Intelligence/grid confidence;
+- Musical Clock;
+- SYNC;
+- mixer automation;
+- FX;
+
+while keeping all actual realtime timing authority in the proven audio/control modules.
+
+Current user direction: continue the product module stack. Keep validation bounded to the end of each module.
