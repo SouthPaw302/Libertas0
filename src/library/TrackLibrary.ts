@@ -209,11 +209,6 @@ export class TrackLibrary {
   }
 
   async remove(id: string): Promise<void> {
-    const db = await this.db();
-    const trackTx = db.transaction(TRACK_STORE, 'readwrite');
-    trackTx.objectStore(TRACK_STORE).delete(id);
-    await transactionDone(trackTx);
-
     const crates = await this.listCrates();
     for (const crate of crates) {
       if (!crate.trackIds.includes(id)) continue;
@@ -221,6 +216,11 @@ export class TrackLibrary {
       crate.updatedAt = Date.now();
       await this.putCrate(crate);
     }
+
+    const db = await this.db();
+    const trackTx = db.transaction(TRACK_STORE, 'readwrite');
+    trackTx.objectStore(TRACK_STORE).delete(id);
+    await transactionDone(trackTx);
   }
 
   async clear(): Promise<void> {
