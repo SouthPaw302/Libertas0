@@ -1,0 +1,51 @@
+{
+  "task_id": "AUTOMIX-T5-001",
+  "requested_sha": "800413053151cd7ba8a4eb98a5734db7079bfb4e",
+  "branch": "module18-automix-transition",
+  "module": "automix-transition-intelligence",
+  "objective": "Close only Module 18 residual LOCAL/PHYSICAL audio gates on the final GitHub Actions-proven product SHA. Test genuine audible AutoMix transitions, physical output, immediate human override, and preserve locked realtime authority. Do not repeat CI-covered unit/browser/torture checks or change product code.",
+  "scope": [
+    "Exact product SHA 800413053151cd7ba8a4eb98a5734db7079bfb4e; tested audio/system files must match exactly.",
+    "Reference Full Actions Gate PASS run 37716733491 (contract, Linux, Windows, focused browser, full browser, torture, evidence).",
+    "Windows local physical audio output with installed headed Chrome, Edge, Brave, or Opera. Codex tiny browser is NOT an acceptable audio-capable substitute.",
+    "Module 17 prepared-library metadata/grid/cues restore; two actual audio recordings at compatible BPM; Module 18 planned+armed transition.",
+    "At least 2 audible A-to-B transitions, 2 B-to-A transitions, one deliberate manual-override during ARMED/EXECUTING, one audible reject/safe cancellation test.",
+    "Fresh physical post-master recording, local telemetry, agent/operator listening observations, Drive-backed evidence, report branch only."
+  ],
+  "steps": [
+    "Fetch handoff branch handoff/module18-automix-t5-001 and read this task; check out product SHA 800413053151cd7ba8a4eb98a5734db7079bfb4e into a clean, isolated worktree. Do not test the later handoff-only commit as if it were the product SHA.",
+    "Run python bootstrap.py and require literal LIBERTAS BOOT: PASS. Note exact SHA, git dirty status, OS, physical interface, output routing, installed browser/version. Local build only if needed to launch Vite; hosted contract, unit, Chromium 73/73, SYNC torture already passed on Actions run 37716733491.",
+    "Launch the installed headed Chrome/Edge/Brave/Opera with real audio access, NOT the Codex tiny browser. Explicitly check AudioContext and AudioWorkletNode exist, and verify speakers/headphones output is audible. If audio capability missing use next installed browser; if none work report BLOCKED.",
+    "Use two distinct real WAV/music sources with comparable trustworthy beat grids (for example earlier recorded Midnight Tribal Pulse (Remastered).wav and Tribal House (Remastered).wav with documented source SHA-256 hashes). Verify loaded tracks, reliable grids and preparation via existing Module 17 controls; do not fake recommended/confident analysis or silently change grids. Record source file names and SHA-256 hashes.",
+    "With both decks loaded, playing, and actual SYNC locked, stage crossfader fully toward outgoing A (-1). Choose 4 bars, Plan then Arm A->B and hear the resulting scheduled transition. Repeat A->B once. Record requested phrase/target beat, start/end AudioContext times, state changes PLANNED/ARMED/EXECUTING/COMPLETED, elapsed interval, and what is actually audible. Check controls are clickable and meaningful.",
+    "Reverse leadership as required, re-lock actual SYNC B->A, stage crossfader fully toward outgoing B (+1), and repeat 4-bar B->A transitions twice with actual sound through local output. Do not claim false transition completion if SYNC could not lock.",
+    "During an ARMED or EXECUTING fade, move the physical/UI crossfader and separately exercise a manual Deck Play/Pause or Cue/Hot Cue/Jog action. Confirm AutoMix reports ABORTED/MANUAL_OVERRIDE or MANUAL_PERFORMANCE, leaves human deck control in authority, and does not later resume scheduled fade or move the fader back. Include physical MIDI override only when hardware exists; otherwise NOT_EVALUATED.",
+    "Check staged-crossfader refusal (CROSSFADER_NOT_STAGED) before arming; rejected/untrusted grid or incompatible tempo and stale plan on track replacement must fail closed without an unexpected seek or audible jump. Do not weaken safety checks just to pass.",
+    "Capture pre/post Deck A/B, mixer and SYNC telemetry including sourceFrame/outputCurrentFrame, syncTracking/syncLocked, transportSeekCount, performanceJumpCount, frameDiscontinuities, mixer frameDiscontinuities, crossfader samples, console errors. Require 0 NEW hidden SYNC maintenance seeks and 0 NEW A/B/mixer frame discontinuities attributable to AutoMix. Explicit human transport moves must be identified separately.",
+    "Make and save a fresh >=60s post-master recording containing representative audible transitions and a manual override where feasible, play it back through the physical speaker/headphone route, and record an explicit human listening verdict. If the agent has no ability to perceive physical audio, mark audible_assessment NOT_EVALUATED and physical/listening status BLOCKED, never invent human confirmation.",
+    "Upload recording (preserve actual browser format), runtime JSON/console logs and source-audio references/filenames/hashes to Google Drive folder https://drive.google.com/drive/folders/1czM7UwZKtJtiZV0pqiDixWjPMSq0ketr. Prefer links to preexisting Drive source files over duplicating large audio when the source SHA is unchanged. Record actual resulting Drive file IDs/URLs, not just Windows filesystem paths.",
+    "Write RESULT_SCHEMA.json-compliant reports/local-debug/LATEST.json (task_id, tested_sha, status PASS/FAIL/BLOCKED, environment, measurements, artifacts, logs, reproduction, notes, completed_at), plus ENVIRONMENT.json and SESSION_LOG.md. On validation/local-debug edit ONLY reports/local-debug/** and push the report commit so local-debug-bus.yml automatically validates, archives and relays to Issue #1. Record report SHA and workflow run ID.",
+    "Do not merge or lock Module 18 from the local-debug agent. The master developer reads the report and evidence before promotion. If any issue occurs, report an exact reproducible blocker and keep all product/main code untouched."
+  ],
+  "evidence_required": [
+    "Exact tested SHA, handoff commit, linked GitHub Actions baseline run and local report SHA.",
+    "Real installed headed browser identifier/version, Web Audio capability, physical speaker/headphone device, actual audible verification versus NOT_EVALUATED.",
+    "Source filenames plus SHA-256 hashes and per-deck BPM/grid confidence or explicit prepared/manual status.",
+    "4 distinct transition plan/result records (2 A->B, 2 B->A) with targetBeat, duration, timeline times and observed visual/audio completion.",
+    "Manual override and cancellation notes; explicit refusing guard evidence including stage guard, incompatibility or stale plan.",
+    "Per-deck sourceFrame/outputCurrentFrame, seek counters, discontinuity deltas, SYNC lock/tracking and mixer continuity.",
+    "Saved >=60s actual post-master recording duration/bytes/MIME and listening verdict.",
+    "Actual Google Drive IDs/URLs for audio recording, runtime JSON, logs and source files/references, plus console error list.",
+    "Machine-readable local-debug LATEST.json conforms to orchestrator/RESULT_SCHEMA.json and scripts/validate_local_report.py."
+  ],
+  "stop_conditions": [
+    "Checked-out runtime files differ from requested product SHA or bootstrap fails.",
+    "No real installed audio-capable headed browser is available; tiny browser is only route.",
+    "Cannot verify true SYNC lock or trustworthy musical grid; never silently skip the guard.",
+    "Any hidden transport seek, unexpected A/B/mixer frame discontinuity, unexpected fader jump or unintentional automation takeover occurs.",
+    "Unable to save/inspect actual audio or required Drive-backed evidence for a requested physical PASS.",
+    "Physical listening is not performed: report BLOCKED for human-listening residue, not invented PASS."
+  ],
+  "requested_by": "master-developer",
+  "created_at": "2026-10-08T02:22:27.792Z"
+}
