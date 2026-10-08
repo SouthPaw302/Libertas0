@@ -90,3 +90,90 @@ jobs:
             test-results/
           if-no-files-found: ignore
           retention-days: 30
+
+  full_browser:
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: All browser regressions
+        run: npm run test:browser
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: module18-full-browser-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  torture:
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Repeated locked high-risk SYNC, transport and distributed torture
+        run: >
+          npx playwright test
+          tests/browser/sync.spec.ts
+          tests/browser/performance-transport.spec.ts
+          tests/browser/distributed-torture.spec.ts
+          --repeat-each=3
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: module18-torture-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30
+
+  evidence:
+    if: always()
+    needs: [contract, core, browser, full_browser, torture]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Exact-SHA evidence result
+        shell: bash
+        env:
+          CONTRACT: ${{ needs.contract.result }}
+          CORE: ${{ needs.core.result }}
+          BROWSER: ${{ needs.browser.result }}
+          FULL_BROWSER: ${{ needs.full_browser.result }}
+          TORTURE: ${{ needs.torture.result }}
+        run: |
+          mkdir -p reports/module18
+          python - <<'PY'
+          import json,os,pathlib
+          keys=('CONTRACT','CORE','BROWSER','FULL_BROWSER','TORTURE')
+          jobs={k:os.environ[k] for k in keys}
+          result={'schema':'libertas.module18.gate.v1','sha':os.environ['GITHUB_SHA'],
+                  'ref':os.environ['GITHUB_REF_NAME'],'run_id':os.environ['GITHUB_RUN_ID'],
+                  'jobs':jobs,'passed':all(v=='success' for v in jobs.values()),
+                  'physical_or_listening_gates':'NOT_EVALUATED'}
+          pathlib.Path('reports/module18/RESULT.json').write_text(json.dumps(result,indent=2)+'\n')
+          print(json.dumps(result,indent=2))
+          if not result['passed']: raise SystemExit(1)
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: module18-evidence-${{ github.sha }}
+          path: reports/module18/
+          retention-days: 30

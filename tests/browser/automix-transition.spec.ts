@@ -69,3 +69,15 @@ test('AutoMix rejects stale plans and exposes real controls', async ({ page }) =
   await page.evaluate(() => window.__libertasSyncTest.loadClickPair(80, 120, 120));
   expect(await page.evaluate(() => window.__libertasAutoMixTest.status().reason)).toBe('TRACK_REPLACED');
 });
+
+test('Manual control cancels a planned but unarmed mix', async ({ page }) => {
+  await ready(page);
+  await page.evaluate(() => window.__libertasSyncTest.loadClickPair(80, 120, 120));
+  await page.evaluate(() => window.__libertasDualDeckTest.playBoth());
+  const decision = await page.evaluate(() => window.__libertasAutoMixTest.plan('A', 1, 1));
+  expect(decision.ok).toBe(true);
+  const override = await page.evaluate(() => window.__libertasAutoMixTest.override(0.3));
+  expect(override.state).toBe('ABORTED');
+  expect(override.reason).toBe('MANUAL_OVERRIDE');
+  await expect(page.evaluate(() => window.__libertasAutoMixTest.arm())).rejects.toThrow('AUTOMIX_NO_PLAN');
+});
