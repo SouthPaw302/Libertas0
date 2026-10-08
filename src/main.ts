@@ -218,6 +218,7 @@ interface LibertasLibraryTestApi {
   listCrates(): Promise<LibraryCrate[]>;
   addToCrate(crateId: string, trackId: string): Promise<LibraryCrate>;
   removeFromCrate(crateId: string, trackId: string): Promise<LibraryCrate>;
+  remove(id: string): Promise<void>;
 }
 
 interface LibertasMidiTestApi {
@@ -2172,6 +2173,7 @@ window.__libertasLibraryTest = {
   listCrates: () => library.listCrates(),
   addToCrate: (crateId, trackId) => library.addToCrate(crateId, trackId),
   removeFromCrate: (crateId, trackId) => library.removeFromCrate(crateId, trackId),
+  remove: (id) => library.remove(id),
 };
 
 window.__libertasMidiTest = {
