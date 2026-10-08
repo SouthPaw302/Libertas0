@@ -1,6 +1,5 @@
 
 import modules from '../../MODULE_REGISTRY.json';
-import './workstation.css';
 
 const repo = 'https://github.com/SouthPaw302/Libertas0';
 const browserSuites = [
@@ -128,7 +127,7 @@ export function startWorkstationGui():void {
   const output=meters[2]?.querySelector('.meter-value');
   if(output){
    if(s&&typeof s==='object'&&'enabled' in s&&s.enabled){
-    const status=s as {leader:string;follower:string;followerDeck?:{syncLocked:boolean}};
+    const status=s as unknown as {leader:string;follower:string;followerDeck?:{syncLocked:boolean}};
     output.textContent=status.leader+' → '+status.follower+' · '+(status.followerDeck?.syncLocked?'Locked':'Acquiring');
    }else output.textContent='Off';
   }
