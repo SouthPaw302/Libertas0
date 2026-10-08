@@ -1,0 +1,92 @@
+name: Module 18 AutoMix Gate
+
+on:
+  push:
+    branches:
+      - module18-automix-transition
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: module18-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  contract:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Mandatory boot
+        run: python bootstrap.py
+      - name: System contract
+        run: python scripts/validate_system.py
+      - name: Module 18 state consistency
+        run: |
+          python - <<'PY'
+          import json
+          s=json.load(open('DEVELOPMENT_STATE.json'))
+          m=json.load(open('MODULE_REGISTRY.json'))
+          assert s['active_module']=='automix-transition-intelligence'
+          assert any(x['id']==s['active_module'] and x['state']==s['status'] for x in m['modules'])
+          assert s['status'] in ['CONTRACTED','IMPLEMENTING','AUTOMATED_TEST','RUNTIME_TEST','PROVEN']
+          print('MODULE 18 CONTRACT: PASS')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: module18-bootstrap-${{ github.sha }}
+          path: .libertas/
+          retention-days: 14
+
+  core:
+    needs: contract
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-24.04, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install
+      - run: npm run check
+
+  browser:
+    needs: contract
+    runs-on: ubuntu-24.04
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - run: npm install
+      - run: npx playwright install --with-deps chromium
+      - name: Module18 focused browser and locked regression
+        run: |
+          if [ -f tests/browser/automix-transition.spec.ts ]; then
+            npx playwright test tests/browser/automix-transition.spec.ts tests/browser/performance-transport.spec.ts tests/browser/sync.spec.ts tests/browser/advanced-library-preparation.spec.ts
+          else
+            test "$(python -c 'import json; print(json.load(open("DEVELOPMENT_STATE.json"))["status"])')" = "CONTRACTED"
+            echo "CONTRACTED: no browser runtime claim before implementation"
+          fi
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: module18-browser-${{ github.sha }}
+          path: |
+            playwright-report/
+            test-results/
+          if-no-files-found: ignore
+          retention-days: 30

@@ -69,6 +69,7 @@
     "fx_engine",
     "sampler_performance_pads",
     "advanced_midi_controller",
-    "advanced_library_preparation"
+    "advanced_library_preparation",
+    "automix_transition_intelligence"
   ]
 }
