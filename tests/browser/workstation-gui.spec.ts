@@ -14,6 +14,7 @@ test('usable performance view keeps deck, mixer, SYNC and AutoMix real controls'
  await expect.poll(()=>page.evaluate(async()=>(await window.__libertasSyncTest.status()).enabled)).toBe(true);
  await page.locator('#session-readout button').click();
  await expect(page.locator('#session-readout')).toContainText('SYNC');
+ await page.screenshot({path:'test-results/workstation-performance.png'});
 });
 
 test('Advanced preserves actual module catalog, suites and functioning diagnostic export',async({page})=>{
@@ -26,6 +27,7 @@ test('Advanced preserves actual module catalog, suites and functioning diagnosti
  await expect(page.locator('#advanced-suites')).toContainText('automix-transition.spec.ts');
  await page.locator('#advanced-capture').click();
  await expect(page.locator('#advanced-output')).toContainText('libertas.gui-snapshot.v1');
+ await page.screenshot({path:'test-results/workstation-advanced.png'});
  const downloading=page.waitForEvent('download');
  await page.locator('#advanced-export').click();
  expect((await downloading).suggestedFilename()).toBe('libertas0-diagnostics.json');
