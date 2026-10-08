@@ -38,3 +38,5 @@ Prefer meaningful checkpoints. Avoid micro-push loops. A commit should represent
 
 ## Post-stack adoption boundary
 After all 18 modules are locked and validated, audit DJtest's existing architecture and prepare a narrowly scoped surgical upgrade plan. Keep DJtest unchanged until explicit integration scope, interface compatibility, and browser regression gates are established. Existing LibertasDJ features are not to be replaced blindly.
+
+19. Usable Performance GUI & Advanced Test Archive — IN PROGRESS (Libertas0 only).

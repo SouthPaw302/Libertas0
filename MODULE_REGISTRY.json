@@ -231,6 +231,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "usable-performance-gui",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "automix-transition-intelligence"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

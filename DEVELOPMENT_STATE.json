@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "automix_transition_intelligence",
-  "active_module": "automix-transition-intelligence",
-  "active_branch": "module18-automix-transition",
-  "status": "LOCKED",
-  "current_objective": "Module 18 AutoMix / Transition Intelligence is complete and locked after final hosted exact-SHA seven-job PASS and independently validated local headed-Edge audible physical PASS.",
+  "phase": "usable_performance_gui",
+  "active_module": "usable-performance-gui",
+  "active_branch": "module19-usable-gui",
+  "status": "IMPLEMENTING",
+  "current_objective": "Module 19 usable performance GUI with Advanced diagnostic/test preservation. Keep all Modules 1-18 runtime and IDs unchanged.",
   "last_passing_gate": "module18-automix-hosted-and-physical",
   "last_evidence": "evidence/automix/module18-closeout/RESULT.json",
   "blockers": [],
@@ -19,6 +19,6 @@
     "AutoMix Module 18 crossfader transitions do not claim automatic EQ/FX choreography, semantic musical phrase detection, or automatic cue/start transport.",
     "Module 18 physical test covers installed headed Microsoft Edge/Realtek on Windows 10; hardware MIDI remains NOT_EVALUATED."
   ],
-  "exact_next_action": "With Modules 1-18 locked, prepare a surgical DJtest adoption audit: compare runtime contracts and map Libertas0 modules into legacy DJtest without replacing working components; keep DJtest untouched until an explicit bounded integration plan and tests are approved.",
-  "product_code_authorized": false
+  "exact_next_action": "Run and fix Module 19 exact-SHA cross-platform/build and all-browser/realtime regressions; local usability proof before locking.",
+  "product_code_authorized": true
 }
