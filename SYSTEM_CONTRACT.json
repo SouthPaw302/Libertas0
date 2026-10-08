@@ -68,6 +68,7 @@
     "waveform_track_view",
     "fx_engine",
     "sampler_performance_pads",
-    "advanced_midi_controller"
+    "advanced_midi_controller",
+    "advanced_library_preparation"
   ]
 }

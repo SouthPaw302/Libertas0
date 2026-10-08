@@ -206,6 +206,18 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "advanced-library-preparation",
+      "state": "IMPLEMENTING",
+      "depends_on": [
+        "advanced-midi-controller"
+      ],
+      "required_gates": [
+        "unit",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

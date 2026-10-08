@@ -400,6 +400,17 @@
         "vendor-specific high-resolution MIDI protocols"
       ],
       "evidence": "evidence/advanced-midi-controller/module16-automated/RESULT.json"
+    },
+    {
+      "id": "storage.advanced-library-preparation",
+      "class": "storage-preparation",
+      "status": "implementing",
+      "provider": "IndexedDB v2 tracks+crates + explicit deck-preparation capture/restore",
+      "contract": "docs/contracts/ADVANCED_LIBRARY_PREPARATION.md",
+      "proven_scope": [],
+      "not_yet_proven": [
+        "module gate pending"
+      ]
     }
   ]
 }

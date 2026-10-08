@@ -18,6 +18,7 @@
 14. FX Engine
 15. Sampler / Performance Pads
 16. Advanced MIDI / Controller Layer
+17. Advanced Library / Preparation
 
 ## Rule
 Do not move upward because a schedule says so. Move upward only when the current module's evidence gate passes.

@@ -79,6 +79,7 @@ Flow:
 14. FX Engine
 15. Sampler / Performance Pads
 16. Advanced MIDI / Controller Layer
+17. Advanced Library / Preparation
 
 ## Test hierarchy
 T1 unit -> T2 simulation -> T3 integration -> T4 runtime -> T5 physical/local.

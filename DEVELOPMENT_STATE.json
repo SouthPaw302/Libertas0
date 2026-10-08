@@ -1,11 +1,11 @@
 {
   "schema": "libertas.development-state.v1",
   "project": "Libertas0",
-  "phase": "advanced_midi_controller",
-  "active_module": "advanced-midi-controller",
-  "active_branch": "main",
-  "status": "LOCKED",
-  "current_objective": "Module 16 Advanced MIDI / Controller Layer is complete and locked: device-aware multi-controller mappings, persistent named profiles, richer DJ targets, MIDI output/LED feedback, and backward-compatible deterministic MIDI control are integrated.",
+  "phase": "advanced_library_preparation",
+  "active_module": "advanced-library-preparation",
+  "active_branch": "module/advanced-library-preparation",
+  "status": "IMPLEMENTING",
+  "current_objective": "Module 17 — Advanced Library / Preparation: searchable metadata, ratings/tags, crates, persisted grids/cues/hotcues/loops, and explicit deck capture/restore workflows on the existing content-addressed IndexedDB library.",
   "last_passing_gate": "module16-advanced-midi-controller",
   "last_evidence": "evidence/advanced-midi-controller/module16-automated/RESULT.json",
   "blockers": [],
@@ -16,6 +16,6 @@
     "Networking remains forbidden from owning deck sourceFrame, render frame, Musical Clock, SYNC phase/correction, or performance execution timing.",
     "Selectable physical headphone routing depends on browser/OS setSinkId support; deterministic monitor routing is the Module 12 software contract."
   ],
-  "exact_next_action": "Begin Module 17 — Advanced Library / Preparation. Expand track preparation with search, crates/playlists, persisted analysis/grids/cues/loops, metadata, and preparation workflows without moving realtime authority into the library.",
-  "product_code_authorized": false
+  "exact_next_action": "Run the bounded Module 17 unit/integration/runtime gate. If green, record evidence and lock advanced-library-preparation.",
+  "product_code_authorized": true
 }
