@@ -210,17 +210,17 @@ export class TrackLibrary {
 
   async remove(id: string): Promise<void> {
     const db = await this.db();
-    const tx = db.transaction([TRACK_STORE, CRATE_STORE], 'readwrite');
-    tx.objectStore(TRACK_STORE).delete(id);
-    const crateStore = tx.objectStore(CRATE_STORE);
-    const crates = await requestResult(crateStore.getAll() as IDBRequest<LibraryCrate[]>);
+    const trackTx = db.transaction(TRACK_STORE, 'readwrite');
+    trackTx.objectStore(TRACK_STORE).delete(id);
+    await transactionDone(trackTx);
+
+    const crates = await this.listCrates();
     for (const crate of crates) {
       if (!crate.trackIds.includes(id)) continue;
       crate.trackIds = crate.trackIds.filter((trackId) => trackId !== id);
       crate.updatedAt = Date.now();
-      crateStore.put(crate);
+      await this.putCrate(crate);
     }
-    await transactionDone(tx);
   }
 
   async clear(): Promise<void> {
