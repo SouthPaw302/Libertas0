@@ -1587,7 +1587,7 @@ async function applyLibraryPreparation(deck: 'A' | 'B', track: LibraryTrack): Pr
 
   const performance = performanceForDeck(deck);
   if (prep.cueFrame !== undefined && prep.cueFrame !== null) {
-    await performance.setCueFrame(prep.cueFrame);
+    await performance.setCueAtFrame(prep.cueFrame);
   }
   for (let slot = 1; slot <= 8; slot += 1) {
     const frame = prep.hotCues?.[slot - 1];
