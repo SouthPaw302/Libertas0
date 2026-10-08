@@ -1,3 +1,4 @@
+import { startWorkstationGui } from './ui/WorkstationGui';
 import {
   BrowserAudioKernel,
   detectAudioKernelCapabilities,
@@ -2576,5 +2577,7 @@ window.__libertasDistributedTest = {
     }
   },
 };
+
+startWorkstationGui();
 
 export {};

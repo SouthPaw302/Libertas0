@@ -70,6 +70,7 @@
     "sampler_performance_pads",
     "advanced_midi_controller",
     "advanced_library_preparation",
-    "automix_transition_intelligence"
+    "automix_transition_intelligence",
+    "usable_performance_gui"
   ]
 }
