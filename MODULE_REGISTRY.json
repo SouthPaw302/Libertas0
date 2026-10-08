@@ -221,7 +221,7 @@
     },
     {
       "id": "automix-transition-intelligence",
-      "state": "CONTRACTED",
+      "state": "IMPLEMENTING",
       "depends_on": [
         "advanced-library-preparation"
       ],
