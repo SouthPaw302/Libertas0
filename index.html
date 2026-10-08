@@ -305,6 +305,18 @@
           </div>
           <pre id="automation-status">Automation idle</pre>
         </div>
+        <div>
+          <strong>AutoMix / Transition Intelligence</strong>
+          <div class="row">
+            <label>Outgoing deck <select id="automix-outgoing"><option value="A">A → B</option><option value="B">B → A</option></select></label>
+            <label>Transition bars <select id="automix-bars"><option value="1">1</option><option value="2">2</option><option value="4" selected>4</option><option value="8">8</option></select></label>
+            <button id="automix-plan" type="button">Plan</button>
+            <button id="automix-arm" type="button">Arm SYNC-locked Mix</button>
+            <button id="automix-cancel" type="button">Cancel</button>
+          </div>
+          <p class="section-note">Both decks must be playing with trusted grids and SYNC locked. Stage the crossfader fully on the outgoing deck before arming. The audio engine schedules the fade; manual deck or crossfader action cancels automation.</p>
+          <pre id="automix-status">AutoMix idle</pre>
+        </div>
       </div>
     </fieldset>
 

@@ -218,6 +218,19 @@
         "integration",
         "runtime"
       ]
+    },
+    {
+      "id": "automix-transition-intelligence",
+      "state": "LOCKED",
+      "depends_on": [
+        "advanced-library-preparation"
+      ],
+      "required_gates": [
+        "unit",
+        "simulation",
+        "integration",
+        "runtime"
+      ]
     }
   ]
 }

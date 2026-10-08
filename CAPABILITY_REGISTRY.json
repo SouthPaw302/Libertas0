@@ -428,6 +428,31 @@
         "variable-tempo warp maps"
       ],
       "evidence": "evidence/advanced-library-preparation/module17-automated/RESULT.json"
+    },
+    {
+      "id": "control.automix-transition-intelligence",
+      "class": "assisted-performance",
+      "status": "proven",
+      "provider": "Deterministic phrase-grid transition planner plus AudioContext AudioParam crossfader automation guarded by existing SYNC/Deck AudioWorklet telemetry",
+      "contract": "docs/MODULE18_AUTOMIX_CONTRACT.md",
+      "proven_scope": [
+        "Beat-grid/phrase-bar-quantized bounded deterministic transition planning",
+        "Two-deck assisted A-to-B and B-to-A transitions on actual distinct WAVs",
+        "Both decks playing and trusted-grid gates; active locked SYNC required to arm",
+        "Crossfader staging refusal; tempo/meter, stale plan, and source identity protection",
+        "Main-thread-independent scheduled AudioParam crossfade timeline",
+        "Human MIDI and deck/performance/crossfader manual override and safe cancellation",
+        "Zero hidden SYNC maintenance seeks and zero A/B/mixer frame discontinuities in local physical run",
+        "Full hosted browser and repeated realtime regression PASS"
+      ],
+      "not_yet_proven": [
+        "Fully autonomous track loading/playlist orchestration",
+        "Auto cue/phrase identification independent of supplied beat grid",
+        "Time-stretch/warp-map creation or unsupervised SYNC-master switching",
+        "Automatic EQ/FX/gain choreography or physical MIDI compatibility across devices",
+        "Cross-browser physical audio output matrix beyond tested Edge/Windows device"
+      ],
+      "evidence": "evidence/automix/module18-closeout/RESULT.json"
     }
   ]
 }

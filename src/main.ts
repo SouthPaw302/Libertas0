@@ -54,6 +54,8 @@ import {
 } from './midi/MidiTargetCatalog';
 import { MasterRecordingController, type RecordingStatus } from './recording/MasterRecordingController';
 import { AutomationController } from './automation/AutomationController';
+import { AutoMixController, type AutoMixStatus } from './automix/AutoMixController';
+import type { MixDeck, TransitionDecision } from './automix/TransitionPlanner';
 import type { AutomationLane, ScheduledAutomation } from './automation/AutomationTypes';
 import { DistributedSession } from './distributed/DistributedSession';
 import { RtcDataChannelTransport } from './distributed/RtcDataChannelTransport';
@@ -255,6 +257,14 @@ interface LibertasRecordingTestApi {
   status(): RecordingStatus;
 }
 
+interface LibertasAutoMixTestApi {
+  plan(outgoing: MixDeck, bars?: number, phraseBars?: number): Promise<TransitionDecision>;
+  arm(): Promise<AutoMixStatus>;
+  cancel(reason?: string): AutoMixStatus;
+  override(value: number): AutoMixStatus;
+  status(): AutoMixStatus;
+}
+
 interface LibertasAutomationTestApi {
   targets(): string[];
   schedule(lane: AutomationLane, leadSeconds?: number): ScheduledAutomation;
@@ -314,6 +324,7 @@ declare global {
     __libertasMidiTest: LibertasMidiTestApi;
     __libertasRecordingTest: LibertasRecordingTestApi;
     __libertasAutomationTest: LibertasAutomationTestApi;
+    __libertasAutoMixTest: LibertasAutoMixTestApi;
     __libertasDistributedTest: LibertasDistributedTestApi;
   }
 }
@@ -366,6 +377,20 @@ const midiFeedback = new MidiFeedbackRouter((message) => {
 });
 const recording = new MasterRecordingController(runtime, masterFx);
 const automation = new AutomationController(runtime.context);
+const autoMix = new AutoMixController({
+  context: runtime.context, deckA, deckB, mixer, sync,
+  getGrid: (deck) => pendingGrids.get(deck)!,
+});
+// Human performance interaction always cancels a pending mix before the UI command.
+document.addEventListener('click', (event) => {
+  const target = event.target;
+  if (!(target instanceof Element)) return;
+  const id = target.closest('button')?.id ?? '';
+  if (!/^(deck-[ab]-(play|pause|load|seek)|perf-[ab]-|sync-(a-to-b|b-to-a|disable)|automation-demo)$/.test(id)) return;
+  if (['PLANNED', 'ARMED', 'EXECUTING'].includes(autoMix.status().state)) {
+    autoMix.cancel('MANUAL_PERFORMANCE');
+  }
+}, true);
 
 function publishMidiActionFeedback(action: MidiAction): void {
   if (action.trigger) midiFeedback.pulse(action.target);
@@ -373,11 +398,15 @@ function publishMidiActionFeedback(action: MidiAction): void {
 }
 
 function applyMidiAction(action: MidiAction): void {
+  if (action.trigger && /^(deck[AB]\.|sync\.)/.test(action.target) &&
+    ['PLANNED', 'ARMED', 'EXECUTING'].includes(autoMix.status().state)) {
+    autoMix.cancel('MIDI_PERFORMANCE');
+  }
   const finish = (): void => publishMidiActionFeedback(action);
 
   switch (action.target) {
     case 'mixer.crossfader':
-      mixer.setCrossfader(action.value);
+      autoMix.manualOverride(action.value);
       finish();
       return;
     case 'mixer.master':
@@ -749,7 +778,10 @@ function bindDeck(prefix: 'a' | 'b', deck: DeckController): void {
       render(statusElement, { error: `Choose a Deck ${prefix.toUpperCase()} audio file first.` });
       return;
     }
-    void deck.loadFile(file).then((status) => render(statusElement, status)).catch((error: unknown) => render(statusElement, { error: String(error) }));
+    void deck.loadFile(file).then((status) => {
+      autoMix.recordLoad(prefix === 'a' ? 'A' : 'B', file.name);
+      render(statusElement, status);
+    }).catch((error: unknown) => render(statusElement, { error: String(error) }));
   });
 
   play?.addEventListener('click', () => {
@@ -1148,6 +1180,7 @@ async function musicalSnapshot(deck: 'A' | 'B'): Promise<MusicalClockSnapshot> {
 
 function setMusicalGrid(deck: 'A' | 'B', grid: BeatGrid): void {
   pendingGrids.set(deck, { ...grid });
+  autoMix.trustGrid(deck);
   const clock = musicalClocks.get(deck);
   if (clock) clock.setGrid(grid);
   void refreshFxTempo().catch(() => {});
@@ -1348,7 +1381,7 @@ mixerMaster?.addEventListener('input', () => {
 });
 mixerCrossfader?.addEventListener('input', () => {
   try {
-    mixer.setCrossfader(Number(mixerCrossfader.value));
+    autoMix.manualOverride(Number(mixerCrossfader.value));
   } catch (error) {
     render(mixerStatusElement, { error: String(error) });
   }
@@ -1606,6 +1639,7 @@ async function loadLibraryTrackById(id: string, deck: 'A' | 'B'): Promise<DeckSt
   if (!track) throw new Error('Library track not found');
   const encoded = await library.getAudio(id);
   await getDeck(deck).loadEncodedAudio(encoded);
+  autoMix.recordLoad(deck, track.id);
   return applyLibraryPreparation(deck, track);
 }
 
@@ -1933,12 +1967,14 @@ function blockMainThread(milliseconds: number): void {
 function makeDeckTestApi(deck: DeckController, defaultFrequencyHz: number): LibertasDeckTestApi {
   return {
     async loadGeneratedTone(durationSeconds = 10, frequencyHz = defaultFrequencyHz, amplitude = 0.35) {
-      return deck.loadEncodedAudio(createSineWav({
+      const result = await deck.loadEncodedAudio(createSineWav({
         durationSeconds,
         sampleRate: 48_000,
         frequencyHz,
         amplitude,
       }));
+      autoMix.recordLoad(deck === deckA ? 'A' : 'B', 'generated-tone');
+      return result;
     },
     play: () => deck.play(),
     pause: () => deck.pause(),
@@ -2087,6 +2123,8 @@ window.__libertasSyncTest = {
       deckA.loadEncodedAudio(createClickTrackWav({ durationSeconds, sampleRate: 48_000, bpm: bpmA, amplitude: 0.45 })),
       deckB.loadEncodedAudio(createClickTrackWav({ durationSeconds, sampleRate: 48_000, bpm: bpmB, amplitude: 0.45 })),
     ]);
+    autoMix.recordLoad('A', 'click-fixture-A');
+    autoMix.recordLoad('B', 'click-fixture-B');
     setMusicalGrid('A', { bpm: bpmA, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 });
     setMusicalGrid('B', { bpm: bpmB, firstBeatFrame: 0, beatsPerBar: 4, beatUnit: 4 });
     return { a, b };
@@ -2140,14 +2178,16 @@ window.__libertasIntelligenceTest = {
       amplitude: 0.45,
     }));
   },
-  loadClick(deck, options = {}) {
-    return getDeck(deck).loadEncodedAudio(createClickTrackWav({
+  async loadClick(deck, options = {}) {
+    const loaded = await getDeck(deck).loadEncodedAudio(createClickTrackWav({
       durationSeconds: options.durationSeconds ?? 20,
       bpm: options.bpm ?? 120,
       sampleRate: options.sampleRate ?? 48_000,
       firstBeatOffsetSeconds: options.firstBeatOffsetSeconds ?? 0,
       amplitude: 0.45,
     }));
+    autoMix.recordLoad(deck, 'intelligence-click');
+    return loaded;
   },
   apply(deck, result) {
     const proposal = intelligence.proposal(result);
@@ -2227,6 +2267,34 @@ window.__libertasRecordingTest = {
   status: () => recording.status(),
 };
 
+window.__libertasAutoMixTest = {
+  plan: (outgoing, bars, phraseBars) => autoMix.plan(outgoing, bars, phraseBars),
+  arm: () => autoMix.arm(),
+  cancel: (reason) => autoMix.cancel(reason),
+  override: (value) => autoMix.manualOverride(value),
+  status: () => autoMix.status(),
+};
+
+const autoMixDirection = document.querySelector<HTMLSelectElement>('#automix-outgoing');
+const autoMixBars = document.querySelector<HTMLSelectElement>('#automix-bars');
+const autoMixPlanButton = document.querySelector<HTMLButtonElement>('#automix-plan');
+const autoMixArmButton = document.querySelector<HTMLButtonElement>('#automix-arm');
+const autoMixCancelButton = document.querySelector<HTMLButtonElement>('#automix-cancel');
+const autoMixStatusElement = document.querySelector<HTMLPreElement>('#automix-status');
+autoMixPlanButton?.addEventListener('click', () => {
+  void autoMix.plan(autoMixDirection?.value === 'B' ? 'B' : 'A', Number(autoMixBars?.value ?? 4))
+    .then((decision) => render(autoMixStatusElement, decision))
+    .catch((error: unknown) => render(autoMixStatusElement, { error: String(error) }));
+});
+autoMixArmButton?.addEventListener('click', () => {
+  void autoMix.arm()
+    .then((status) => render(autoMixStatusElement, status))
+    .catch((error: unknown) => render(autoMixStatusElement, { error: String(error) }));
+});
+autoMixCancelButton?.addEventListener('click', () => {
+  render(autoMixStatusElement, autoMix.cancel());
+});
+
 window.__libertasAutomationTest = {
   targets: () => automation.targetsList(),
   schedule: (lane, leadSeconds) => automation.schedule(lane, leadSeconds),
@@ -2239,6 +2307,8 @@ window.__libertasDualDeckTest = {
       deckA.loadEncodedAudio(createSineWav({ durationSeconds, sampleRate: 48_000, frequencyHz: frequencyA, amplitude })),
       deckB.loadEncodedAudio(createSineWav({ durationSeconds, sampleRate: 48_000, frequencyHz: frequencyB, amplitude })),
     ]);
+    autoMix.recordLoad('A', 'dual-generated-A');
+    autoMix.recordLoad('B', 'dual-generated-B');
     return { a, b };
   },
   async playBoth() {
