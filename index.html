@@ -189,18 +189,67 @@
       <p class="section-note">Import tracks, map MIDI, record the post-master mix, and test scheduled automation.</p>
       <div class="decks">
         <div>
-          <strong>Local Track Library</strong>
+          <strong>Advanced Library / Preparation</strong>
           <div class="row">
             <input id="library-files" type="file" accept="audio/*" multiple />
             <button id="library-import" type="button">Import</button>
             <button id="library-refresh" type="button">Refresh</button>
           </div>
           <div class="row">
-            <select id="library-select"></select>
-            <button id="library-load-a" type="button">Load → A</button>
-            <button id="library-load-b" type="button">Load → B</button>
-            <button id="library-remove" type="button">Remove</button>
+            <label>Search <input id="library-search" type="search" placeholder="title, artist, tag, genre…" /></label>
+            <label><input id="library-prepared-only" type="checkbox" /> Prepared only</label>
+            <label>Rating ≥
+              <select id="library-min-rating">
+                <option value="0" selected>Any</option>
+                <option value="1">1★</option>
+                <option value="2">2★</option>
+                <option value="3">3★</option>
+                <option value="4">4★</option>
+                <option value="5">5★</option>
+              </select>
+            </label>
           </div>
+          <div class="row">
+            <label>Crate <select id="library-crate-filter"><option value="">All tracks</option></select></label>
+            <input id="library-crate-name" type="text" placeholder="New crate name" />
+            <button id="library-create-crate" type="button">Create Crate</button>
+            <button id="library-add-crate" type="button">Add Selected</button>
+            <button id="library-remove-crate" type="button">Remove Selected</button>
+          </div>
+          <div class="row">
+            <select id="library-select"></select>
+            <button id="library-load-a" type="button">Load Prepared → A</button>
+            <button id="library-load-b" type="button">Load Prepared → B</button>
+            <button id="library-remove" type="button">Remove Track</button>
+          </div>
+          <div class="row">
+            <label>Title <input id="library-title" type="text" /></label>
+            <label>Artist <input id="library-artist" type="text" /></label>
+            <label>Album <input id="library-album" type="text" /></label>
+            <label>Genre <input id="library-genre" type="text" /></label>
+            <label>Key <input id="library-key" type="text" placeholder="8A" /></label>
+          </div>
+          <div class="row">
+            <label>Tags <input id="library-tags" type="text" placeholder="peak, tribal, vocal" /></label>
+            <label>Rating
+              <select id="library-rating">
+                <option value="0">0</option>
+                <option value="1">1★</option>
+                <option value="2">2★</option>
+                <option value="3">3★</option>
+                <option value="4">4★</option>
+                <option value="5">5★</option>
+              </select>
+            </label>
+            <label>Comment <input id="library-comment" type="text" /></label>
+          </div>
+          <div class="row">
+            <button id="library-save-prep" type="button">Save Metadata</button>
+            <button id="library-capture-a" type="button">Capture Prep from A</button>
+            <button id="library-capture-b" type="button">Capture Prep from B</button>
+            <button id="library-clear-prep" type="button">Clear Prep</button>
+          </div>
+          <p class="section-note">Capture stores the deck's current grid, Cue, Hot Cues and loop with this track. Loading a prepared track restores those settings explicitly after PCM load.</p>
           <pre id="library-status">Library initializing</pre>
         </div>
         <div>

@@ -30,7 +30,12 @@ import { PerformanceTransportController } from './transport/PerformanceTransport
 import { MusicalClock, type BeatGrid, type MusicalPosition } from './music/MusicalClock';
 import { TrackIntelligenceController } from './intelligence/TrackIntelligenceController';
 import type { TrackAnalysisResult } from './intelligence/TrackAnalysisCore';
-import { TrackLibrary, type LibraryTrack } from './library/TrackLibrary';
+import { TrackLibrary, type LibraryCrate, type LibraryTrack } from './library/TrackLibrary';
+import {
+  type LibraryQuery,
+  type LibraryTrackPreparation,
+  defaultTrackMetadata,
+} from './library/LibraryPreparation';
 import { MidiMappingEngine, type MidiAction, type MidiBinding } from './midi/MidiMappingEngine';
 import { WebMidiController, type MidiRuntimeStatus } from './midi/WebMidiController';
 import {
@@ -204,7 +209,15 @@ interface LibertasLibraryTestApi {
   clear(): Promise<void>;
   importGenerated(name?: string, durationSeconds?: number, frequencyHz?: number): Promise<LibraryTrack>;
   list(): Promise<LibraryTrack[]>;
+  search(query: LibraryQuery): Promise<LibraryTrack[]>;
+  get(id: string): Promise<LibraryTrack | null>;
+  prepare(id: string, preparation: Partial<LibraryTrackPreparation>): Promise<LibraryTrack>;
+  capture(id: string, deck: 'A' | 'B'): Promise<LibraryTrack>;
   load(id: string, deck: 'A' | 'B'): Promise<DeckStatus>;
+  createCrate(name: string): Promise<LibraryCrate>;
+  listCrates(): Promise<LibraryCrate[]>;
+  addToCrate(crateId: string, trackId: string): Promise<LibraryCrate>;
+  removeFromCrate(crateId: string, trackId: string): Promise<LibraryCrate>;
 }
 
 interface LibertasMidiTestApi {
@@ -626,6 +639,26 @@ const libraryLoadA = document.querySelector<HTMLButtonElement>('#library-load-a'
 const libraryLoadB = document.querySelector<HTMLButtonElement>('#library-load-b');
 const libraryRemove = document.querySelector<HTMLButtonElement>('#library-remove');
 const libraryStatus = document.querySelector<HTMLPreElement>('#library-status');
+const librarySearch = document.querySelector<HTMLInputElement>('#library-search');
+const libraryPreparedOnly = document.querySelector<HTMLInputElement>('#library-prepared-only');
+const libraryMinimumRating = document.querySelector<HTMLSelectElement>('#library-min-rating');
+const libraryCrateFilter = document.querySelector<HTMLSelectElement>('#library-crate-filter');
+const libraryCrateName = document.querySelector<HTMLInputElement>('#library-crate-name');
+const libraryCreateCrate = document.querySelector<HTMLButtonElement>('#library-create-crate');
+const libraryAddCrate = document.querySelector<HTMLButtonElement>('#library-add-crate');
+const libraryRemoveCrate = document.querySelector<HTMLButtonElement>('#library-remove-crate');
+const libraryTitle = document.querySelector<HTMLInputElement>('#library-title');
+const libraryArtist = document.querySelector<HTMLInputElement>('#library-artist');
+const libraryAlbum = document.querySelector<HTMLInputElement>('#library-album');
+const libraryGenre = document.querySelector<HTMLInputElement>('#library-genre');
+const libraryKey = document.querySelector<HTMLInputElement>('#library-key');
+const libraryTags = document.querySelector<HTMLInputElement>('#library-tags');
+const libraryRating = document.querySelector<HTMLSelectElement>('#library-rating');
+const libraryComment = document.querySelector<HTMLInputElement>('#library-comment');
+const librarySavePrep = document.querySelector<HTMLButtonElement>('#library-save-prep');
+const libraryCaptureA = document.querySelector<HTMLButtonElement>('#library-capture-a');
+const libraryCaptureB = document.querySelector<HTMLButtonElement>('#library-capture-b');
+const libraryClearPrep = document.querySelector<HTMLButtonElement>('#library-clear-prep');
 const midiConnect = document.querySelector<HTMLButtonElement>('#midi-connect');
 const midiLearnCrossfader = document.querySelector<HTMLButtonElement>('#midi-learn-crossfader');
 const midiLearnMaster = document.querySelector<HTMLButtonElement>('#midi-learn-master');
@@ -1422,26 +1455,163 @@ monitorOutput?.addEventListener('change', () => {
 });
 monitorStatusButton?.addEventListener('click', () => renderMonitorStatus());
 
+function performanceForDeck(deck: 'A' | 'B'): PerformanceTransportController {
+  return deck === 'A' ? performanceA : performanceB;
+}
+
+function currentLibraryQuery(crate: LibraryCrate | null): LibraryQuery {
+  return {
+    text: librarySearch?.value ?? '',
+    preparedOnly: Boolean(libraryPreparedOnly?.checked),
+    minimumRating: Number(libraryMinimumRating?.value ?? 0),
+    ...(crate ? { crateTrackIds: crate.trackIds } : {}),
+  };
+}
+
+function preparationFromEditor(track: LibraryTrack): Partial<LibraryTrackPreparation> {
+  return {
+    metadata: {
+      title: libraryTitle?.value.trim() || track.preparation?.metadata.title || defaultTrackMetadata(track.name).title,
+      artist: libraryArtist?.value.trim() ?? '',
+      album: libraryAlbum?.value.trim() ?? '',
+      genre: libraryGenre?.value.trim() ?? '',
+      key: libraryKey?.value.trim() ?? '',
+      comment: libraryComment?.value.trim() ?? '',
+    },
+    rating: Number(libraryRating?.value ?? 0),
+    tags: (libraryTags?.value ?? '').split(','),
+  };
+}
+
+function fillPreparationEditor(track: LibraryTrack | null): void {
+  const metadata = track?.preparation?.metadata ?? (track ? defaultTrackMetadata(track.name) : defaultTrackMetadata(''));
+  if (libraryTitle) libraryTitle.value = metadata.title;
+  if (libraryArtist) libraryArtist.value = metadata.artist;
+  if (libraryAlbum) libraryAlbum.value = metadata.album;
+  if (libraryGenre) libraryGenre.value = metadata.genre;
+  if (libraryKey) libraryKey.value = metadata.key;
+  if (libraryTags) libraryTags.value = track?.preparation?.tags.join(', ') ?? '';
+  if (libraryRating) libraryRating.value = String(track?.preparation?.rating ?? 0);
+  if (libraryComment) libraryComment.value = metadata.comment;
+}
+
+async function selectedLibraryCrate(): Promise<LibraryCrate | null> {
+  const crateId = libraryCrateFilter?.value;
+  if (!crateId) return null;
+  return library.getCrate(crateId);
+}
+
+async function selectedLibraryTrack(): Promise<LibraryTrack> {
+  const id = librarySelect?.value;
+  if (!id) throw new Error('Choose a library track');
+  const track = await library.get(id);
+  if (!track) throw new Error('Selected library track no longer exists');
+  return track;
+}
+
 async function refreshLibraryUi(): Promise<void> {
-  const tracks = await library.list();
+  const [crates, crate] = await Promise.all([
+    library.listCrates(),
+    selectedLibraryCrate().catch(() => null),
+  ]);
+  const tracks = await library.search(currentLibraryQuery(crate));
+
+  if (libraryCrateFilter) {
+    const current = libraryCrateFilter.value;
+    const all = document.createElement('option');
+    all.value = '';
+    all.textContent = 'All tracks';
+    const options = crates.map((item) => {
+      const option = document.createElement('option');
+      option.value = item.id;
+      option.textContent = `${item.name} (${item.trackIds.length})`;
+      return option;
+    });
+    libraryCrateFilter.replaceChildren(all, ...options);
+    if (crates.some((item) => item.id === current)) libraryCrateFilter.value = current;
+  }
+
   if (librarySelect) {
     const current = librarySelect.value;
     librarySelect.replaceChildren(...tracks.map((track) => {
       const option = document.createElement('option');
       option.value = track.id;
-      option.textContent = `${track.name} (${Math.round(track.size / 1024)} KiB)`;
+      const prep = track.preparation;
+      const title = prep?.metadata.title || track.name;
+      const artist = prep?.metadata.artist ? ` — ${prep.metadata.artist}` : '';
+      const bpm = prep?.grid?.bpm ? ` · ${prep.grid.bpm.toFixed(1)} BPM` : '';
+      const stars = prep?.rating ? ` · ${'★'.repeat(prep.rating)}` : '';
+      option.textContent = `${title}${artist}${bpm}${stars}`;
       return option;
     }));
     if (tracks.some((track) => track.id === current)) librarySelect.value = current;
+    else if (tracks[0]) librarySelect.value = tracks[0].id;
   }
-  render(libraryStatus, { count: tracks.length, tracks });
+
+  const selected = librarySelect?.value ? await library.get(librarySelect.value) : null;
+  fillPreparationEditor(selected);
+  render(libraryStatus, {
+    count: tracks.length,
+    totalCount: (await library.list()).length,
+    crate,
+    crates,
+    selected,
+    tracks,
+  });
+}
+
+async function captureLibraryPreparation(id: string, deck: 'A' | 'B'): Promise<LibraryTrack> {
+  const status = await getDeck(deck).requestStatus();
+  if (!status.loaded) throw new Error(`Deck ${deck} must have a loaded track before capture`);
+  const existing = await library.get(id);
+  if (!existing) throw new Error('Library track not found');
+  return library.updatePreparation(id, {
+    ...preparationFromEditor(existing),
+    grid: { ...pendingGrids.get(deck)! },
+    cueFrame: status.cueFrame,
+    hotCues: [...status.hotCues],
+    loop: status.loopStartFrame !== null && status.loopEndFrame !== null
+      ? {
+          startFrame: status.loopStartFrame,
+          endFrame: status.loopEndFrame,
+          enabled: status.loopEnabled,
+        }
+      : null,
+  });
+}
+
+async function applyLibraryPreparation(deck: 'A' | 'B', track: LibraryTrack): Promise<DeckStatus> {
+  const prep = track.preparation;
+  if (!prep) return getDeck(deck).requestStatus();
+  if (prep.grid) setMusicalGrid(deck, prep.grid);
+
+  const performance = performanceForDeck(deck);
+  if (prep.cueFrame !== undefined && prep.cueFrame !== null) {
+    await performance.setCueFrame(prep.cueFrame);
+  }
+  for (let slot = 1; slot <= 8; slot += 1) {
+    const frame = prep.hotCues?.[slot - 1];
+    if (frame !== undefined && frame !== null) await performance.setHotCue(slot, frame);
+  }
+  if (prep.loop) {
+    await performance.setLoopFrames(prep.loop.startFrame, prep.loop.endFrame);
+    if (!prep.loop.enabled) await performance.setLoopEnabled(false);
+  }
+  return getDeck(deck).requestStatus();
+}
+
+async function loadLibraryTrackById(id: string, deck: 'A' | 'B'): Promise<DeckStatus> {
+  const track = await library.get(id);
+  if (!track) throw new Error('Library track not found');
+  const encoded = await library.getAudio(id);
+  await getDeck(deck).loadEncodedAudio(encoded);
+  return applyLibraryPreparation(deck, track);
 }
 
 async function loadLibraryTrack(deck: 'A' | 'B'): Promise<DeckStatus> {
   const id = librarySelect?.value;
   if (!id) throw new Error('Choose a library track');
-  const encoded = await library.getAudio(id);
-  return getDeck(deck).loadEncodedAudio(encoded);
+  return loadLibraryTrackById(id, deck);
 }
 
 libraryImport?.addEventListener('click', () => {
@@ -1454,6 +1624,74 @@ libraryImport?.addEventListener('click', () => {
 });
 libraryRefresh?.addEventListener('click', () => {
   void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+librarySearch?.addEventListener('input', () => {
+  void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryPreparedOnly?.addEventListener('change', () => {
+  void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryMinimumRating?.addEventListener('change', () => {
+  void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryCrateFilter?.addEventListener('change', () => {
+  void refreshLibraryUi().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+librarySelect?.addEventListener('change', () => {
+  void selectedLibraryTrack()
+    .then(fillPreparationEditor)
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryCreateCrate?.addEventListener('click', () => {
+  void library.createCrate(libraryCrateName?.value ?? '')
+    .then((crate) => {
+      if (libraryCrateFilter) libraryCrateFilter.value = crate.id;
+      return refreshLibraryUi();
+    })
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryAddCrate?.addEventListener('click', () => {
+  void (async () => {
+    const crateId = libraryCrateFilter?.value;
+    const trackId = librarySelect?.value;
+    if (!crateId || !trackId) throw new Error('Choose both a crate and a track');
+    await library.addToCrate(crateId, trackId);
+    await refreshLibraryUi();
+  })().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryRemoveCrate?.addEventListener('click', () => {
+  void (async () => {
+    const crateId = libraryCrateFilter?.value;
+    const trackId = librarySelect?.value;
+    if (!crateId || !trackId) throw new Error('Choose both a crate and a track');
+    await library.removeFromCrate(crateId, trackId);
+    await refreshLibraryUi();
+  })().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+librarySavePrep?.addEventListener('click', () => {
+  void (async () => {
+    const track = await selectedLibraryTrack();
+    await library.updatePreparation(track.id, preparationFromEditor(track));
+    await refreshLibraryUi();
+  })().catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryCaptureA?.addEventListener('click', () => {
+  void selectedLibraryTrack()
+    .then((track) => captureLibraryPreparation(track.id, 'A'))
+    .then(() => refreshLibraryUi())
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryCaptureB?.addEventListener('click', () => {
+  void selectedLibraryTrack()
+    .then((track) => captureLibraryPreparation(track.id, 'B'))
+    .then(() => refreshLibraryUi())
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
+});
+libraryClearPrep?.addEventListener('click', () => {
+  void selectedLibraryTrack()
+    .then((track) => library.clearPreparation(track.id))
+    .then(() => refreshLibraryUi())
+    .catch((error: unknown) => render(libraryStatus, { error: String(error) }));
 });
 libraryLoadA?.addEventListener('click', () => {
   void loadLibraryTrack('A').then((status) => render(document.querySelector('#deck-a-status'), status))
@@ -1925,9 +2163,15 @@ window.__libertasLibraryTest = {
     return library.importBlob(name, new Blob([encoded], { type: 'audio/wav' }), 1);
   },
   list: () => library.list(),
-  async load(id, deck) {
-    return getDeck(deck).loadEncodedAudio(await library.getAudio(id));
-  },
+  search: (query) => library.search(query),
+  get: (id) => library.get(id),
+  prepare: (id, preparation) => library.updatePreparation(id, preparation),
+  capture: (id, deck) => captureLibraryPreparation(id, deck),
+  load: (id, deck) => loadLibraryTrackById(id, deck),
+  createCrate: (name) => library.createCrate(name),
+  listCrates: () => library.listCrates(),
+  addToCrate: (crateId, trackId) => library.addToCrate(crateId, trackId),
+  removeFromCrate: (crateId, trackId) => library.removeFromCrate(crateId, trackId),
 };
 
 window.__libertasMidiTest = {
