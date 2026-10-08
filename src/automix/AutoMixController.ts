@@ -55,9 +55,18 @@ export class AutoMixController {
       return { ok: false, reason: 'ALREADY_ARMED' };
     }
     const incoming: MixDeck = outgoing === 'A' ? 'B' : 'A';
-    const [from, to] = await Promise.all([
-      this.deck(outgoing).requestStatus(), this.deck(incoming).requestStatus(),
-    ]);
+    let from: DeckStatus;
+    let to: DeckStatus;
+    try {
+      [from, to] = await Promise.all([
+        this.deck(outgoing).requestStatus(), this.deck(incoming).requestStatus(),
+      ]);
+    } catch {
+      this.selected = null;
+      this.reason = 'DECK_NOT_READY';
+      this.state = 'REFUSED';
+      return { ok: false, reason: 'DECK_NOT_READY' };
+    }
     const toInput = (deck: MixDeck, status: DeckStatus) => ({
       deck, sourceId: this.identities.get(deck) ?? '',
       loaded: status.loaded, playing: status.playing,
@@ -148,7 +157,7 @@ export class AutoMixController {
   }
 
   manualOverride(value: number): AutoMixStatus {
-    if (this.state === 'ARMED' || this.state === 'EXECUTING') this.cancel('MANUAL_OVERRIDE');
+    if (this.state === 'PLANNED' || this.state === 'ARMED' || this.state === 'EXECUTING') this.cancel('MANUAL_OVERRIDE');
     this.deps.mixer.setCrossfader(value);
     return this.status();
   }
