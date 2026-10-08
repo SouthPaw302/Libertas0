@@ -124,14 +124,10 @@ test('removing a track also removes stale crate membership', async ({ page }) =>
     if (!tracks.some((track) => track.id === id)) throw new Error('test track missing');
   }, { id: track.id });
 
-  await page.evaluate(async ({ id }) => {
-    // removal is exposed through the real library UI path
-    const select = document.querySelector<HTMLSelectElement>('#library-select')!;
-    select.value = id;
-    document.querySelector<HTMLButtonElement>('#library-remove')!.click();
-  }, { id: track.id });
-  await page.waitForFunction(async () => (await window.__libertasLibraryTest.list()).length === 0);
+  await page.evaluate(({ id }) => window.__libertasLibraryTest.remove(id), { id: track.id });
 
+  const remaining = await page.evaluate(() => window.__libertasLibraryTest.list());
+  expect(remaining).toHaveLength(0);
   const crates = await page.evaluate(() => window.__libertasLibraryTest.listCrates());
   expect(crates[0]?.trackIds).toEqual([]);
 });
