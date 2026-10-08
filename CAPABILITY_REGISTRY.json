@@ -404,13 +404,30 @@
     {
       "id": "storage.advanced-library-preparation",
       "class": "storage-preparation",
-      "status": "implementing",
+      "status": "proven",
       "provider": "IndexedDB v2 tracks+crates + explicit deck-preparation capture/restore",
       "contract": "docs/contracts/ADVANCED_LIBRARY_PREPARATION.md",
-      "proven_scope": [],
+      "proven_scope": [
+        "IndexedDB v1 track migration to v2 tracks + crates",
+        "content-addressed audio identity preserved",
+        "metadata title/artist/album/genre/key/comment",
+        "ratings and normalized tags",
+        "free-text and structured filtering",
+        "crate creation and membership",
+        "track deletion cleans crate membership",
+        "persisted Musical Clock grid",
+        "persisted Cue / eight Hot Cues / loop state",
+        "explicit deck preparation capture",
+        "prepared load restores grid and performance markers through proven APIs",
+        "original Phase 10 library dedup/load compatibility preserved"
+      ],
       "not_yet_proven": [
-        "module gate pending"
-      ]
+        "cloud library sync",
+        "streaming-provider integration",
+        "automatic semantic key/genre/phrase metadata",
+        "variable-tempo warp maps"
+      ],
+      "evidence": "evidence/advanced-library-preparation/module17-automated/RESULT.json"
     }
   ]
 }

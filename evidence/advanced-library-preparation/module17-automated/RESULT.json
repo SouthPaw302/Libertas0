@@ -1,0 +1,45 @@
+{
+  "schema": "libertas.evidence.v1",
+  "module": "advanced-library-preparation",
+  "gate": "module17-automated",
+  "status": "PASS",
+  "tested_sha": "d690d301e391a456ee856a5d7e54e7b6da3f6833",
+  "system_contract_run": 37706914159,
+  "module_gate_run": 37706914127,
+  "results": {
+    "system_contract": "PASS",
+    "typecheck_unit_build": "PASS",
+    "unit_tests": {
+      "passed": 74,
+      "total": 74,
+      "library_preparation_tests": 3
+    },
+    "advanced_library_browser": {
+      "passed": 5,
+      "total": 5
+    },
+    "original_library_compatibility": {
+      "passed": 1,
+      "total": 1
+    },
+    "performance_transport_regression": {
+      "passed": 6,
+      "total": 6
+    },
+    "prepared_load_restore": "PASS",
+    "explicit_deck_capture": "PASS",
+    "crate_cleanup_on_remove": "PASS"
+  },
+  "artifact": {
+    "id": 11519554368,
+    "digest": "sha256:b1935c29d9c775910d9a958db0bae245686102d17e47cee8a846d3ced926c0f6"
+  },
+  "proven_scope": [
+    "searchable metadata and tags",
+    "ratings",
+    "crates",
+    "saved BPM/grid",
+    "saved cue/hotcue/loop prep",
+    "explicit capture and prepared-load restore"
+  ]
+}

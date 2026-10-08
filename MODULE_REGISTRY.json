@@ -209,7 +209,7 @@
     },
     {
       "id": "advanced-library-preparation",
-      "state": "IMPLEMENTING",
+      "state": "LOCKED",
       "depends_on": [
         "advanced-midi-controller"
       ],
